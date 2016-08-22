@@ -459,7 +459,7 @@ abstract class CommonTreeDropdown extends CommonDropdown {
          echo "<td><a href='".$this->getFormURL();
          echo '?id='.$data['id']."'>".$data['name']."</a></td>";
          if ($entity_assign) {
-            echo "<td>".Dropdown::getDropdownName("glpi_entities", $data["entities_id"])."</td>";
+            echo "<td>".Dropdown::getDropdownName(Entity::getTable(), $data["entities_id"])."</td>";
          }
 
          foreach ($fields as $field) {

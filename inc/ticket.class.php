@@ -533,7 +533,7 @@ class Ticket extends CommonITILObject {
          if ($_SESSION['glpishow_count_on_tabs']) {
             switch ($item->getType()) {
                case 'User' :
-                  $nb = countElementsInTable(array('glpi_tickets', 'glpi_tickets_users'),
+                  $nb = countElementsInTable(array($this->getTable(), Ticket_User::getTable()),
                                              getEntitiesRestrictRequest("", 'glpi_tickets').
                                                "AND `glpi_tickets_users`.`tickets_id` = `glpi_tickets`.`id`
                                                 AND `glpi_tickets_users`.`users_id` = '".$item->getID()."'
@@ -542,20 +542,20 @@ class Ticket extends CommonITILObject {
                   break;
 
                case 'Supplier' :
-                  $nb = countElementsInTable(array('glpi_tickets', 'glpi_suppliers_tickets'),
+                  $nb = countElementsInTable(array($this->getTable(), Supplier_Ticket::getTable()),
                                              getEntitiesRestrictRequest("", 'glpi_tickets').
                                                "AND `glpi_suppliers_tickets`.`tickets_id` = `glpi_tickets`.`id`
                                                 AND `glpi_suppliers_tickets`.`suppliers_id` = '".$item->getID()."'");
                   break;
 
                case 'SLT' :
-                  $nb = countElementsInTable('glpi_tickets',
+                  $nb = countElementsInTable($this->getTable(),
                                              "`slts_tto_id` = '".$item->getID()."'
                                                OR `slts_ttr_id` = '".$item->getID()."'");
                   break;
 
                case 'Group' :
-                  $nb = countElementsInTable(array('glpi_tickets', 'glpi_groups_tickets'),
+                  $nb = countElementsInTable(array($this->getTable(), Group_Ticket::getTable()),
                                              getEntitiesRestrictRequest("", 'glpi_tickets').
                                                "AND `glpi_groups_tickets`.`tickets_id` = `glpi_tickets`.`id`
                                                 AND `glpi_groups_tickets`.`groups_id` = '".$item->getID()."'
@@ -565,7 +565,7 @@ class Ticket extends CommonITILObject {
 
                default :
                   // Direct one
-                  $nb = countElementsInTable('glpi_items_tickets',
+                  $nb = countElementsInTable(Item_Ticket::getTable(),
                                              " `itemtype` = '".$item->getType()."'
                                                 AND `items_id` = '".$item->getID()."'");
                   // Linked items
@@ -574,7 +574,7 @@ class Ticket extends CommonITILObject {
                   if (count($linkeditems)) {
                      foreach ($linkeditems as $type => $tab) {
                         foreach ($tab as $ID) {
-                           $nb += countElementsInTable('glpi_items_tickets',
+                           $nb += countElementsInTable(Item_Ticket::getTable(),
                                                        " `itemtype` = '$type'
                                                          AND `items_id` = '$ID'");
                         }
@@ -2256,7 +2256,7 @@ class Ticket extends CommonITILObject {
       $tab[14]['searchtype']        = 'equals';
       $tab[14]['datatype']          = 'specific';
 
-      $tab[13]['table']             = 'glpi_items_tickets';
+      $tab[13]['table']             = Item_Ticket::getTable();
       $tab[13]['field']             = 'items_id';
       $tab[13]['name']              = _n('Associated element', 'Associated elements', Session::getPluralNumber());
       $tab[13]['datatype']          = 'specific';
@@ -2268,7 +2268,7 @@ class Ticket extends CommonITILObject {
       $tab[13]['forcegroupby']      = true;
       $tab[13]['massiveaction']     = false;
 
-      $tab[131]['table']            = 'glpi_items_tickets';
+      $tab[131]['table']            = Item_Ticket::getTable();
       $tab[131]['field']            = 'itemtype';
       $tab[131]['name']             = _n('Associated item type', 'Associated item types', Session::getPluralNumber());
       $tab[131]['datatype']         = 'itemtypename';
@@ -2279,25 +2279,25 @@ class Ticket extends CommonITILObject {
       $tab[131]['forcegroupby']     = true;
       $tab[131]['massiveaction']    = false;
 
-      $tab[9]['table']              = 'glpi_requesttypes';
+      $tab[9]['table']              = RequestType::getTable();
       $tab[9]['field']              = 'name';
       $tab[9]['name']               = __('Request source');
       $tab[9]['datatype']           = 'dropdown';
 
       // Can't use Location::getSearchOptionsToAdd because id conflicts
-      $tab[83]['table']             = 'glpi_locations';
+      $tab[83]['table']             = location::getTable();
       $tab[83]['field']             = 'completename';
       $tab[83]['name']              = __('Location');
       $tab[83]['datatype']          = 'dropdown';
 
-      $tab[80]['table']             = 'glpi_entities';
+      $tab[80]['table']             = Entity::getTable();
       $tab[80]['field']             = 'completename';
       $tab[80]['name']              = __('Entity');
       $tab[80]['massiveaction']     = false;
       $tab[80]['datatype']          = 'dropdown';
 
       // For ticket template
-      $tab[142]['table']            = 'glpi_documents';
+      $tab[142]['table']            = Document::getTable();
       $tab[142]['field']            = 'name';
       $tab[142]['name']             = _n('Document', 'Documents', Session::getPluralNumber());
       $tab[142]['forcegroupby']     = true;
@@ -2318,7 +2318,7 @@ class Ticket extends CommonITILObject {
 
       $tab['slt']                   = __('SLT');
 
-      $tab[37]['table']             = 'glpi_slts';
+      $tab[37]['table']             = SLT::getTable();
       $tab[37]['field']             = 'name';
       $tab[37]['linkfield']         = 'slts_tto_id';
       $tab[37]['name']              = __('SLT')."&nbsp;".__('Time to own');
@@ -2327,7 +2327,7 @@ class Ticket extends CommonITILObject {
       $tab[37]['joinparams']        = array('condition' => "AND NEWTABLE.`type` = '".SLT::TTO."'");
       $tab[37]['condition']         = "`glpi_slts`.`type` = '".SLT::TTO."'";
 
-      $tab[30]['table']             = 'glpi_slts';
+      $tab[30]['table']             = SLT::getTable();
       $tab[30]['field']             = 'name';
       $tab[30]['linkfield']         = 'slts_ttr_id';
       $tab[30]['name']              = __('SLT')."&nbsp;".__('Time to resolve');
@@ -2336,7 +2336,7 @@ class Ticket extends CommonITILObject {
       $tab[30]['joinparams']        = array('condition' => "AND NEWTABLE.`type` = '".SLT::TTR."'");
       $tab[30]['condition']         = "`glpi_slts`.`type` = '".SLT::TTR."'";
 
-      $tab[32]['table']             = 'glpi_slalevels';
+      $tab[32]['table']             = SlaLevel::getTable();
       $tab[32]['field']             = 'name';
       $tab[32]['name']              = __('Escalation level');
       $tab[32]['massiveaction']     = false;
@@ -2352,7 +2352,7 @@ class Ticket extends CommonITILObject {
 
       $tab['satisfaction']             = __('Satisfaction survey');
 
-      $tab[31]['table']                = 'glpi_ticketsatisfactions';
+      $tab[31]['table']                = TicketSatisfaction::getTable();
       $tab[31]['field']                = 'type';
       $tab[31]['name']                 = __('Type');
       $tab[31]['massiveaction']        = false;
@@ -2361,28 +2361,28 @@ class Ticket extends CommonITILObject {
       $tab[31]['joinparams']           = array('jointype' => 'child');
       $tab[31]['datatype']             = 'specific';
 
-      $tab[60]['table']                = 'glpi_ticketsatisfactions';
+      $tab[60]['table']                = TicketSatisfaction::getTable();
       $tab[60]['field']                = 'date_begin';
       $tab[60]['name']                 = __('Creation date');
       $tab[60]['datatype']             = 'datetime';
       $tab[60]['massiveaction']        = false;
       $tab[60]['joinparams']           = array('jointype' => 'child');
 
-      $tab[61]['table']                = 'glpi_ticketsatisfactions';
+      $tab[61]['table']                = TicketSatisfaction::getTable();
       $tab[61]['field']                = 'date_answered';
       $tab[61]['name']                 = __('Response date');
       $tab[61]['datatype']             = 'datetime';
       $tab[61]['massiveaction']        = false;
       $tab[61]['joinparams']           = array('jointype' => 'child');
 
-      $tab[62]['table']                = 'glpi_ticketsatisfactions';
+      $tab[62]['table']                = TicketSatisfaction::getTable();
       $tab[62]['field']                = 'satisfaction';
       $tab[62]['name']                 = __('Satisfaction');
       $tab[62]['datatype']             = 'number';
       $tab[62]['massiveaction']        = false;
       $tab[62]['joinparams']           = array('jointype' => 'child');
 
-      $tab[63]['table']                = 'glpi_ticketsatisfactions';
+      $tab[63]['table']                = TicketSatisfaction::getTable();
       $tab[63]['field']                = 'comment';
       $tab[63]['name']                 = __('Comments');
       $tab[63]['datatype']             = 'text';
@@ -2397,7 +2397,7 @@ class Ticket extends CommonITILObject {
                                      OR `NEWTABLE`.`users_id` = '".Session::getLoginUserID()."')";
       }
 
-      $tab[25]['table']             = 'glpi_ticketfollowups';
+      $tab[25]['table']             = TicketFollowup::getTable();
       $tab[25]['field']             = 'content';
       $tab[25]['name']              = __('Description');
       $tab[25]['forcegroupby']      = true;
@@ -2408,7 +2408,7 @@ class Ticket extends CommonITILObject {
       $tab[25]['datatype']          = 'text';
 
 
-      $tab[36]['table']             = 'glpi_ticketfollowups';
+      $tab[36]['table']             = TicketFollowup::getTable();
       $tab[36]['field']             = 'date';
       $tab[36]['name']              = __('Date');
       $tab[36]['datatype']          = 'datetime';
@@ -2417,7 +2417,7 @@ class Ticket extends CommonITILObject {
       $tab[36]['joinparams']        = array('jointype'  => 'child',
                                             'condition' => $followup_condition);
 
-      $tab[27]['table']             = 'glpi_ticketfollowups';
+      $tab[27]['table']             = TicketFollowup::getTable();
       $tab[27]['field']             = 'id';
       $tab[27]['name']              = _x('quantity', 'Number of followups');
       $tab[27]['forcegroupby']      = true;
@@ -2427,7 +2427,7 @@ class Ticket extends CommonITILObject {
       $tab[27]['joinparams']        = array('jointype'  => 'child',
                                             'condition' => $followup_condition);
 
-      $tab[29]['table']             = 'glpi_requesttypes';
+      $tab[29]['table']             = RequestType::getTable();
       $tab[29]['field']             = 'name';
       $tab[29]['name']              = __('Request source');
       $tab[29]['datatype']          = 'dropdown';
@@ -2440,7 +2440,7 @@ class Ticket extends CommonITILObject {
                                                        => array('jointype'  => 'child',
                                                                 'condition' => $followup_condition)));
 
-      $tab[91]['table']             = 'glpi_ticketfollowups';
+      $tab[91]['table']             = TicketFollowup::getTable();
       $tab[91]['field']             = 'is_private';
       $tab[91]['name']              = __('Private followup');
       $tab[91]['datatype']          = 'bool';
@@ -2450,7 +2450,7 @@ class Ticket extends CommonITILObject {
       $tab[91]['joinparams']        = array('jointype'  => 'child',
                                             'condition' => $followup_condition);
 
-      $tab[93]['table']             = 'glpi_users';
+      $tab[93]['table']             = User::getTable();
       $tab[93]['field']             = 'name';
       $tab[93]['name']              = __('Writer');
       $tab[93]['datatype']          = 'itemlink';
@@ -2481,8 +2481,8 @@ class Ticket extends CommonITILObject {
 
          $tab['linktickets']          = _n('Linked ticket', 'Linked tickets', Session::getPluralNumber());
 
-         $tab[40]['table']            = 'glpi_tickets_tickets';
-         $tab[40]['field']            = 'tickets_id_1';
+         $tab[40]['table']            = Ticket_Ticket::getTable();
+         $tab[40]['field']            = 'ticket_id_1';
          $tab[40]['name']             = __('All linked tickets');
          $tab[40]['massiveaction']    = false;
          $tab[40]['forcegroupby']     = true;
@@ -2490,8 +2490,8 @@ class Ticket extends CommonITILObject {
          $tab[40]['joinparams']       = array('jointype' => 'item_item');
          $tab[40]['additionalfields'] = array('tickets_id_2');
 
-         $tab[47]['table']            = 'glpi_tickets_tickets';
-         $tab[47]['field']            = 'tickets_id_1';
+         $tab[47]['table']            = Ticket_Ticket::getTable();
+         $tab[47]['field']            = 'ticket_id_1';
          $tab[47]['name']             = __('Duplicated tickets');
          $tab[47]['massiveaction']    = false;
          $tab[47]['searchtype']       = 'equals';
@@ -2501,7 +2501,7 @@ class Ticket extends CommonITILObject {
          $tab[47]['additionalfields'] = array('tickets_id_2');
          $tab[47]['forcegroupby']     = true;
 
-         $tab[41]['table']            = 'glpi_tickets_tickets';
+         $tab[41]['table']            = Ticket_Ticket::getTable();
          $tab[41]['field']            = 'id';
          $tab[41]['name']             = __('Number of all linked tickets');
          $tab[41]['massiveaction']    = false;
@@ -2509,7 +2509,7 @@ class Ticket extends CommonITILObject {
          $tab[41]['usehaving']        = true;
          $tab[41]['joinparams']       = array('jointype' => 'item_item');
 
-         $tab[46]['table']            = 'glpi_tickets_tickets';
+         $tab[46]['table']            = Ticket_Ticket::getTable();
          $tab[46]['field']            = 'id';
          $tab[46]['name']             = __('Number of duplicated tickets');
          $tab[46]['massiveaction']    = false;
@@ -2529,7 +2529,7 @@ class Ticket extends CommonITILObject {
 
          $tab['problem']            = Problem::getTypeName(Session::getPluralNumber());
 
-         $tab[141]['table']         = 'glpi_problems_tickets';
+         $tab[141]['table']         = Problem_Ticket::getTable();
          $tab[141]['field']         = 'id';
          $tab[141]['name']          = _x('quantity', 'Number of problems');
          $tab[141]['forcegroupby']  = true;
@@ -3073,7 +3073,7 @@ class Ticket extends CommonITILObject {
 
       echo "<tr><th>".__('Describe the incident or request')."</th><th>";
       if (Session::isMultiEntitiesMode()) {
-         echo "(".Dropdown::getDropdownName("glpi_entities", $_SESSION["glpiactive_entity"]).")";
+         echo "(".Dropdown::getDropdownName(Entity::getTable(), $_SESSION["glpiactive_entity"]).")";
       }
       echo "</th></tr>";
 
@@ -3197,7 +3197,7 @@ class Ticket extends CommonITILObject {
          } else { // predefined value
            if (isset($values["_users_id_observer"]) && $values["_users_id_observer"]) {
                echo self::getActorIcon('user', CommonITILActor::OBSERVER)."&nbsp;";
-               echo Dropdown::getDropdownName("glpi_users", $values["_users_id_observer"]);
+               echo Dropdown::getDropdownName(User::getTable(), $values["_users_id_observer"]);
                echo "<input type='hidden' name='_users_id_observer' value=\"".
                       $values["_users_id_observer"]."\">";
            }
@@ -3792,14 +3792,14 @@ class Ticket extends CommonITILObject {
                          sprintf(__('%1$s: %2$s'), __('ID'), $ID));
          if ($ismultientities) {
             $text = sprintf(__('%1$s (%2$s)'), $text,
-                            Dropdown::getDropdownName('glpi_entities',
+                            Dropdown::getDropdownName(Entity::getTable(),
                                                       $this->fields['entities_id']));
          }
          echo $text;
       } else {
          if ($ismultientities) {
             printf(__('The ticket will be added in the entity %s'),
-                   Dropdown::getDropdownName("glpi_entities", $this->fields['entities_id']));
+                   Dropdown::getDropdownName(Entity::getTable(), $this->fields['entities_id']));
          } else {
             _e('New ticket');
          }
@@ -3982,7 +3982,7 @@ class Ticket extends CommonITILObject {
          ITILCategory::dropdown($opt);
          echo "</span>";
       } else {
-         echo Dropdown::getDropdownName("glpi_itilcategories", $this->fields["itilcategories_id"]);
+         echo Dropdown::getDropdownName(ITILCategory::getTable(), $this->fields["itilcategories_id"]);
       }
       echo "</td>";
       echo "</tr>";
@@ -4022,7 +4022,7 @@ class Ticket extends CommonITILObject {
       if ($canupdate) {
          RequestType::dropdown(array('value' => $this->fields["requesttypes_id"], 'condition' => 'is_active = 1 AND is_ticketheader = 1'));
       } else {
-         echo Dropdown::getDropdownName('glpi_requesttypes', $this->fields["requesttypes_id"]);
+         echo Dropdown::getDropdownName(RequestType::getTable(), $this->fields["requesttypes_id"]);
          echo Html::hidden('requesttypes_id', array('value' => $this->fields["requesttypes_id"]));
       }
       echo $tt->getEndHiddenFieldValue('requesttypes_id',$this);
@@ -4134,7 +4134,7 @@ class Ticket extends CommonITILObject {
          Location::dropdown(array('value'  => $this->fields['locations_id'],
                                   'entity' => $this->fields['entities_id']));
       } else {
-         echo Dropdown::getDropdownName('glpi_locations', $this->fields["locations_id"]);
+         echo Dropdown::getDropdownName(Location::getTable(), $this->fields["locations_id"]);
       }
       echo $tt->getEndHiddenFieldValue('locations_id', $this);
       echo "</td>";
@@ -5148,7 +5148,7 @@ class Ticket extends CommonITILObject {
             echo "</td></tr></table>";
 
             if ($tree) {
-               $restrict = "IN (".implode(',', getSonsOf('glpi_groups', $item->getID())).")";
+               $restrict = "IN (".implode(',', getSonsOf(Group::getTable(), $item->getID())).")";
             } else {
                $restrict = "='".$item->getID()."'";
             }
@@ -5355,7 +5355,7 @@ class Ticket extends CommonITILObject {
          if (isset($job->groups[CommonITILActor::REQUESTER])
              && count($job->groups[CommonITILActor::REQUESTER])) {
             foreach ($job->groups[CommonITILActor::REQUESTER] as $d) {
-               echo Dropdown::getDropdownName("glpi_groups", $d["groups_id"]);
+               echo Dropdown::getDropdownName(Group::getTable(), $d["groups_id"]);
                echo "<br>";
             }
          }
@@ -5535,7 +5535,7 @@ class Ticket extends CommonITILObject {
             if ($nb) {
                $tot += $nb;
                $task->addVolume($nb);
-               $task->log(Dropdown::getDropdownName('glpi_entities', $entity)." : $nb");
+               $task->log(Dropdown::getDropdownName(Entity::getTable(), $entity)." : $nb");
             }
          }
       }
@@ -5583,7 +5583,7 @@ class Ticket extends CommonITILObject {
                $tot += count($tickets);
                $task->addVolume(count($tickets));
                $task->log(sprintf(__('%1$s: %2$s'),
-                                  Dropdown::getDropdownName('glpi_entities', $entity),
+                                  Dropdown::getDropdownName(Entity::getTable(), $entity),
                                   count($tickets)));
             }
          }
@@ -5673,7 +5673,7 @@ class Ticket extends CommonITILObject {
             $tot += $nb;
             $task->addVolume($nb);
             $task->log(sprintf(__('%1$s: %2$s'),
-                               Dropdown::getDropdownName('glpi_entities', $entity), $nb));
+                               Dropdown::getDropdownName(Entity::getTable(), $entity), $nb));
          }
       }
 
@@ -6409,13 +6409,13 @@ class Ticket extends CommonITILObject {
 
          echo "<div class='b_right'>";
          if (isset($item_i['solutiontypes_id']) && !empty($item_i['solutiontypes_id'])) {
-            echo Dropdown::getDropdownName("glpi_solutiontypes", $item_i['solutiontypes_id'])."<br>";
+            echo Dropdown::getDropdownName(SolutionType::getTable(), $item_i['solutiontypes_id'])."<br>";
          }
          if (isset($item_i['taskcategories_id']) && !empty($item_i['taskcategories_id'])) {
-            echo Dropdown::getDropdownName("glpi_taskcategories", $item_i['taskcategories_id'])."<br>";
+            echo Dropdown::getDropdownName(TaskCategory::getTable(), $item_i['taskcategories_id'])."<br>";
          }
          if (isset($item_i['requesttypes_id']) && !empty($item_i['requesttypes_id'])) {
-            echo Dropdown::getDropdownName("glpi_requesttypes", $item_i['requesttypes_id'])."<br>";
+            echo Dropdown::getDropdownName(RequestType::getTable(), $item_i['requesttypes_id'])."<br>";
          }
 
          if (isset($item_i['actiontime']) && !empty($item_i['actiontime'])) {

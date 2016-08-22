@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -70,11 +70,12 @@ class MigrationCleaner extends CommonGLPI {
 
 
    static function canView() {
+      $_SESSION['glpishowmigrationcleaner'] = false;
+      return true;
 
       if (!isset($_SESSION['glpishowmigrationcleaner'])) {
-
          if (TableExists('glpi_networkportmigrations')
-             && (countElementsInTable('glpi_networkportmigrations') > 0)) {
+             && (countElementsInTable(NetworkPortMigration::getTable() > 0))) {
             $_SESSION['glpishowmigrationcleaner'] = true;
          } else {
             $_SESSION['glpishowmigrationcleaner'] = false;

@@ -198,7 +198,7 @@ class Item_Ticket extends CommonDBRelation{
                    AND `glpi_items_tickets`.`itemtype` = '".$item->getType()."'".
                    getEntitiesRestrictRequest(" AND ", "glpi_tickets", '', '', true);
 
-      $nb = countElementsInTable(array('glpi_items_tickets', 'glpi_tickets'), $restrict);
+      $nb = countElementsInTable(array(self::getTable(), Ticket::getTable()), $restrict);
 
       return $nb ;
    }
@@ -548,7 +548,7 @@ class Item_Ticket extends CommonDBRelation{
                          (($nb > 1) ? sprintf(__('%1$s: %2$s'), $typename, $nb) : $typename)."</td>";
                }
                echo "<td class='center'>";
-               echo Dropdown::getDropdownName("glpi_entities", $data['entity'])."</td>";
+               echo Dropdown::getDropdownName(Entity::getTable(), $data['entity'])."</td>";
                echo "<td class='center".
                         (isset($data['is_deleted']) && $data['is_deleted'] ? " tab_bg_2_2'" : "'");
                echo ">".$namelink."</td>";
@@ -591,7 +591,7 @@ class Item_Ticket extends CommonDBRelation{
                if (($_SESSION["glpiactiveprofile"]["helpdesk_hardware"] != 0)
                    && (count($_SESSION["glpiactiveprofile"]["helpdesk_item_type"]) > 0)) {
                   if ($_SESSION['glpishow_count_on_tabs']) {
-                     $nb = countElementsInTable('glpi_items_tickets',
+                     $nb = countElementsInTable($this->getTable(),
                                                 "`tickets_id` = '".$item->getID()."'");
                   }
                   return self::createTabEntry(_n('Item', 'Items', Session::getPluralNumber()), $nb);
@@ -827,7 +827,7 @@ class Item_Ticket extends CommonDBRelation{
                   } else {
                      $group_where .= " OR ";
                   }
-                  $a_groups                     = getAncestorsOf("glpi_groups", $data["groups_id"]);
+                  $a_groups                     = getAncestorsOf(Group::getTable(), $data["groups_id"]);
                   $a_groups[$data["groups_id"]] = $data["groups_id"];
                   $group_where                 .= " `groups_id` IN (".implode(',', $a_groups).") ";
                }

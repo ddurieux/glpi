@@ -343,19 +343,19 @@ class Group_User extends CommonDBRelation{
 
       // Entity restriction for this group, according to user allowed entities
       if ($group->fields['is_recursive']) {
-         $entityrestrict = getSonsOf('glpi_entities', $group->fields['entities_id']);
+         $entityrestrict = getSonsOf(Entity::getTable(), $group->fields['entities_id']);
 
          // active entity could be a child of object entity
          if (($_SESSION['glpiactive_entity'] != $group->fields['entities_id'])
              && in_array($_SESSION['glpiactive_entity'], $entityrestrict)) {
-            $entityrestrict = getSonsOf('glpi_entities', $_SESSION['glpiactive_entity']);
+            $entityrestrict = getSonsOf(Entity::getTable(), $_SESSION['glpiactive_entity']);
          }
       } else {
          $entityrestrict = $group->fields['entities_id'];
       }
 
       if ($tree) {
-         $restrict = "IN (".implode(',', getSonsOf('glpi_groups', $group->getID())).")";
+         $restrict = "IN (".implode(',', getSonsOf(Group::getTable(), $group->getID())).")";
       } else {
          $restrict = "='".$group->getID()."'";
       }
@@ -687,7 +687,7 @@ class Group_User extends CommonDBRelation{
             case 'Group' :
                if (User::canView()) {
                   if ($_SESSION['glpishow_count_on_tabs']) {
-                     $nb = countElementsInTable("glpi_groups_users",
+                     $nb = countElementsInTable($this->getTable(),
                                                 "`groups_id` = '".$item->getID()."'" );
                   }
                   return self::createTabEntry(User::getTypeName(Session::getPluralNumber()), $nb);

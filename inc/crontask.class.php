@@ -723,7 +723,7 @@ class CronTask extends CommonDBTM{
 
       // Changer de nom toutes les heures en cas de blocage MySQL (ca arrive)
       $nom = "glpicron." . intval(time()/HOUR_TIMESTAMP-340000);
-
+return false;
       if ($DB->getLock($nom)) {
          self::$lockname = $nom;
          return true;
@@ -931,10 +931,10 @@ class CronTask extends CommonDBTM{
       echo "<table class='tab_cadre'>";
       echo "<tr><th colspan='2'>&nbsp;".__('Statistics')."</th></tr>\n";
 
-      $nbstart = countElementsInTable('glpi_crontasklogs',
+      $nbstart = countElementsInTable(CronTaskLog::getTable(),
                                       "`crontasks_id` = '".$this->fields['id']."'
                                           AND `state` = '".CronTaskLog::STATE_START."'");
-      $nbstop  = countElementsInTable('glpi_crontasklogs',
+      $nbstop  = countElementsInTable(CronTaskLog::getTable(),
                                       "`crontasks_id` = '".$this->fields['id']."'
                                           AND `state` = '".CronTaskLog::STATE_STOP."'");
 
@@ -1039,7 +1039,7 @@ class CronTask extends CommonDBTM{
       }
 
       // Total Number of events
-      $number = countElementsInTable('glpi_crontasklogs',
+      $number = countElementsInTable(CronTaskLog::getTable(),
                                      "`crontasks_id` = '".$this->fields['id']."'
                                           AND `state` = '".CronTaskLog::STATE_STOP."'");
 

@@ -533,7 +533,7 @@ abstract class CommonITILCost extends CommonDBChild {
                echo "</td>";
                echo "<td>".Html::convDate($data['begin_date'])."</td>";
                echo "<td>".Html::convDate($data['end_date'])."</td>";
-               echo "<td>".Dropdown::getDropdownName('glpi_budgets', $data['budgets_id'])."</td>";
+               echo "<td>".Dropdown::getDropdownName(Budget::getTable(), $data['budgets_id'])."</td>";
                echo "<td>".CommonITILObject::getActionTime($data['actiontime'])."</td>";
                $total_time += $data['actiontime'];
                echo "<td class='numeric'>".Html::formatNumber($data['cost_time'])."</td>";

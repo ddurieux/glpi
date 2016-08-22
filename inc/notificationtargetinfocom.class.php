@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -61,7 +61,7 @@ class NotificationTargetInfocom extends NotificationTarget {
 
       $events                                 = $this->getAllEvents();
 
-      $this->datas['##infocom.entity##']      = Dropdown::getDropdownName('glpi_entities',
+      $this->datas['##infocom.entity##']      = Dropdown::getDropdownName(Entity::getTable(),
                                                                           $options['entities_id']);
       $this->datas['##infocom.action##']      = $events[$event];
 

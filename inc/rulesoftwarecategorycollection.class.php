@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -70,7 +70,7 @@ class RuleSoftwareCategoryCollection extends RuleCollection {
       }
 
       if (isset($software["manufacturers_id"])) {
-         $params["manufacturer"] = Dropdown::getDropdownName("glpi_manufacturers",
+         $params["manufacturer"] = Dropdown::getDropdownName(Manufacturer::getTable(),
                                                              $software["manufacturers_id"]);
       }
       return $params;

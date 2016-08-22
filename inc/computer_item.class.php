@@ -77,7 +77,7 @@ class Computer_Item extends CommonDBRelation{
    **/
    static function countForItem(CommonDBTM $item) {
 
-      return countElementsInTable('glpi_computers_items',
+      return countElementsInTable(self::getTable(),
                                   "`itemtype` = '".$item->getType()."'
                                       AND `items_id` ='".$item->getField('id')."'
                                       AND `is_deleted` = '0'");
@@ -93,7 +93,7 @@ class Computer_Item extends CommonDBRelation{
    **/
    static function countForComputer(Computer $comp) {
 
-      return countElementsInTable('glpi_computers_items',
+      return countElementsInTable(self::getTable(),
                                   "`computers_id` ='".$comp->getField('id')."'
                                       AND `is_deleted`='0'");
    }
@@ -111,7 +111,7 @@ class Computer_Item extends CommonDBRelation{
    **/
    static function countForAll(Computer $comp, CommonDBTM $item) {
 
-      return countElementsInTable('glpi_computers_items',
+      return countElementsInTable(self::getTable(),
                                   "`computers_id` ='".$comp->getField('id')."'
                                    AND `itemtype` = '".$item->getType()."'
                                    AND `items_id` ='".$item->getField('id')."'");
@@ -477,7 +477,7 @@ class Computer_Item extends CommonDBRelation{
             if (Plugin::haveImport()) {
                echo "<td>".Dropdown::getYesNo($data['assoc_is_dynamic'])."</td>";
             }
-            echo "<td class='center'>".Dropdown::getDropdownName("glpi_entities",
+            echo "<td class='center'>".Dropdown::getDropdownName(Entity::getTable(),
                                                                $data['entities_id']);
             echo "</td>";
             echo "<td class='center'>".
@@ -549,7 +549,7 @@ class Computer_Item extends CommonDBRelation{
          echo "<input type='hidden' name='itemtype' value='".$item->getType()."'>";
          if ($item->isRecursive()) {
             self::dropdownConnect('Computer', $item->getType(), "computers_id",
-                                  getSonsOf("glpi_entities", $item->getEntityID()), 0, $used);
+                                  getSonsOf(Entity::getTable(), $item->getEntityID()), 0, $used);
          } else {
             self::dropdownConnect('Computer', $item->getType(), "computers_id",
                                   $item->getEntityID(), 0, $used);
@@ -615,7 +615,7 @@ class Computer_Item extends CommonDBRelation{
             if (Plugin::haveImport()) {
                echo "<td>".Dropdown::getYesNo($dynamic[$key])."</td>";
             }
-            echo "<td class='center'>".Dropdown::getDropdownName("glpi_entities",
+            echo "<td class='center'>".Dropdown::getDropdownName(Entity::getTable(),
                                                                $comp->getField('entities_id'));
             echo "</td>";
             echo "<td class='center'>".$comp->getField('serial')."</td>";

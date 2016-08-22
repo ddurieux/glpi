@@ -541,7 +541,7 @@ abstract class CommonITILTask  extends CommonDBTM {
 
       if (isset($this->fields['taskcategories_id'])) {
          if ($this->fields['taskcategories_id']) {
-            return Dropdown::getDropdownName('glpi_taskcategories',
+            return Dropdown::getDropdownName(TaskCategory::getTable(),
                                              $this->fields['taskcategories_id']);
          }
          return $this->getTypeName(1);
@@ -635,7 +635,7 @@ abstract class CommonITILTask  extends CommonDBTM {
       $tab[28]['massiveaction']  = false;
       $tab[28]['joinparams']     = array('jointype' => 'child');
 
-      $tab[20]['table']          = 'glpi_taskcategories';
+      $tab[20]['table']          = TaskCategory::getTable();
       $tab[20]['field']          = 'name';
       $tab[20]['datatype']       = 'dropdown';
       $tab[20]['name']           = __('Task category');
@@ -657,7 +657,7 @@ abstract class CommonITILTask  extends CommonDBTM {
          $tab[92]['joinparams']     = array('jointype' => 'child');
       }
 
-      $tab[94]['table']          = 'glpi_users';
+      $tab[94]['table']          = User::getTable();
       $tab[94]['field']          = 'name';
       $tab[94]['name']           = __('Writer');
       $tab[94]['datatype']       = 'itemlink';
@@ -667,7 +667,7 @@ abstract class CommonITILTask  extends CommonDBTM {
       $tab[94]['joinparams']     = array('beforejoin'
                                           => array('table'      => static::getTable(),
                                                    'joinparams' => array('jointype' => 'child')));
-      $tab[95]['table']          = 'glpi_users';
+      $tab[95]['table']          = User::getTable();
       $tab[95]['field']          = 'name';
       $tab[95]['linkfield']      = 'users_id_tech';
       $tab[95]['name']           = __('Technician');
@@ -679,7 +679,7 @@ abstract class CommonITILTask  extends CommonDBTM {
                                           => array('table'      => static::getTable(),
                                                    'joinparams' => array('jointype'  => 'child')));
 
-      $tab[112]['table']          = 'glpi_groups';
+      $tab[112]['table']          = Group::getTable();
       $tab[112]['field']          = 'name';
       $tab[112]['linkfield']      = 'groups_id_tech';
       $tab[112]['name']           = __('Group in charge of the task');
@@ -1095,7 +1095,7 @@ abstract class CommonITILTask  extends CommonDBTM {
          $typename = $this->getTypeName(1);
          if ($this->fields['taskcategories_id']) {
             printf(__('%1$s - %2$s'), $typename,
-                   Dropdown::getDropdownName('glpi_taskcategories',
+                   Dropdown::getDropdownName(TaskCategory::getTable(),
                                              $this->fields['taskcategories_id']));
          } else {
             echo $typename;
@@ -1134,7 +1134,7 @@ abstract class CommonITILTask  extends CommonDBTM {
                }
                if (isset($this->fields["groups_id_tech"])) {
                   $groupname = sprintf('%1$s %2$s',"<br />".__('By group'),
-                                       Dropdown::getDropdownName('glpi_groups',
+                                       Dropdown::getDropdownName(Group::getTable(),
                                                                  $this->fields["groups_id_tech"]));
                   if ($_SESSION['glpiis_ids_visible']) {
                      $groupname = printf(__('%1$s (%2$s)'), $groupname, $this->fields["groups_id_tech"]);
@@ -1160,7 +1160,7 @@ abstract class CommonITILTask  extends CommonDBTM {
             }
             if ($this->fields["groups_id_tech"]) {
                $groupname = sprintf('%1$s %2$s',"<br />".__('By group'),
-                                     Dropdown::getDropdownName('glpi_groups',
+                                     Dropdown::getDropdownName(Group::getTable(),
                                                                $this->fields["groups_id_tech"]));
                if ($_SESSION['glpiis_ids_visible']) {
                    $groupname = printf(__('%1$s (%2$s)'), $groupname,
@@ -1411,7 +1411,7 @@ abstract class CommonITILTask  extends CommonDBTM {
             echo "<br>".getUserName($this->fields["users_id_tech"]);
          }
          if (isset($this->fields["groups_id_tech"]) && ($this->fields["groups_id_tech"] > 0)) {
-            echo "<br>".Dropdown::getDropdownName('glpi_groups', $this->fields["groups_id_tech"]);
+            echo "<br>".Dropdown::getDropdownName(Group::getTable(), $this->fields["groups_id_tech"]);
          }
          if (Session::haveRight('planning', Planning::READMY)) {
             echo "</span>";
@@ -1544,8 +1544,8 @@ abstract class CommonITILTask  extends CommonDBTM {
 
          while ($data = $DB->fetch_assoc($result)) {
             if ($this->getFromDB($data['id'])) {
-               $options = array( 'parent' => $item, 
-                                 'rand' => $rand, 
+               $options = array( 'parent' => $item,
+                                 'rand' => $rand,
                                  'showprivate' => $showprivate ) ;
                Plugin::doHook('pre_show_item', array('item' => $this, 'options' => &$options));
                $this->showInObjectSumnary($item, $rand, $showprivate);

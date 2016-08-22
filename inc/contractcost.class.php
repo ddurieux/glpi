@@ -98,7 +98,7 @@ class ContractCost extends CommonDBChild {
           && Contract::canView()) {
          $nb = 0;
          if ($_SESSION['glpishow_count_on_tabs']) {
-            $nb = countElementsInTable('glpi_contractcosts', "contracts_id = '".$item->getID()."'");
+            $nb = countElementsInTable(self::getTable(), "contracts_id = '".$item->getID()."'");
          }
          return self::createTabEntry(self::getTypeName(Session::getPluralNumber()), $nb);
       }
@@ -395,7 +395,7 @@ class ContractCost extends CommonDBChild {
                echo "</td>";
                echo "<td>".Html::convDate($data['begin_date'])."</td>";
                echo "<td>".Html::convDate($data['end_date'])."</td>";
-               echo "<td>".Dropdown::getDropdownName('glpi_budgets', $data['budgets_id'])."</td>";
+               echo "<td>".Dropdown::getDropdownName(Budget::getTable(), $data['budgets_id'])."</td>";
                echo "<td class='numeric'>".Html::formatNumber($data['cost'])."</td>";
                $total += $data['cost'];
                echo "</tr>";

@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -75,14 +75,14 @@ class Problem_Ticket extends CommonDBRelation{
          switch ($item->getType()) {
             case 'Ticket' :
                if ($_SESSION['glpishow_count_on_tabs']) {
-                  $nb = countElementsInTable('glpi_problems_tickets',
+                  $nb = countElementsInTable($this->getTable(),
                                              "`tickets_id` = '".$item->getID()."'");
                }
                return self::createTabEntry(Problem::getTypeName(Session::getPluralNumber()), $nb);
 
             case 'Problem' :
                if ($_SESSION['glpishow_count_on_tabs']) {
-                  $nb = countElementsInTable('glpi_problems_tickets',
+                  $nb = countElementsInTable($this->getTable(),
                                              "`problems_id` = '".$item->getID()."'");
                }
                return self::createTabEntry(Ticket::getTypeName(Session::getPluralNumber()), $nb);
@@ -179,7 +179,7 @@ class Problem_Ticket extends CommonDBRelation{
                return true;
             }
             return false;
-            
+
          case "solveticket" :
             $problem = new Problem();
             $input = $ma->getInput();
@@ -239,7 +239,7 @@ class Problem_Ticket extends CommonDBRelation{
                }
             }
             return;
-            
+
          case 'solveticket' :
             $input  = $ma->getInput();
             $ticket = new Ticket();
@@ -346,7 +346,7 @@ class Problem_Ticket extends CommonDBRelation{
                                                                           'Delete permanently'),
                                                                   __CLASS__.MassiveAction::CLASS_ACTION_SEPARATOR.'solveticket'
                                                                     => __('Solve tickets'),
-                                                                  __CLASS__.MassiveAction::CLASS_ACTION_SEPARATOR.'add_task' 
+                                                                  __CLASS__.MassiveAction::CLASS_ACTION_SEPARATOR.'add_task'
                                                                     => __('Add a new task')),
                                       'extraparams'      => array('problems_id' => $problem->getID()),
                                       'width'            => 1000,

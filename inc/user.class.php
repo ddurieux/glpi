@@ -193,7 +193,7 @@ class User extends CommonDBTM {
          $_SESSION["glpiactive_entity"]           = $entities_id;
          $_SESSION["glpiactive_entity_recursive"] = $is_recursive;
          if ($is_recursive) {
-            $entities = getSonsOf("glpi_entities", $entities_id);
+            $entities = getSonsOf(Entity::getTable(), $entities_id);
          } else {
             $entities = array($entities_id);
          }
@@ -409,7 +409,14 @@ class User extends CommonDBTM {
     * @return true if succeed else false
    **/
    function getFromDBbyName($name) {
-      return $this->getFromDBByQuery("WHERE `".$this->getTable()."`.`name` = '$name'");
+      global $DB;
+
+      $result = $DB->dbh->user()->where('name', $name)->fetch();
+      if ($result->exists()) {
+         $this->fields = $result->getData();
+         return TRUE;
+      }
+      return FALSE;
    }
 
 
@@ -2122,7 +2129,7 @@ class User extends CommonDBTM {
       echo "<td class='b'>";
       _e('Location');
       echo "</td><td>";
-      echo Dropdown::getDropdownName('glpi_locations', $user->getField('locations_id'));
+      echo Dropdown::getDropdownName(Location::getTable(), $user->getField('locations_id'));
       echo "</td>";
       echo "<td colspan='2' class='center'>";
       if ($userid == Session::getLoginUserID()) {
@@ -3241,7 +3248,7 @@ class User extends CommonDBTM {
          if (is_array($p['entity'])) {
             $output .= "entity_sons options is not available with array of entity";
          } else {
-            $p['entity'] = getSonsOf('glpi_entities',$p['entity']);
+            $p['entity'] = getSonsOf(Entity::getTable(), $p['entity']);
          }
       }
 
@@ -3409,20 +3416,20 @@ class User extends CommonDBTM {
       // prepare properties for the Vcard
       if (!empty($this->fields["realname"])
           || !empty($this->fields["firstname"])) {
-         $name = [$this->fields["realname"], $this->fields["firstname"], "", "", ""];
+         $name = array($this->fields["realname"], $this->fields["firstname"], "", "", "");
       } else {
-         $name = [$this->fields["name"], "", "", "", ""];
+         $name = array($this->fields["name"], "", "", "", "");
       }
 
       // create vcard
-      $vcard = new VObject\Component\VCard([
+      $vcard = new VObject\Component\VCard(array(
          'N'     => $name,
          'EMAIL' => $this->getDefaultEmail(),
          'NOTE'  => $this->fields["comment"],
-      ]);
-      $vcard->add('TEL', $this->fields["phone"], ['type' => 'PREF;WORK;VOICE']);
-      $vcard->add('TEL', $this->fields["phone2"], ['type' => 'HOME;VOICE']);
-      $vcard->add('TEL', $this->fields["mobile"], ['type' => 'WORK;CELL']);
+      ));
+      $vcard->add('TEL', $this->fields["phone"], array('type' => 'PREF;WORK;VOICE'));
+      $vcard->add('TEL', $this->fields["phone2"], array('type' => 'HOME;VOICE'));
+      $vcard->add('TEL', $this->fields["mobile"], array('type' => 'WORK;CELL'));
 
       // send the  VCard
       $output   = $vcard->serialize();
@@ -3530,7 +3537,7 @@ class User extends CommonDBTM {
                      $linktype = self::getTypeName(1);
                   }
                   echo "<tr class='tab_bg_1'><td class='center'>$type_name</td>";
-                  echo "<td class='center'>".Dropdown::getDropdownName("glpi_entities",
+                  echo "<td class='center'>".Dropdown::getDropdownName(Entity::getTable(),
                                                                        $data["entities_id"])."</td>";
                   echo "<td class='center'>$link</td>";
                   echo "<td class='center'>";
@@ -3547,7 +3554,7 @@ class User extends CommonDBTM {
                   }
                   echo "</td><td class='center'>";
                   if (isset($data["states_id"])) {
-                     echo Dropdown::getDropdownName("glpi_states", $data['states_id']);
+                     echo Dropdown::getDropdownName(State::getTable(), $data['states_id']);
                   } else {
                      echo '&nbsp;';
                   }
@@ -3613,7 +3620,7 @@ class User extends CommonDBTM {
                                             $groups[$data[$field_group]]);
                      }
                      echo "<tr class='tab_bg_1'><td class='center'>$type_name</td>";
-                     echo "<td class='center'>".Dropdown::getDropdownName("glpi_entities",
+                     echo "<td class='center'>".Dropdown::getDropdownName(Entity::getTable(),
                                                                           $data["entities_id"]);
                      echo "</td><td class='center'>$link</td>";
                      echo "<td class='center'>";
@@ -3630,7 +3637,7 @@ class User extends CommonDBTM {
                      }
                      echo "</td><td class='center'>";
                      if (isset($data["states_id"])) {
-                        echo Dropdown::getDropdownName("glpi_states",$data['states_id']);
+                        echo Dropdown::getDropdownName(State::getTable(),$data['states_id']);
                      } else {
                         echo '&nbsp;';
                      }
@@ -4110,11 +4117,9 @@ class User extends CommonDBTM {
                          'post-only' => 'postonly');
       $default_password_set = array();
 
-      $crit = array('FIELDS'    => array('name', 'password'),
-                    'is_active' => 1,
-                    'name'      => array_keys($passwords));
-
-      foreach ($DB->request('glpi_users', $crit) as $data) {
+      $rows = $DB->dbh->user()->where('is_active', 1)->where('name', array_keys($passwords))->fetchAll();
+      foreach ($rows as $row) {
+         $data = $row->getData();
          if (Auth::checkPassword($passwords[$data['name']], $data['password'])) {
             $default_password_set[] = $data['name'];
          }

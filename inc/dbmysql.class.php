@@ -52,6 +52,8 @@ class DBmysql {
    public $dbpassword         = "";
    //! Default Database
    public $dbdefault          = "";
+   //! Default Database type
+   public $dbtype             = "";
    //! Database Handler
    public $dbh;
    //! Database Error
@@ -67,6 +69,13 @@ class DBmysql {
    /// Is connected to the DB ?
    public $connected          = false;
 
+   public $debug_sql = array(
+       'queries' => array(),
+       'errors'  => array(),
+       'times'   => array(),
+       'params'  => array()
+   );
+   public $sql_total_request = 0;
 
    /**
     * Constructor / Connect to the MySQL Database
@@ -85,7 +94,7 @@ class DBmysql {
    /**
     * Connect using current database settings
     *
-    * Use dbhost, dbuser, dbpassword and dbdefault
+    * Use dbhost, dbuser, dbpassword, dbdefault and dbtype
     *
     * @param $choice integer, host number (default NULL)
     *
@@ -104,6 +113,28 @@ class DBmysql {
       } else {
          $host = $this->dbhost;
       }
+
+      $dsn = $this->dbtype.':host='.$host.';dbname='.$this->dbdefault;
+      $options = array();
+      if ($this->dbtype == 'mysql') {
+         $options = array(
+             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+         );
+      }
+      $pdo = new \PDO($dsn, $this->dbuser, $this->dbpassword, $options);
+
+      $this->dbh = new \LessQL\Database($pdo);
+      $this->dbh->setIdentifierDelimiter('');
+      $this->connected = true;
+
+      $this->dbh->setRewrite(function($table) {
+         return 'glpi_'.$table;
+      });
+
+      // Define for login
+      $this->dbh->setQueryCallback(array($this, 'log_queries'));
+
+      return;
 
       $hostport = explode(":", $host);
       if (count($hostport) < 2) {
@@ -142,7 +173,8 @@ class DBmysql {
     * @return String escaped
    **/
    function escape($string) {
-      return $this->dbh->real_escape_string($string);
+      return $string;
+//      return $this->dbh->real_escape_string($string);
    }
 
 
@@ -377,7 +409,9 @@ class DBmysql {
     * @return list of tables
    **/
    function list_tables($table="glpi_%") {
-      return $this->query("SHOW TABLES LIKE '".$table."'");
+      global $DB;
+
+      return $DB->dbh->query("SHOW TABLES LIKE '".$table."'");
    }
 
 
@@ -392,19 +426,29 @@ class DBmysql {
    function list_fields($table, $usecache=true) {
       static $cache = array();
 
+      $table = 'glpi_'.$table;
+
       if ($usecache && isset($cache[$table])) {
          return $cache[$table];
       }
-      $result = $this->query("SHOW COLUMNS FROM `$table`");
-      if ($result) {
-         if ($this->numrows($result) > 0) {
-            $cache[$table] = array();
-            while ($data = $result->fetch_assoc()) {
-               $cache[$table][$data["Field"]] = $data;
-            }
-            return $cache[$table];
+
+      $select = $this->dbh->query('SELECT * FROM '.$table);
+      $total_column = $select->columnCount();
+      for ($counter = 0; $counter < $total_column; $counter++) {
+         $meta = $select->getColumnMeta($counter);
+         $cache[$table][$meta['name']] = $meta;
+      }
+      return $cache[$table] ;
+      return false;
+
+      // Old but specific for MySQL
+      $result = $this->dbh->query("SHOW COLUMNS FROM $table")->fetchAll();
+      $cache[$table] = array();
+      if (count($result) > 0) {
+         foreach ($result as $line) {
+            $cache[$table][$line["Field"]] = $line;
          }
-         return array();
+         return $cache[$table];
       }
       return false;
    }
@@ -721,6 +765,21 @@ class DBmysql {
       }
       return $crashed_tables;
    }
+
+
+
+   function log_queries($query, $params) {
+      global $CFG_GLPI;
+      if (($_SESSION['glpi_use_mode'] == Session::DEBUG_MODE)
+          && $CFG_GLPI["debug_sql"]) {
+         $this->sql_total_request++;
+         $this->debug_sql["queries"][$this->sql_total_request] = $query;
+         if (count($params) > 0) {
+            $this->debug_sql["params"][$this->sql_total_request] = print_r($params, TRUE);
+         }
+         $this->debug_sql["times"][$this->sql_total_request] = '';
+      }
+   }
 }
 
 
@@ -795,7 +854,7 @@ class DBmysqlIterator  implements Iterator {
                   $this->sql .= (empty($this->sql) ? 'SELECT ' : ', ') . self::quoteName($f);
                } else if (is_array($f)) {
                   $t = self::quoteName($t);
-                  $f = array_map([__CLASS__, 'quoteName'], $f);
+                  $f = array_map(array(__CLASS__, 'quoteName'), $f);
                   $this->sql .= (empty($this->sql) ? "SELECT $t." : ",$t.") . implode(", $t.",$f);
                } else {
                   $t = self::quoteName($t);
@@ -811,7 +870,7 @@ class DBmysqlIterator  implements Iterator {
 
          // FROM table list
          if (is_array($table)) {
-            $table = array_map([__CLASS__, 'quoteName'], $table);
+            $table = array_map(array(__CLASS__, 'quoteName'), $table);
             $this->sql .= ' FROM '.implode(", ",$table);
          } else {
             $table = self::quoteName($table);

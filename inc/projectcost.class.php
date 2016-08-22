@@ -95,7 +95,7 @@ class ProjectCost extends CommonDBChild {
       if (($item->getType() == 'Project') && Project::canView()) {
          $nb = 0;
          if ($_SESSION['glpishow_count_on_tabs']) {
-            $nb = countElementsInTable('glpi_projectcosts', "projects_id = '".$item->getID()."'");
+            $nb = countElementsInTable($this->getTable(), "projects_id = '".$item->getID()."'");
          }
          return self::createTabEntry(self::getTypeName(Session::getPluralNumber()), $nb);
       }
@@ -393,7 +393,7 @@ class ProjectCost extends CommonDBChild {
                echo "</td>";
                echo "<td>".Html::convDate($data['begin_date'])."</td>";
                echo "<td>".Html::convDate($data['end_date'])."</td>";
-               echo "<td>".Dropdown::getDropdownName('glpi_budgets', $data['budgets_id'])."</td>";
+               echo "<td>".Dropdown::getDropdownName(Budget::getTable(), $data['budgets_id'])."</td>";
                echo "<td class='numeric'>".Html::formatNumber($data['cost'])."</td>";
                $total += $data['cost'];
                echo "</tr>";

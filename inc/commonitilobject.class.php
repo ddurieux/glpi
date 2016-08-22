@@ -2803,7 +2803,7 @@ abstract class CommonITILObject extends CommonDBTM {
       $tab[19]['datatype']            = 'datetime';
       $tab[19]['massiveaction']       = false;
 
-      $tab[7]['table']                = 'glpi_itilcategories';
+      $tab[7]['table']                = ITILCategory::getTable();
       $tab[7]['field']                = 'completename';
       $tab[7]['name']                 = __('Category');
       $tab[7]['datatype']             = 'dropdown';
@@ -2814,7 +2814,7 @@ abstract class CommonITILObject extends CommonDBTM {
          $tab[7]['condition']         = "`is_helpdeskvisible`";
       }
 
-      $tab[80]['table']               = 'glpi_entities';
+      $tab[80]['table']               = Entity::getTable();
       $tab[80]['field']               = 'completename';
       $tab[80]['name']                = __('Entity');
       $tab[80]['massiveaction']       = false;
@@ -2827,7 +2827,7 @@ abstract class CommonITILObject extends CommonDBTM {
       $tab[45]['massiveaction']       = false;
       $tab[45]['nosearch']            = true;
 
-      $tab[64]['table']               = 'glpi_users';
+      $tab[64]['table']               = User::getTable();
       $tab[64]['field']               = 'name';
       $tab[64]['linkfield']           = 'users_id_lastupdater';
       $tab[64]['name']                = __('Last edit by');
@@ -2849,7 +2849,7 @@ abstract class CommonITILObject extends CommonDBTM {
       $tab                       = array();
       $tab['solution']           = _n('Solution', 'Solutions', 1);
 
-      $tab[23]['table']          = 'glpi_solutiontypes';
+      $tab[23]['table']          = SolutionType::getTable();
       $tab[23]['field']          = 'name';
       $tab[23]['name']           = __('Solution type');
       $tab[23]['datatype']       = 'dropdown';
@@ -2901,7 +2901,7 @@ abstract class CommonITILObject extends CommonDBTM {
 
       $tab['requester']        = __('Requester');
 
-      $tab[4]['table']         = 'glpi_users';
+      $tab[4]['table']         = User::getTable();
       $tab[4]['field']         = 'name';
       $tab[4]['datatype']      = 'dropdown';
       $tab[4]['right']         = 'all';
@@ -2923,7 +2923,7 @@ abstract class CommonITILObject extends CommonDBTM {
          $tab[4]['right']       = 'id';
       }
 
-      $tab[71]['table']         = 'glpi_groups';
+      $tab[71]['table']         = Group::getTable();
       $tab[71]['field']         = 'completename';
       $tab[71]['datatype']      = 'dropdown';
       $tab[71]['name']          = __('Requester group');
@@ -2945,7 +2945,7 @@ abstract class CommonITILObject extends CommonDBTM {
          $tab[71]['condition']       .= " AND `id` IN (".implode(",",$_SESSION['glpigroups']).")";
       }
 
-      $tab[22]['table']         = 'glpi_users';
+      $tab[22]['table']         = User::getTable();
       $tab[22]['field']         = 'name';
       $tab[22]['datatype']      = 'dropdown';
       $tab[22]['right']         = 'all';
@@ -2960,7 +2960,7 @@ abstract class CommonITILObject extends CommonDBTM {
 
       $tab['observer']          = __('Watcher');
 
-      $tab[66]['table']         = 'glpi_users';
+      $tab[66]['table']         = User::getTable();
       $tab[66]['field']         = 'name';
       $tab[66]['datatype']      = 'dropdown';
       $tab[66]['right']         = 'all';
@@ -2977,7 +2977,7 @@ abstract class CommonITILObject extends CommonDBTM {
                                                               => 'AND NEWTABLE.`type`
                                                                    = '.CommonITILActor::OBSERVER)));
 
-      $tab[65]['table']         = 'glpi_groups';
+      $tab[65]['table']         = Group::getTable();
       $tab[65]['field']         = 'completename';
       $tab[65]['datatype']      = 'dropdown';
       $tab[65]['name']          = __('Watcher group');
@@ -2996,7 +2996,7 @@ abstract class CommonITILObject extends CommonDBTM {
 
       $tab['assign']            = __('Assigned to');
 
-      $tab[5]['table']          = 'glpi_users';
+      $tab[5]['table']          = User::getTable();
       $tab[5]['field']          = 'name';
       $tab[5]['datatype']       = 'dropdown';
       $tab[5]['right']          = 'own_ticket';
@@ -3014,7 +3014,7 @@ abstract class CommonITILObject extends CommonDBTM {
                                                                   = '.CommonITILActor::ASSIGN)));
 
 
-      $tab[6]['table']          = 'glpi_suppliers';
+      $tab[6]['table']          = Supplier::getTable();
       $tab[6]['field']          = 'name';
       $tab[6]['datatype']       = 'dropdown';
       $tab[6]['name']           = __('Assigned to a supplier');
@@ -3030,7 +3030,7 @@ abstract class CommonITILObject extends CommonDBTM {
                                                              => 'AND NEWTABLE.`type`
                                                                   = '.CommonITILActor::ASSIGN)));
 
-      $tab[8]['table']          = 'glpi_groups';
+      $tab[8]['table']          = Group::getTable();
       $tab[8]['field']          = 'completename';
       $tab[8]['datatype']       = 'dropdown';
       $tab[8]['name']           = __('Technician group');
@@ -3714,7 +3714,7 @@ abstract class CommonITILObject extends CommonDBTM {
             } else { // predefined value
                if (isset($options["_users_id_requester"]) && $options["_users_id_requester"]) {
                   echo self::getActorIcon('user', CommonITILActor::REQUESTER)."&nbsp;";
-                  echo Dropdown::getDropdownName("glpi_users", $options["_users_id_requester"]);
+                  echo Dropdown::getDropdownName(User::getTable(), $options["_users_id_requester"]);
                   echo "<input type='hidden' name='_users_id_requester' value=\"".
                          $options["_users_id_requester"]."\">";
                   echo '<br>';
@@ -3762,7 +3762,7 @@ abstract class CommonITILObject extends CommonDBTM {
          } else { // predefined value
             if (isset($options["_groups_id_requester"]) && $options["_groups_id_requester"]) {
                echo self::getActorIcon('group', CommonITILActor::REQUESTER)."&nbsp;";
-               echo Dropdown::getDropdownName("glpi_groups", $options["_groups_id_requester"]);
+               echo Dropdown::getDropdownName(Group::getTable(), $options["_groups_id_requester"]);
                echo "<input type='hidden' name='_groups_id_requester' value=\"".
                       $options["_groups_id_requester"]."\">";
                echo '<br>';
@@ -3826,7 +3826,7 @@ abstract class CommonITILObject extends CommonDBTM {
          } else { // predefined value
             if (isset($options["_users_id_observer"]) && $options["_users_id_observer"]) {
                echo self::getActorIcon('user', CommonITILActor::OBSERVER)."&nbsp;";
-               echo Dropdown::getDropdownName("glpi_users", $options["_users_id_observer"]);
+               echo Dropdown::getDropdownName(User::getTable(), $options["_users_id_observer"]);
                echo "<input type='hidden' name='_users_id_observer' value=\"".
                       $options["_users_id_observer"]."\">";
                echo '<hr>';
@@ -3854,7 +3854,7 @@ abstract class CommonITILObject extends CommonDBTM {
          } else { // predefined value
             if (isset($options["_groups_id_observer"]) && $options["_groups_id_observer"]) {
                echo self::getActorIcon('group', CommonITILActor::OBSERVER)."&nbsp;";
-               echo Dropdown::getDropdownName("glpi_groups", $options["_groups_id_observer"]);
+               echo Dropdown::getDropdownName(Group::getTable(), $options["_groups_id_observer"]);
                echo "<input type='hidden' name='_groups_id_observer' value=\"".
                       $options["_groups_id_observer"]."\">";
                echo '<br>';
@@ -3937,7 +3937,7 @@ abstract class CommonITILObject extends CommonDBTM {
             if (isset($options["_users_id_assign"]) && $options["_users_id_assign"]
                 && $this->isAllowedStatus(CommonITILObject::INCOMING, CommonITILObject::ASSIGNED)) {
                echo self::getActorIcon('user', CommonITILActor::ASSIGN)."&nbsp;";
-               echo Dropdown::getDropdownName("glpi_users", $options["_users_id_assign"]);
+               echo Dropdown::getDropdownName(User::getTable(), $options["_users_id_assign"]);
                echo "<input type='hidden' name='_users_id_assign' value=\"".
                       $options["_users_id_assign"]."\">";
                echo '<hr>';
@@ -3992,7 +3992,7 @@ abstract class CommonITILObject extends CommonDBTM {
                 && $options["_groups_id_assign"]
                 && $this->isAllowedStatus(CommonITILObject::INCOMING, CommonITILObject::ASSIGNED)) {
                echo self::getActorIcon('group', CommonITILActor::ASSIGN)."&nbsp;";
-               echo Dropdown::getDropdownName("glpi_groups", $options["_groups_id_assign"]);
+               echo Dropdown::getDropdownName(Group::getTable(), $options["_groups_id_assign"]);
                echo "<input type='hidden' name='_groups_id_assign' value=\"".
                       $options["_groups_id_assign"]."\">";
                echo '<hr>';
@@ -4014,7 +4014,7 @@ abstract class CommonITILObject extends CommonDBTM {
                 && $options["_suppliers_id_assign"]
                 && $this->isAllowedStatus(CommonITILObject::INCOMING, CommonITILObject::ASSIGNED)) {
                echo self::getActorIcon('supplier', CommonITILActor::ASSIGN)."&nbsp;";
-               echo Dropdown::getDropdownName("glpi_suppliers", $options["_suppliers_id_assign"]);
+               echo Dropdown::getDropdownName(Supplier::getTable(), $options["_suppliers_id_assign"]);
                echo "<input type='hidden' name='_suppliers_id_assign' value=\"".
                       $options["_suppliers_id_assign"]."\">";
                echo '<hr>';
@@ -4150,7 +4150,7 @@ abstract class CommonITILObject extends CommonDBTM {
                                       'rand'   => $rand_type,
                                       'entity' => $this->getEntityID()));
       } else {
-         echo Dropdown::getDropdownName('glpi_solutiontypes',
+         echo Dropdown::getDropdownName(SolutionType::getTable(),
                                         $this->getField('solutiontypes_id'));
       }
       echo "</td><td colspan='2'>&nbsp;</td></tr>";
@@ -4435,7 +4435,7 @@ abstract class CommonITILObject extends CommonDBTM {
 
       echo "<tr class='tab_bg_2'><td>".__('Opening date')."</td>";
       echo "<td>".Html::convDateTime($this->fields['date'])."</td></tr>";
-      
+
       if ($this->getType() == 'Ticket') {
          echo "<tr class='tab_bg_2'><td>".__('Time to own')."</td>";
          echo "<td>".Html::convDateTime($this->fields['time_to_own'])."</td></tr>";
@@ -4823,7 +4823,7 @@ abstract class CommonITILObject extends CommonDBTM {
       if ($DB->numrows($result) >= 1) {
          while ($line = $DB->fetch_assoc($result)) {
             $tmp['id']   = $line["requesttypes_id"];
-            $tmp['link'] = Dropdown::getDropdownName('glpi_requesttypes',
+            $tmp['link'] = Dropdown::getDropdownName(RequestType::getTable(),
                                                      $line["requesttypes_id"]);
             $tab[]       = $tmp;
          }
@@ -4860,7 +4860,7 @@ abstract class CommonITILObject extends CommonDBTM {
       if ($DB->numrows($result) >= 1) {
          while ($line = $DB->fetch_assoc($result)) {
             $tmp['id']   = $line["solutiontypes_id"];
-            $tmp['link'] = Dropdown::getDropdownName('glpi_solutiontypes',
+            $tmp['link'] = Dropdown::getDropdownName(SolutionType::getTable(),
                                                      $line["solutiontypes_id"]);
             $tab[]       = $tmp;
          }
@@ -5178,7 +5178,7 @@ abstract class CommonITILObject extends CommonDBTM {
 
          // Second TER column
          if (count($_SESSION["glpiactiveentities"]) > 1) {
-            $second_col = Dropdown::getDropdownName('glpi_entities', $item->fields['entities_id']);
+            $second_col = Dropdown::getDropdownName(Entity::getTable(), $item->fields['entities_id']);
             echo Search::showItem($p['output_type'], $second_col, $item_num, $p['row_num'],
                                   $align." width=100");
          }
@@ -5203,7 +5203,7 @@ abstract class CommonITILObject extends CommonDBTM {
          }
 
          foreach ($item->getGroups(CommonITILActor::REQUESTER) as $d) {
-            $fourth_col .= Dropdown::getDropdownName("glpi_groups", $d["groups_id"]);
+            $fourth_col .= Dropdown::getDropdownName(Group::getTable(), $d["groups_id"]);
             $fourth_col .= "<br>";
          }
 
@@ -5223,13 +5223,13 @@ abstract class CommonITILObject extends CommonDBTM {
          }
 
          foreach ($item->getGroups(CommonITILActor::ASSIGN) as $d) {
-            $fifth_col .= Dropdown::getDropdownName("glpi_groups", $d["groups_id"]);
+            $fifth_col .= Dropdown::getDropdownName(Group::getTable(), $d["groups_id"]);
             $fifth_col .= "<br>";
          }
 
 
          foreach ($item->getSuppliers(CommonITILActor::ASSIGN) as $d) {
-            $fifth_col .= Dropdown::getDropdownName("glpi_suppliers", $d["suppliers_id"]);
+            $fifth_col .= Dropdown::getDropdownName(Supplier::getTable(), $d["suppliers_id"]);
             $fifth_col .= "<br>";
          }
 
@@ -5272,7 +5272,7 @@ abstract class CommonITILObject extends CommonDBTM {
          // Seventh column
          echo Search::showItem($p['output_type'],
                                "<span class='b'>".
-                                 Dropdown::getDropdownName('glpi_itilcategories',
+                                 Dropdown::getDropdownName(ITILCategory::getTable(),
                                                            $item->fields["itilcategories_id"]).
                                "</span>",
                                $item_num, $p['row_num'], $align);

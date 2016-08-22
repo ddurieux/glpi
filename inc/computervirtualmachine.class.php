@@ -67,7 +67,7 @@ class ComputerVirtualMachine extends CommonDBChild {
           && Computer::canView()) {
          $nb = 0;
          if ($_SESSION['glpishow_count_on_tabs']) {
-            $nb = countElementsInTable('glpi_computervirtualmachines',
+            $nb = countElementsInTable($this->getTable(),
                                        "computers_id = '".$item->getID()."' AND `is_deleted`='0'");
          }
          return self::createTabEntry(self::getTypeName(Session::getPluralNumber()), $nb);
@@ -276,7 +276,7 @@ class ComputerVirtualMachine extends CommonDBChild {
                }
                echo "</td>";
                echo "<td>";
-               echo Dropdown::getDropdownName('glpi_entities', $computer->fields['entities_id']);
+               echo Dropdown::getDropdownName(Entity::getTable(), $computer->fields['entities_id']);
                echo "</td></tr>";
 
             }
@@ -356,15 +356,15 @@ class ComputerVirtualMachine extends CommonDBChild {
                echo "<td>".Dropdown::getYesNo($vm->isDynamic())."</td>";
             }
             echo "<td>";
-            echo Dropdown::getDropdownName('glpi_virtualmachinetypes',
+            echo Dropdown::getDropdownName(VirtualMachineType::getTable(),
                                            $virtualmachine['virtualmachinetypes_id']);
             echo "</td>";
             echo "<td>";
-            echo Dropdown::getDropdownName('glpi_virtualmachinesystems',
+            echo Dropdown::getDropdownName(VirtualMachineSystem::getTable(),
                                            $virtualmachine['virtualmachinesystems_id']);
             echo "</td>";
             echo "<td>";
-            echo Dropdown::getDropdownName('glpi_virtualmachinestates',
+            echo Dropdown::getDropdownName(VirtualMachineState::getTable(),
                                            $virtualmachine['virtualmachinestates_id']);
             echo "</td>";
             echo "<td>".$virtualmachine['uuid']."</td>";

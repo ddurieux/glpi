@@ -173,7 +173,7 @@ class Calendar extends CommonDropdown {
                $holiday->getFromDB($input['holidays_id']);
                $entities = array($holiday->getEntityID() => $holiday->getEntityID());
                if ($holiday->isRecursive()) {
-                  $entities = getSonsOf("glpi_entities", $holiday->getEntityID());
+                  $entities = getSonsOf(Entity::getTable(), $holiday->getEntityID());
                }
 
                foreach ($ids as $id) {
@@ -513,7 +513,7 @@ class Calendar extends CommonDropdown {
       $cache_duration = $this->getDurationsCache();
 
       // Only if segments exists
-      if (countElementsInTable('glpi_calendarsegments',
+      if (countElementsInTable(CalendarSegment::getTable(),
                                "`calendars_id` = '".$this->fields['id']."'")) {
           while ($delay >= 0) {
             $actualdate = date('Y-m-d',$actualtime);

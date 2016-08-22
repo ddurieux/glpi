@@ -58,7 +58,7 @@ abstract class API extends CommonGLPI {
 
 
    public function __construct() {
-      global $CFG_GLPI;
+      global $CFG_GLPI, $DB;
 
       // construct api url
       self::$api_url = trim($CFG_GLPI['url_base_api'], "/");
@@ -82,21 +82,27 @@ abstract class API extends CommonGLPI {
       $this->ipnum = (strstr($this->iptxt, ':')===false ? ip2long($this->iptxt) : '');
 
       // check ip access
-      $apiclient = new APIClient;
-      $where_ip = "";
+      $apiclient = new APIClient();
+      $rows = $DB->dbh->apiclient()->where('is_active', 1);
       if ($this->ipnum) {
-         $where_ip .= " AND (`ipv4_range_start` IS NULL
-                             OR (`ipv4_range_start` <= '$this->ipnum'
-                                 AND `ipv4_range_end` >= '$this->ipnum'))";
+         $rows = $rows->whereNot("ipv4_range_start => :ipv4_range_start",
+                                 array(':ipv4_range_start' => $this->ipnum));
+         $rows = $rows->whereNot("ipv4_range_end <= :ipv4_range_end",
+                                 array(':ipv4_range_end' => $this->ipnum));
       } else {
-         $where_ip .= " AND (`ipv6` IS NULL
-                             OR `ipv6` = '".addslashes($this->iptxt)."')";
+         $rows = $rows->where("(ipv6 IS NULL OR ipv6 = :ipv6)",
+                              array(':ipv6' => addslashes($this->iptxt)));
       }
-      $found_clients = $apiclient->find("`is_active` = '1' $where_ip");
-      if (count($found_clients) <= 0) {
+      if ($rows->count() == 0) {
          $this->returnError(__("There isn't an active api client matching your ip adress in the configuration").
                             " (".$this->iptxt.")",
                             "", "ERROR_NOT_ALLOWED_IP", false);
+      }
+      $rows = $rows->fetchAll();
+      $found_clients = array();
+      foreach ($rows as $row) {
+         $row_data = $row->getData();
+         $found_clients[] = $row_data;
       }
       $app_tokens = array_column($found_clients, 'app_token');
       $apiclients_id = array_column($found_clients, 'id');
@@ -278,7 +284,7 @@ abstract class API extends CommonGLPI {
       $myentities = array();
       foreach ($_SESSION['glpiactiveprofile']['entities'] as $entity) {
          $myentities[$entity['id']] = array('id' => $entity['id'],
-                                            'name' => Dropdown::getDropdownName("glpi_entities",
+                                            'name' => Dropdown::getDropdownName(Entity::getTable(),
                                                                                 $entity['id']));
       }
 
@@ -428,12 +434,18 @@ abstract class API extends CommonGLPI {
          && in_array($itemtype, Item_Devices::getConcernedItems())) {
          $all_devices = array();
          foreach (Item_Devices::getItemAffinities($item->getType()) as $device_type) {
-            $found_devices = getAllDatasFromTable($device_type::getTable(),
-                                                  "`items_id` = '".$item->getID()."'
-                                                   AND `itemtype` = '".$item->getType()."'
-                                                   AND `is_deleted` = '0'", true);
+            $rows = $DB->dbh->table($device_type::getTable());
+            $rows = $rows->where('items_id', $item->getID());
+            $rows = $rows->where('itemtype', $item->getType());
+            $rows = $rows->where('is_deleted', 0);
+            $rows = $rows->fetchAll();
+            $found_devices = array();
+            foreach ($rows as $row) {
+               $row_data = $row->getData();
+               $found_devices[$row_data['id']] = $row_data;
+            }
 
-            foreach($found_devices as $devices_id => &$device) {
+            foreach($found_devices as &$device) {
                unset($device['items_id']);
                unset($device['itemtype']);
                unset($device['is_deleted']);
@@ -452,21 +464,22 @@ abstract class API extends CommonGLPI {
          && $params['with_disks']
          && $itemtype == "Computer") {
          // build query to retrive filesystems
-         $query = "SELECT `glpi_filesystems`.`name` AS fsname,
-                          `glpi_computerdisks`.*
-                   FROM `glpi_computerdisks`
-                   LEFT JOIN `glpi_filesystems`
-                             ON (`glpi_computerdisks`.`filesystems_id` = `glpi_filesystems`.`id`)
-                   WHERE `computers_id` = '$id'
-                         AND `is_deleted` = '0'";
-         if ($result = $DB->query($query)) {
-            while ($data = $DB->fetch_assoc($result)) {
-               unset($data['computers_id']);
-               unset($data['is_deleted']);
-               $fields['_disks'][] = array('name' => $data);
-            }
+         $rows = $DB->dbh->computerdisk();
+         $rows = $rows->where('is_deleted', 0);
+         $rows = $rows->fetchAll();
+         foreach ($rows as $row) {
+            $data = $row->getData();
+            unset($data['computers_id']);
+            unset($data['is_deleted']);
+            $filesystem = $row->filesystem()->fetch();
+            $data['fsname'] = $filesystem['name'];
+            $fields['_disks'][] = array('name' => $data);
          }
       }
+
+
+// todo *** David rewrite queries
+
 
       // retrieve computer softwares
       if (isset($params['with_softwares'])

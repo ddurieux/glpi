@@ -297,7 +297,7 @@ class Transfer extends CommonDBTM {
                = $this->createSearchConditionUsingArray($this->noneedtobe_transfer[$t]);
       }
 
-      $to_entity_ancestors = getAncestorsOf("glpi_entities", $this->to);
+      $to_entity_ancestors = getAncestorsOf(Entity::getTable(), $this->to);
 
       // Copy items to needtobe_transfer
       foreach ($items as $key => $tab) {
@@ -1405,7 +1405,7 @@ class Transfer extends CommonDBTM {
       $soft = new Software();
       if ($soft->getFromDB($ID)) {
          if ($soft->fields['is_recursive']
-             && in_array($soft->fields['entities_id'], getAncestorsOf("glpi_entities",
+             && in_array($soft->fields['entities_id'], getAncestorsOf(Entity::getTable(),
                                                                       $this->to))) {
             // no need to copy
             $newsoftID = $ID;
@@ -1673,9 +1673,9 @@ class Transfer extends CommonDBTM {
 
       $vers = new SoftwareVersion();
       foreach ($this->already_transfer['SoftwareVersion'] AS $old => $new) {
-         if ((countElementsInTable("glpi_softwarelicenses", "softwareversions_id_buy=$old") == 0)
-             && (countElementsInTable("glpi_softwarelicenses", "softwareversions_id_use=$old") == 0)
-             && (countElementsInTable("glpi_computers_softwareversions",
+         if ((countElementsInTable(SoftwareLicense::getTable(), "softwareversions_id_buy=$old") == 0)
+             && (countElementsInTable(SoftwareLicense::getTable(), "softwareversions_id_use=$old") == 0)
+             && (countElementsInTable(Computer_SoftwareVersion::getTable(),
                                       "softwareversions_id=$old") == 0)) {
 
             $vers->delete(array('id' => $old));
@@ -1692,8 +1692,8 @@ class Transfer extends CommonDBTM {
 
       $soft = new Software();
       foreach ($this->already_transfer['Software'] AS $old => $new) {
-         if ((countElementsInTable("glpi_softwarelicenses", "softwares_id=$old") == 0)
-             && (countElementsInTable("glpi_softwareversions", "softwares_id=$old") == 0)) {
+         if ((countElementsInTable(SoftwareLicense::getTable(), "softwares_id=$old") == 0)
+             && (countElementsInTable(SoftwareVersion::getTable(), "softwares_id=$old") == 0)) {
 
             if ($this->options['clean_software'] == 1) { // delete
                $soft->delete(array('id' => $old), 0);
@@ -3521,7 +3521,7 @@ class Transfer extends CommonDBTM {
          }
          echo "</td><td class='tab_bg_2 top'>";
 
-         if (countElementsInTable('glpi_transfers') == 0) {
+         if (countElementsInTable($this->getTable()) == 0) {
             _e('No item found');
          } else {
             $params = array('id' => '__VALUE__');

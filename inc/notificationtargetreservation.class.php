@@ -104,12 +104,12 @@ class NotificationTargetReservation extends NotificationTarget {
             $this->datas['##reservation.item.name##']
                                  = $item->getField('name');
             $this->datas['##reservation.item.entity##']
-                                 = Dropdown::getDropdownName('glpi_entities',
+                                 = Dropdown::getDropdownName(Entity::getTable(),
                                                              $item->getField('entities_id'));
 
             if ($item->isField('users_id_tech')) {
                 $this->datas['##reservation.item.tech##']
-                                 = Dropdown::getDropdownName('glpi_users',
+                                 = Dropdown::getDropdownName(User::getTable(),
                                                              $item->getField('users_id_tech'));
             }
 
@@ -123,7 +123,7 @@ class NotificationTargetReservation extends NotificationTarget {
                      }
 
       } else {
-         $this->datas['##reservation.entity##'] = Dropdown::getDropdownName('glpi_entities',
+         $this->datas['##reservation.entity##'] = Dropdown::getDropdownName(Entity::getTable(),
                                                                             $options['entities_id']);
 
          foreach ($options['items'] as $id => $item) {

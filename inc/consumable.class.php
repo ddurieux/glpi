@@ -479,7 +479,7 @@ class Consumable extends CommonDBChild {
                            `id`";
       }
 
-      $number = countElementsInTable("glpi_consumables", "`consumableitems_id` = '$tID' $where");
+      $number = countElementsInTable(self::getTable(), "`consumableitems_id` = '$tID' $where");
 
       $query = "SELECT `glpi_consumables`.*
                 FROM `glpi_consumables`
@@ -506,7 +506,7 @@ class Consumable extends CommonDBChild {
          }
          $entparam = array('entities_id' => $consitem->getEntityID());
          if ($consitem->isRecursive()) {
-            $entparam = array('entities_id' => getSonsOf('glpi_entities', $consitem->getEntityID()));
+            $entparam = array('entities_id' => getSonsOf(Entity::getTable(), $consitem->getEntityID()));
          }
          $massiveactionparams = array('num_displayed'    => $number,
                            'specific_actions' => $actions,
@@ -737,7 +737,7 @@ class Consumable extends CommonDBChild {
 
       $restrict = "`glpi_consumables`.`consumableitems_id` = '".$item->getField('id') ."'";
 
-      return countElementsInTable(array('glpi_consumables'), $restrict);
+      return countElementsInTable(self::getTable(), $restrict);
    }
 
 

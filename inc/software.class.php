@@ -216,7 +216,7 @@ class Software extends CommonDBTM {
       $soft = new self();
       if ($soft->getFromDB($ID)) {
          $valid = 1;
-         if (countElementsInTable('glpi_softwarelicenses',
+         if (countElementsInTable(SoftwareLicense::getTable(),
                                   "`softwares_id`='$ID' AND NOT `is_valid`") > 0) {
             $valid = 0;
          }
@@ -333,13 +333,13 @@ class Software extends CommonDBTM {
       $isadmin = static::canUpdate();
       $actions = parent::getSpecificMassiveActions($checkitem);
       if ($isadmin
-          && (countElementsInTable("glpi_rules", "sub_type='RuleSoftwareCategory'") > 0)) {
+          && (countElementsInTable(Rule::getTable(), "sub_type='RuleSoftwareCategory'") > 0)) {
          $actions[__CLASS__.MassiveAction::CLASS_ACTION_SEPARATOR.'compute_software_category']
             = __('Recalculate the category');
       }
 
       if (Session::haveRightsOr("rule_dictionnary_software", array(CREATE, UPDATE))
-           && (countElementsInTable("glpi_rules", "sub_type='RuleDictionnarySoftware'") > 0)) {
+           && (countElementsInTable(Rule::getTable(), "sub_type='RuleDictionnarySoftware'") > 0)) {
          $actions[__CLASS__.MassiveAction::CLASS_ACTION_SEPARATOR.'replay_dictionnary']
             = __('Replay the dictionary rules');
       }
@@ -848,7 +848,7 @@ class Software extends CommonDBTM {
                      AND `glpi_softwares`.`is_deleted` = '0'
                      AND `glpi_softwares`.`is_template` = '0' " .
                          getEntitiesRestrictRequest('AND', 'glpi_softwares','entities_id',
-                                                    getSonsOf("glpi_entities",
+                                                    getSonsOf(Entity::getTable(),
                                                               $this->fields["entities_id"]),
                                                               false).")
               ORDER BY `entity`";

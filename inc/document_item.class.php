@@ -212,7 +212,7 @@ class Document_Item extends CommonDBRelation{
          $restrict .= " AND `glpi_documents_items`.`entities_id` = '0' ";
       }
 
-      $nb = countElementsInTable(array('glpi_documents_items'), $restrict);
+      $nb = countElementsInTable(self::getTable(), $restrict);
 
       // Document case : search in both
       if ($item->getType() == 'Document') {
@@ -225,7 +225,7 @@ class Document_Item extends CommonDBRelation{
             // Anonymous access from FAQ
             $restrict .= " AND `glpi_documents_items`.`entities_id` = '0' ";
          }
-         $nb += countElementsInTable(array('glpi_documents_items'), $restrict);
+         $nb += countElementsInTable(self::getTable(), $restrict);
       }
       return $nb ;
    }
@@ -239,7 +239,7 @@ class Document_Item extends CommonDBRelation{
       $restrict = "`glpi_documents_items`.`documents_id` = '".$item->getField('id')."'
                    AND `glpi_documents_items`.`itemtype` != '".$item->getType()."'";
 
-      return countElementsInTable(array('glpi_documents_items'), $restrict);
+      return countElementsInTable(self::getTable(), $restrict);
    }
 
 
@@ -369,7 +369,7 @@ class Document_Item extends CommonDBRelation{
                                                        => Document::getItemtypesThatCanHave(),
                                                      'entity_restrict'
                                                        => ($doc->fields['is_recursive']
-                                                           ?getSonsOf('glpi_entities',
+                                                           ?getSonsOf(Entity::getTable(),
                                                                       $doc->fields['entities_id'])
                                                            :$doc->fields['entities_id']),
                                                      'checkright'
@@ -528,7 +528,7 @@ class Document_Item extends CommonDBRelation{
                      echo "<td ".
                            (isset($data['is_deleted']) && $data['is_deleted']?"class='tab_bg_2_2'":"").
                           ">".$name."</td>";
-                     echo "<td class='center'>".Dropdown::getDropdownName("glpi_entities",
+                     echo "<td class='center'>".Dropdown::getDropdownName(Entity::getTable(),
                                                                           $data['entity']);
                      echo "</td>";
                      echo "<td class='center'>".
@@ -667,7 +667,7 @@ class Document_Item extends CommonDBRelation{
             }
 
             if ($item->isRecursive()) {
-               $entities = getSonsOf('glpi_entities',$entity);
+               $entities = getSonsOf(Entity::getTable(),$entity);
             } else {
                $entities = $entity;
             }
@@ -952,7 +952,7 @@ class Document_Item extends CommonDBRelation{
                echo "&nbsp;";
             }
             echo "</td>";
-            echo "<td class='center'>".Dropdown::getDropdownName("glpi_documentcategories",
+            echo "<td class='center'>".Dropdown::getDropdownName(DocumentCategory::getTable(),
                                                                  $data["documentcategories_id"]);
             echo "</td>";
             echo "<td class='center'>".$data["mime"]."</td>";

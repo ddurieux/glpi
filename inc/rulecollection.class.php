@@ -105,7 +105,7 @@ class RuleCollection extends CommonDBTM {
       if ($condition > 0) {
          $restrict .= ' AND `condition` & '.$condition;
       }
-      return countElementsInTable("glpi_rules", $restrict);
+      return countElementsInTable(Rule::getTable(), $restrict);
    }
 
 
@@ -149,7 +149,7 @@ class RuleCollection extends CommonDBTM {
             $sql .= getEntitiesRestrictRequest(" AND", "glpi_rules", "entities_id", $this->entity,
                                                $p['inherited']);
          } else {
-            $sons = getSonsOf('glpi_entities', $this->entity);
+            $sons = getSonsOf(Entity::getTable(), $this->entity);
             $sql .= " AND `glpi_rules`.`entities_id` IN (".implode(',',$sons).")";
          }
          $sql .= " ORDER BY `glpi_entities`.`level` ASC,
@@ -906,7 +906,7 @@ class RuleCollection extends CommonDBTM {
          unset($rulecollection->fields['id']);
          unset($rulecollection->fields['date_mod']);
 
-         $name = Dropdown::getDropdownName("glpi_entities",
+         $name = Dropdown::getDropdownName(Entity::getTable(),
                                            $rulecollection->fields['entities_id']);
          $rulecollection->fields['entities_id'] = $name;
 
@@ -1905,14 +1905,14 @@ class RuleCollection extends CommonDBTM {
          if ($item->showInheritedTab()) {
             //TRANS: %s is the entity name
             $ong[1] = sprintf(__('Rules applied: %s'),
-                              Dropdown::getDropdownName('glpi_entities',
+                              Dropdown::getDropdownName(Entity::getTable(),
                                                         $_SESSION['glpiactive_entity']));
          }
          $title = _n('Rule', 'Rules', Session::getPluralNumber());
          if ($item->isRuleRecursive()) {
             //TRANS: %s is the entity name
             $title = sprintf(__('Local rules: %s'),
-                             Dropdown::getDropdownName('glpi_entities',
+                             Dropdown::getDropdownName(Entity::getTable(),
                                                        $_SESSION['glpiactive_entity']));
          }
          $ong[2] = $title;

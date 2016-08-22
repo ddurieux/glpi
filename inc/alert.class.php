@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -74,12 +74,9 @@ class Alert extends CommonDBTM {
    function clear($itemtype, $ID, $alert_type) {
       global $DB;
 
-      $query = "DELETE
-                FROM `".$this->getTable()."`
-                WHERE `itemtype` = '$itemtype'
-                      AND `items_id` = '$ID'
-                      AND `type` = '$alert_type'";
-      $DB->query($query);
+      $rows = $DB->dbh->alert()->where('itemtype', $itemtype);
+      $rows = $rows->where('items_id', $ID);
+      $rows->where('type', $alert_type)->delete();
    }
 
 
@@ -96,11 +93,8 @@ class Alert extends CommonDBTM {
    function cleanDBonItemDelete($itemtype, $ID) {
       global $DB;
 
-      $query = "DELETE
-                FROM `".$this->getTable()."`
-                WHERE `itemtype` = '$itemtype'
-                      AND `items_id` = '$ID'";
-      $DB->query($query);
+      $rows = $DB->dbh->alert()->where('itemtype', $itemtype);
+      $rows = $rows->where('items_id', $ID)->delete();
    }
 
 
@@ -201,17 +195,16 @@ class Alert extends CommonDBTM {
     * @param $items_id  (default '')
     * @param $type      (default '')
    **/
-   static function alertExists($itemtype='', $items_id='', $type='') {
+   static function alertExists($itemtype='', $items_id=0, $type=0) {
       global $DB;
 
-      $query = "SELECT `id`
-                FROM `glpi_alerts`
-                WHERE `itemtype` = '$itemtype'
-                      AND `type` = '$type'
-                      AND `items_id` = '$items_id'";
-      $result = $DB->query($query);
-      if ($DB->numrows($result)) {
-         return $DB->result($result,0,'id');
+      $rows = $DB->dbh->alert()->where('itemtype', $itemtype);
+      $rows = $rows->where('type', $type);
+      $rows = $rows->where('items_id', $items_id);
+      if ($rows->count()) {
+         $row = $rows->fetch();
+         $row_data = $row->getData();
+         return $row_data;
       }
       return false;
    }
@@ -224,17 +217,12 @@ class Alert extends CommonDBTM {
     * @param $items_id  (default '')
     * @param $type      (default '')
    **/
-   static function getAlertDate($itemtype='', $items_id='', $type='') {
+   static function getAlertDate($itemtype='', $items_id=0, $type=0) {
       global $DB;
 
-      $query = "SELECT `date`
-                FROM `glpi_alerts`
-                WHERE `itemtype` = '$itemtype'
-                      AND `type` = '$type'
-                      AND `items_id` = '$items_id'";
-      $result = $DB->query($query);
-      if ($DB->numrows($result)) {
-         return $DB->result($result,0,'date');
+      $data = Alert::alertExists($itemtype, $items_id, $type);
+      if ($data) {
+         return $data['date'];
       }
       return false;
    }
@@ -247,19 +235,16 @@ class Alert extends CommonDBTM {
    static function displayLastAlert($itemtype, $items_id) {
       global $DB;
 
-      if ($items_id) {
-         $query = "SELECT `date`
-                   FROM `glpi_alerts`
-                   WHERE `itemtype` = '$itemtype'
-                         AND `items_id` = '$items_id'
-                   ORDER BY `date` DESC
-                   LIMIT 1";
-         $result = $DB->query($query);
-         if ($DB->numrows($result) > 0) {
-            //TRANS: %s is the date
-            echo sprintf(__('Alert sent on %s'),
-                         Html::convDateTime($DB->result($result, 0, 'date')));
-         }
+      $rows = $DB->dbh->alert()->select('date');
+      $rows = $rows->where('itemtype', $itemtype);
+      $rows = $rows->where('items_id', $items_id);
+      $rows = $rows->orderBy('date', 'DESC');
+      if ($rows->count()) {
+         $row = $rows->fetch();
+         $row_data = $row->getData();
+         //TRANS: %s is the date
+         echo sprintf(__('Alert sent on %s'),
+                      Html::convDateTime($row_data['date']));
       }
    }
 

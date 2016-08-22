@@ -99,12 +99,12 @@ if (!file_exists(GLPI_CONFIG_DIR . "/config_db.php")) {
       }
 
       // First try old config table : for update process management from < 0.80 to >= 0.80
-      $config_object->forceTable('glpi_config');
+//      $config_object->forceTable('glpi_config');
 
-      if ($config_object->getFromDB(1)) {
-         $current_config = $config_object->fields;
-      } else {
-         $config_object->forceTable('glpi_configs');
+//      if ($config_object->getFromDB(1)) {
+//         $current_config = $config_object->fields;
+//      } else {
+         $config_object->forceTable('config');
          if ($config_object->getFromDB(1)) {
             if (isset($config_object->fields['context'])) {
                $current_config = Config::getConfigurationValues('core');
@@ -113,7 +113,7 @@ if (!file_exists(GLPI_CONFIG_DIR . "/config_db.php")) {
             }
             $config_ok = true;
          }
-      }
+//      }
 
    } else { // Normal load process : use normal config table. If problem try old one
       if ($config_object->getFromDB(1)) {

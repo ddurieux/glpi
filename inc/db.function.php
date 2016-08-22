@@ -46,11 +46,7 @@ if (!defined('GLPI_ROOT')) {
  * @return string field name used for a foreign key to the parameter table
 **/
 function getForeignKeyFieldForTable($table) {
-
-   if (strpos($table,'glpi_') === false) {
-      return "";
-   }
-   return str_replace("glpi_","",$table)."_id";
+   return $table."_id";
 }
 
 
@@ -173,8 +169,6 @@ function getTableForItemType($itemtype) {
       return $CFG_GLPI['glpitablesitemtype'][$itemtype];
 
    } else {
-      $prefix = "glpi_";
-
       if ($plug = isPluginItemType($itemtype)) {
          /* PluginFooBar => glpi_plugin_foor_bars */
          $prefix .= "plugin_".strtolower($plug['plugin'])."_";
@@ -188,17 +182,17 @@ function getTableForItemType($itemtype) {
          $split = explode('_',$table);
 
          foreach ($split as $key => $part) {
-            $split[$key] = getPlural($part);
+            $split[$key] = $part;
          }
          $table = implode('_',$split);
 
       } else {
-         $table = getPlural($table);
+         $table = $table;
       }
 
-      $CFG_GLPI['glpitablesitemtype'][$itemtype]      = $prefix.$table;
-      $CFG_GLPI['glpiitemtypetables'][$prefix.$table] = $itemtype;
-      return $prefix.$table;
+      $CFG_GLPI['glpitablesitemtype'][$itemtype]      = $table;
+      $CFG_GLPI['glpiitemtypetables'][$table] = $itemtype;
+      return $table;
    }
 }
 
@@ -309,16 +303,12 @@ function countElementsInTable($table, $condition="") {
       $table = implode('`,`',$table);
    }
 
-   $query = "SELECT COUNT(*) AS cpt
-             FROM `$table`";
+   $rows = $DB->dbh->table($table);
 
    if (!empty($condition)) {
-      $query .= " WHERE $condition ";
+      $rows = $rows->where($condition);
    }
-
-   $result = $DB->query($query);
-   $ligne  = $DB->fetch_assoc($result);
-   return $ligne['cpt'];
+   return $rows->count();
 }
 
 /**
@@ -419,20 +409,17 @@ function getAllDatasFromTable($table, $condition='', $usecache=false, $order='')
    }
 
    $datas = array();
-   $query = "SELECT *
-             FROM `$table` ";
-
+   $result = $DB->dbh->table($table);
    if (!empty($condition)) {
-      $query .= " WHERE $condition ";
+      $result = $result->where($condition);
    }
    if (!empty($order)) {
-      $query .= " ORDER BY $order ";
+      $result = $result->orderBy($order);
    }
-
-   if ($result = $DB->query($query)) {
-      while ($data = $DB->fetch_assoc($result)) {
-         $datas[$data['id']] = $data;
-      }
+   $rows = $result->fetchall();
+   foreach ($rows as $row) {
+      $line = $row->getData();
+      $datas[$line['id']] = $line;
    }
 
    if (empty($condition) && empty($order) && $usecache) {
@@ -460,52 +447,39 @@ function getTreeLeafValueName($table, $ID, $withcomment=false, $translate=true) 
    $name    = "";
    $comment = "";
 
-   $SELECTNAME    = "`$table`.`name`, '' AS transname";
-   $SELECTCOMMENT = "`$table`.`comment`, '' AS transcomment";
-   $JOIN          = '';
-   if  ($translate) {
-      if (Session::haveTranslations(getItemTypeForTable($table), 'name')) {
-         $SELECTNAME  = "`$table`.`name`, `namet`.`value` AS transname";
-         $JOIN       .= " LEFT JOIN `glpi_dropdowntranslations` AS namet
-                           ON (`namet`.`itemtype` = '".getItemTypeForTable($table)."'
-                               AND `namet`.`items_id` = `$table`.`id`
-                               AND `namet`.`language` = '".$_SESSION['glpilanguage']."'
-                               AND `namet`.`field` = 'name')";
-      }
-      if (Session::haveTranslations(getItemTypeForTable($table), 'comment')) {
-         $SELECTCOMMENT  = "`$table`.`comment`, `namec`.`value` AS transcomment";
-         $JOIN          .= " LEFT JOIN `glpi_dropdowntranslations` AS namet
-                           ON (`namec`.`itemtype` = '".getItemTypeForTable($table)."'
-                               AND `namec`.`items_id` = `$table`.`id`
-                               AND `namec`.`language` = '".$_SESSION['glpilanguage']."'
-                               AND `namec`.`field` = 'comment')";
-      }
-
-   }
-
-   $query = "SELECT $SELECTNAME, $SELECTCOMMENT
-             FROM `$table`
-             $JOIN
-             WHERE `$table`.`id` = '$ID'";
-
-   if ($result = $DB->query($query)) {
-      if ($DB->numrows($result) == 1) {
-         $transname = $DB->result($result,0,"transname");
-         if ($translate && !empty($transname)) {
-            $name = $transname;
-         } else {
-            $name = $DB->result($result,0,"name");
+   $row = $DB->dbh->table($table, $ID);
+   if ($row->exists()) {
+      $data = $row->getData();
+      $name = $data['completename'];
+      $mycomment = $data['comment'];
+      if ($translate) {
+         if (Session::haveTranslations(getItemTypeForTable($table), 'completename')) {
+            $translations = $DB->dbh->dropdowntranslation();
+            $translations = $translations->where('itemtype', getItemTypeForTable($table));
+            $translations = $translations->where('items_id', $ID);
+            $translations = $translations->where('language', $_SESSION['glpilanguage']);
+            $translations = $translations->where('field', 'completename');
+            $translations = $translations->fetch();
+            if (count($translations) > 0) {
+               $datat = $translations->getData();
+               $name = $data['value'];
+            }
          }
-
-         $comment      = $name." :<br>";
-         $transcomment = $DB->result($result,0,"transcomment");
-
-         if ($translate && !empty($transcomment)) {
-            $comment .= nl2br($transcomment);
-         } else {
-            $comment .= nl2br($DB->result($result,0,"comment"));
+         if (Session::haveTranslations(getItemTypeForTable($table), 'comment')) {
+            $translations = $DB->dbh->dropdowntranslation();
+            $translations = $translations->where('itemtype', getItemTypeForTable($table));
+            $translations = $translations->where('items_id', $ID);
+            $translations = $translations->where('language', $_SESSION['glpilanguage']);
+            $translations = $translations->where('field', 'comment');
+            $translations = $translations->fetch();
+            if (count($translations) > 0) {
+               $datat = $translations->getData();
+               $mycomment = $data['value'];
+            }
          }
       }
+
+      $comment = $name." :<br>".nl2br($mycomment);
    }
 
    if ($withcomment) {
@@ -534,54 +508,42 @@ function getTreeValueCompleteName($table, $ID, $withcomment=false, $translate=tr
    $name    = "";
    $comment = "";
 
-   $SELECTNAME    = "`$table`.`completename`, '' AS transname";
-   $SELECTCOMMENT = "`$table`.`comment`, '' AS transcomment";
-   $JOIN          = '';
-   if  ($translate) {
-      if (Session::haveTranslations(getItemTypeForTable($table), 'completename')) {
-         $SELECTNAME  = "`$table`.`completename`, `namet`.`value` AS transname";
-         $JOIN       .= " LEFT JOIN `glpi_dropdowntranslations` AS namet
-                           ON (`namet`.`itemtype` = '".getItemTypeForTable($table)."'
-                               AND `namet`.`items_id` = `$table`.`id`
-                               AND `namet`.`language` = '".$_SESSION['glpilanguage']."'
-                               AND `namet`.`field` = 'completename')";
-      }
-      if (Session::haveTranslations(getItemTypeForTable($table), 'comment')) {
-         $SELECTCOMMENT  = "`$table`.`comment`, `namec`.`value` AS transcomment";
-         $JOIN          .= " LEFT JOIN `glpi_dropdowntranslations` AS namec
-                              ON (`namec`.`itemtype` = '".getItemTypeForTable($table)."'
-                                  AND `namec`.`items_id` = `$table`.`id`
-                                  AND `namec`.`language` = '".$_SESSION['glpilanguage']."'
-                                  AND `namec`.`field` = 'comment')";
-      }
-
-   }
-
-   $query = "SELECT $SELECTNAME, $SELECTCOMMENT
-             FROM `$table`
-             $JOIN
-             WHERE `$table`.`id` = '$ID'";
-
-   if ($result = $DB->query($query)) {
-      if ($DB->numrows($result) == 1) {
-         $transname = $DB->result($result,0,"transname");
-         if ($translate && !empty($transname)) {
-            $name = $transname;
-         } else {
-            $name = $DB->result($result,0,"completename");
+   $row = $DB->dbh->table($table, $ID);
+   if ($row->exists()) {
+      $data = $row->getData();
+      $name = $data['completename'];
+      $mycomment = $data['comment'];
+      if ($translate) {
+         if (Session::haveTranslations(getItemTypeForTable($table), 'completename')) {
+            $translations = $DB->dbh->dropdowntranslation();
+            $translations = $translations->where('itemtype', getItemTypeForTable($table));
+            $translations = $translations->where('items_id', $ID);
+            $translations = $translations->where('language', $_SESSION['glpilanguage']);
+            $translations = $translations->where('field', 'completename');
+            $translations = $translations->fetch();
+            if (count($translations) > 0) {
+               $datat = $translations->getData();
+               $name = $data['value'];
+            }
          }
-         $comment  = sprintf(__('%1$s: %2$s')."<br>",
-                             "<span class='b'>".__('Complete name')."</span>",
-                             $name);
-         $comment .= "<span class='b'>&nbsp;".__('Comments')."&nbsp;</span>";
-
-         $transcomment = $DB->result($result,0,"transcomment");
-         if ($translate && !empty($transcomment)) {
-            $comment .= nl2br($transcomment);
-         } else {
-            $comment .= nl2br($DB->result($result,0,"comment"));
+         if (Session::haveTranslations(getItemTypeForTable($table), 'comment')) {
+            $translations = $DB->dbh->dropdowntranslation();
+            $translations = $translations->where('itemtype', getItemTypeForTable($table));
+            $translations = $translations->where('items_id', $ID);
+            $translations = $translations->where('language', $_SESSION['glpilanguage']);
+            $translations = $translations->where('field', 'comment');
+            $translations = $translations->fetch();
+            if (count($translations) > 0) {
+               $datat = $translations->getData();
+               $mycomment = $data['value'];
+            }
          }
       }
+      $comment  = sprintf(__('%1$s: %2$s')."<br>",
+                          "<span class='b'>".__('Complete name')."</span>",
+                          $name);
+      $comment .= "<span class='b'>&nbsp;".__('Comments')."&nbsp;</span>";
+      $comment .= nl2br($mycomment);
    }
 
    if (empty($name)) {
@@ -657,37 +619,31 @@ function getAncestorsOf($table, $items_id) {
    if ($use_cache
        && ($items_id > 0)) {
 
-      $query = "SELECT `ancestors_cache`, `$parentIDfield`
-                FROM `$table`
-                WHERE `id` = '$items_id'";
+      $result = $DB->dbh->table($table)->where('id', $items_id)->fetch();
+      $data = $result->getData();
+      $ancestors = trim($data['ancestors_cache']);
+      $parent = $data[$parentIDfield];
 
-      if (($result = $DB->query($query))
-          && ($DB->numrows($result) > 0)) {
-         $ancestors = trim($DB->result($result, 0, 0));
-         $parent    = $DB->result($result, 0, 1);
-
-         // Return datas from cache in DB
-         if (!empty($ancestors)) {
-            return importArrayFromDB($ancestors, true);
-         }
-
-         // Recursive solution for table with-cache
-         if ($parent > 0) {
-            $id_found = getAncestorsOf($table, $parent);
-         }
-
-         // ID=0 only exists for Entities
-         if (($parent > 0)
-             || ($table == 'glpi_entities')) {
-            $id_found[$parent] = $parent;
-         }
-
-         // Store cache datas in DB
-         $query = "UPDATE `$table`
-                   SET `ancestors_cache` = '".exportArrayToDB($id_found)."'
-                   WHERE `id` = '$items_id'";
-         $DB->query($query);
+      // Return datas from cache in DB
+      if (!empty($ancestors)) {
+         return importArrayFromDB($ancestors, true);
       }
+
+      // Recursive solution for table with-cache
+      if ($parent > 0) {
+         $id_found = getAncestorsOf($table, $parent);
+      }
+
+      // ID=0 only exists for Entities
+      if (($parent > 0)
+          || ($table == Entity::getTable())) {
+         $id_found[$parent] = $parent;
+      }
+
+      // Store cache datas in DB
+      $DB->dbh->begin();
+      $DB->dbh->table($table)->where('id', $items_id)->update(array('ancestors_cache' => exportArrayToDB($id_found)));
+		$DB->dbh->commit();
 
       return $id_found;
    }
@@ -709,7 +665,7 @@ function getAncestorsOf($table, $items_id) {
       }
 
       if (!isset($id_found[$IDf])
-          && (($IDf > 0) || ($table == 'glpi_entities'))) {
+          && (($IDf > 0) || ($table == Entity::getTable()))) {
          $id_found[$IDf] = $IDf;
       } else {
          $IDf = 0;
@@ -736,17 +692,11 @@ function getSonsOf($table, $IDf) {
 
    if ($use_cache
        && ($IDf > 0)) {
-
-      $query = "SELECT `sons_cache`
-                FROM `$table`
-                WHERE `id` = '$IDf'";
-
-      if (($result = $DB->query($query))
-          && ($DB->numrows($result) > 0)) {
-         $sons = trim($DB->result($result, 0, 0));
-         if (!empty($sons)) {
-            return importArrayFromDB($sons, true);
-         }
+      $result = $DB->dbh->table($table)->where('id', $IDf)->fetch();
+      $data = $result->getData();
+      $sons = trim($data['sons_cache']);
+      if (!empty($sons)) {
+         return importArrayFromDB($sons, true);
       }
    }
 
@@ -755,38 +705,26 @@ function getSonsOf($table, $IDf) {
    // current ID found to be added
    $found = array();
    // First request init the  varriables
-   $query = "SELECT `id`
-             FROM `$table`
-             WHERE `$parentIDfield` = '$IDf'
-             ORDER BY `name`";
-
-   if (($result = $DB->query($query))
-       && ($DB->numrows($result) > 0)) {
-      while ($row = $DB->fetch_assoc($result)) {
-         $id_found[$row['id']] = $row['id'];
-         $found[$row['id']]    = $row['id'];
-      }
+   $rows = $DB->dbh->table($table)->where($parentIDfield, $IDf)->orderBy('name')->fetchAll();
+   foreach ($rows as $row) {
+      $data = $row->getData();
+      $id_found[$data['id']] = $data['id'];
+      $found[$data['id']]    = $data['id'];
    }
 
    // Get the leafs of previous founded item
    while (count($found) > 0) {
-      $first = true;
-      // Get next elements
-      $query = "SELECT `id`
-                FROM `$table`
-                WHERE `$parentIDfield` IN ('" . implode("','",$found) . "')";
-
-      // CLear the found array
+      // Clear the found array
       unset($found);
       $found = array();
 
-      $result = $DB->query($query);
-      if ($DB->numrows($result) > 0) {
-         while ($row = $DB->fetch_assoc($result)) {
-            if (!isset($id_found[$row['id']])) {
-               $id_found[$row['id']] = $row['id'];
-               $found[$row['id']]    = $row['id'];
-            }
+      // Get next elements
+      $rows = $DB->dbh->table($table)->where($parentIDfield, $found);
+      foreach ($rows as $row) {
+         $data = $row->getData();
+         if (!isset($id_found[$data['id']])) {
+            $id_found[$data['id']] = $data['id'];
+            $found[$data['id']]    = $data['id'];
          }
       }
    }
@@ -794,11 +732,9 @@ function getSonsOf($table, $IDf) {
    // Store cache datas in DB
    if ($use_cache
        && ($IDf > 0)) {
-
-      $query = "UPDATE `$table`
-                SET `sons_cache`='".exportArrayToDB($id_found)."'
-                WHERE `id` = '$IDf';";
-      $DB->query($query);
+      $DB->dbh->begin();
+      $DB->dbh->table($table)->where('id', $IDf)->update(array('sons_cache' => exportArrayToDB($id_found)));
+		$DB->dbh->commit();
    }
 
    return $id_found;
@@ -1055,7 +991,7 @@ function getNextItem($table, $ID, $condition="", $nextprev_item="name") {
    }
 
    // Restrict to active entities
-   if ($table == "glpi_entities") {
+   if ($table == Entity::getTable()) {
       $query .= getEntitiesRestrictRequest("AND", $table, '', '', true);
 
    } else if ($item->isEntityAssign()) {
@@ -1143,7 +1079,7 @@ function getPreviousItem($table, $ID, $condition="", $nextprev_item="name") {
    }
 
    // Restrict to active entities
-   if ($table == "glpi_entities") {
+   if ($table == Entity::getTable()) {
       $query .= getEntitiesRestrictRequest("AND", $table, '', '', true);
 
    } else if ($item->isEntityAssign()) {
@@ -1300,19 +1236,19 @@ function getUserName($ID, $link=0) {
 
             if ($data["locations_id"] > 0) {
                $comments[] = array('name'  => __('Location'),
-                                   'value' => Dropdown::getDropdownName("glpi_locations",
+                                   'value' => Dropdown::getDropdownName(Location::getTable(),
                                                                         $data["locations_id"]));
             }
 
             if ($data["usertitles_id"] > 0) {
                $comments[] = array('name'  => _x('person','Title'),
-                                   'value' => Dropdown::getDropdownName("glpi_usertitles",
+                                   'value' => Dropdown::getDropdownName(UserTitle::getTable(),
                                                                         $data["usertitles_id"]));
             }
 
             if ($data["usercategories_id"] > 0) {
                $comments[] = array('name'  => __('Category'),
-                                   'value' => Dropdown::getDropdownName("glpi_usercategories",
+                                   'value' => Dropdown::getDropdownName(UserCategory::getTable(),
                                                                         $data["usercategories_id"]));
             }
             if (count($comments)) {
@@ -1350,19 +1286,18 @@ function getUserName($ID, $link=0) {
 function TableExists($tablename) {
    global $DB;
 
+   return TRUE;
+
    // Get a list of tables contained within the database.
    $result = $DB->list_tables("%".$tablename."%");
-
-   if ($rcount = $DB->numrows($result)) {
-      while ($data = $DB->fetch_row($result)) {
-         if ($data[0] === $tablename) {
-            return true;
-         }
-      }
+   $cnt = 0;
+   foreach ($result as $row) {
+      $cnt++;
    }
-
-   $DB->free_result($result);
-   return false;
+   if ($cnt > 0) {
+      return TRUE;
+   }
+   return FALSE;
 }
 
 
@@ -1473,7 +1408,7 @@ function autoName($objectName, $field, $isTemplate, $itemtype, $entities_id=-1) 
 
                if ($CFG_GLPI["use_autoname_by_entity"]
                    && ($entities_id >= 0)) {
-                  $query .=" AND `entities_id` = '$entities_id' ";
+                  $query .=" AND `entity_id` = '$entities_id' ";
                }
 
                $first = 0;
@@ -1494,7 +1429,7 @@ function autoName($objectName, $field, $isTemplate, $itemtype, $entities_id=-1) 
 
                if ($CFG_GLPI["use_autoname_by_entity"]
                    && ($entities_id >= 0)) {
-                  $query .= " AND `entities_id` = '$entities_id' ";
+                  $query .= " AND `entity_id` = '$entities_id' ";
                }
             }
          }
@@ -1694,10 +1629,10 @@ function getEntitiesRestrictRequest($separator="AND", $table="", $field="",$valu
       $query .= "`$table`.";
    }
    if (empty($field)) {
-      if ($table == 'glpi_entities') {
+      if ($table == Entity::getTable()) {
          $field = "id";
       } else {
-         $field = "entities_id";
+         $field = "entity_id";
       }
    }
 
@@ -1717,7 +1652,7 @@ function getEntitiesRestrictRequest($separator="AND", $table="", $field="",$valu
       $ancestors = array();
       if (is_array($value)) {
          foreach ($value as $val) {
-            $ancestors = array_unique(array_merge(getAncestorsOf("glpi_entities", $val),
+            $ancestors = array_unique(array_merge(getAncestorsOf(Entity::getTable(), $val),
                                                   $ancestors));
          }
          $ancestors = array_diff($ancestors, $value);
@@ -1726,11 +1661,11 @@ function getEntitiesRestrictRequest($separator="AND", $table="", $field="",$valu
          $ancestors = $_SESSION['glpiparententities'];
 
       } else {
-         $ancestors = getAncestorsOf("glpi_entities", $value);
+         $ancestors = getAncestorsOf(Entity::getTable(), $value);
       }
 
       if (count($ancestors)) {
-         if ($table == 'glpi_entities') {
+         if ($table == Entity::getTable()) {
             $query .= " OR `$table`.`$field` IN ('" . implode("','",$ancestors) . "')";
          } else {
             $query .= " OR (`$table`.`is_recursive`='1' ".
@@ -1741,4 +1676,68 @@ function getEntitiesRestrictRequest($separator="AND", $table="", $field="",$valu
    $query .= " ) ";
 
    return $query;
+}
+
+
+function whereEntitiesRestrict($rows, $separator="AND", $table="", $field="",$value='',
+                                    $is_recursive=false, $complete_request=false) {
+
+   // !='0' needed because consider as empty
+   if (!$complete_request
+       && ($value != '0')
+       && empty($value)
+       && isset($_SESSION['glpishowallentities'])
+       && $_SESSION['glpishowallentities']) {
+
+      // Not ADD "AND 1" if not needed
+      if (trim($separator) == "AND") {
+         return $rows;
+      }
+      return $rows;
+   }
+
+   if (empty($field)) {
+      if ($table == Entity::getTable()) {
+         $field = "id";
+      } else {
+         $field = "entity_id";
+      }
+   }
+
+   if (!is_array($value) && strlen($value) == 0) {
+      $rows = $rows->where($field, $_SESSION['glpiactiveentities_string']);
+   } else {
+      $rows = $rows->where($field, $value);
+   }
+   return $rows;
+
+   if ($is_recursive) {
+      $ancestors = array();
+      if (is_array($value)) {
+         foreach ($value as $val) {
+            $ancestors = array_unique(array_merge(getAncestorsOf(Entity::getTable(), $val),
+                                                  $ancestors));
+         }
+         $ancestors = array_diff($ancestors, $value);
+
+      } else if (strlen($value) == 0) {
+         $ancestors = $_SESSION['glpiparententities'];
+
+      } else {
+         $ancestors = getAncestorsOf(Entity::getTable(), $value);
+      }
+
+      if (count($ancestors)) {
+         if ($table == Entity::getTable()) {
+            $query .= " OR `$table`.`$field` IN ('" . implode("','",$ancestors) . "')";
+         } else {
+            $query .= " OR (`$table`.`is_recursive`='1' ".
+                           "AND `$table`.`$field` IN ('" . implode("','",$ancestors) . "'))";
+         }
+      }
+   }
+   $query .= " ) ";
+
+   return $query;
+
 }

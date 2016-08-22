@@ -233,7 +233,7 @@ class Plugin extends CommonDBTM {
 
       //// Get all plugins
       // Get all from DBs
-      $pluglist   = $this->find("","name, directory");
+      $pluglist   = $this->find("", array('name', 'directory'));
       $db_plugins = array();
       if (count($pluglist)) {
          foreach ($pluglist as $plug) {
@@ -327,7 +327,7 @@ class Plugin extends CommonDBTM {
                $data['state'] = self::NOTINSTALLED;
             }
             $data['directory'] = $plug;
-            $this->add($data);
+//            $this->add($data);
          }
       }
    }
@@ -796,9 +796,13 @@ class Plugin extends CommonDBTM {
     * @param $plugin plugin directory
    **/
    function isActivated($plugin) {
+      global $DB;
 
-      if ($this->getFromDBbyDir($plugin)) {
-         return ($this->fields['state'] == self::ACTIVATED);
+      $rows = $DB->dbh->plugin()->where('directory', $plugin);
+      if ($rows->count()) {
+         $row = $rows->fetch();
+         $row_data = $row->getData();
+         return ($row_data['state'] == self::ACTIVATED);
       }
    }
 

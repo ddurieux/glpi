@@ -1074,14 +1074,14 @@ class NetworkPort extends CommonDBChild {
       }
 
       if ($item->getType() == 'NetworkPort') {
-         $nbAlias = countElementsInTable('glpi_networkportaliases',
+         $nbAlias = countElementsInTable(NetworkPortAlias::getTable(),
                                          "`networkports_id_alias` = '".$item->getField('id')."'");
          if ($nbAlias > 0) {
             $aliases = self::createTabEntry(NetworkPortAlias::getTypeName(Session::getPluralNumber()), $nbAlias);
          } else {
             $aliases = '';
          }
-         $nbAggregates = countElementsInTable('glpi_networkportaggregates',
+         $nbAggregates = countElementsInTable(NetworkPortAggregate::getTable(),
                                               "`networkports_id_list`
                                                    LIKE '%\"".$item->getField('id')."\"%'");
          if ($nbAggregates > 0) {
@@ -1104,7 +1104,7 @@ class NetworkPort extends CommonDBChild {
    **/
    static function countForItem(CommonDBTM $item) {
 
-      return countElementsInTable('glpi_networkports',
+      return countElementsInTable(self::getTable(),
                                   "`itemtype` = '".$item->getType()."'
                                       AND `items_id` ='".$item->getField('id')."'
                                       AND `is_deleted` = '0'");

@@ -398,7 +398,7 @@ class KnowbaseItem extends CommonDBTM {
                   // Restrict to entities
                   $entities = array($group['entities_id']);
                   if ($group['is_recursive']) {
-                     $entities = getSonsOf('glpi_entities', $group['entities_id']);
+                     $entities = getSonsOf(Entity::getTable(), $group['entities_id']);
                   }
                   if (Session::haveAccessToOneOfEntities($entities, true)) {
                      return true;
@@ -416,7 +416,7 @@ class KnowbaseItem extends CommonDBTM {
             foreach ($data as $entity) {
                $entities = array($entity['entities_id']);
                if ($entity['is_recursive']) {
-                  $entities = getSonsOf('glpi_entities', $entity['entities_id']);
+                  $entities = getSonsOf(Entity::getTable(), $entity['entities_id']);
                }
                if (Session::haveAccessToOneOfEntities($entities, true)) {
                   return true;
@@ -438,7 +438,7 @@ class KnowbaseItem extends CommonDBTM {
                // Restrict to entities
                $entities = array($profile['entities_id']);
                if ($profile['is_recursive']) {
-                  $entities = getSonsOf('glpi_entities', $profile['entities_id']);
+                  $entities = getSonsOf(Entity::getTable(), $profile['entities_id']);
                }
                if (Session::haveAccessToOneOfEntities($entities, true)) {
                   return true;
@@ -1072,7 +1072,7 @@ class KnowbaseItem extends CommonDBTM {
       }
 
       if (KnowbaseItemTranslation::isKbTranslationActive()
-          && (countElementsInTable('glpi_knowbaseitemtranslations') > 0)) {
+          && (countElementsInTable(KnowbaseItemTranslation::getTable()) > 0)) {
          $join .= "LEFT JOIN `glpi_knowbaseitemtranslations`
                      ON (`glpi_knowbaseitems`.`id` = `glpi_knowbaseitemtranslations`.`knowbaseitems_id`
                          AND `glpi_knowbaseitemtranslations`.`language` = '".$_SESSION['glpilanguage']."')";
@@ -1110,7 +1110,7 @@ class KnowbaseItem extends CommonDBTM {
 
                $addscore = array();
                if (KnowbaseItemTranslation::isKbTranslationActive()
-                   && (countElementsInTable('glpi_knowbaseitemtranslations') > 0)) {
+                   && (countElementsInTable(KnowbaseItemTranslation::getTable()) > 0)) {
                   $addscore = array('`glpi_knowbaseitemtranslations`.`name`',
                                     '`glpi_knowbaseitemtranslations`.`answer`');
                }
@@ -1167,7 +1167,7 @@ class KnowbaseItem extends CommonDBTM {
                   $contains = preg_replace($search1,"", $params["contains"]);
                   $addwhere = '';
                   if (KnowbaseItemTranslation::isKbTranslationActive()
-                      && (countElementsInTable('glpi_knowbaseitemtranslations') > 0)) {
+                      && (countElementsInTable(KnowbaseItemTranslation::getTable()) > 0)) {
                      $addwhere = " OR `glpi_knowbaseitemtranslations`.`name` ".Search::makeTextSearch($contains)."
                                     OR `glpi_knowbaseitemtranslations`.`answer` ".Search::makeTextSearch($contains);
                   }
@@ -1429,7 +1429,7 @@ class KnowbaseItem extends CommonDBTM {
             if (($output_type == Search::PDF_OUTPUT_LANDSCAPE)
                 || ($output_type == Search::PDF_OUTPUT_PORTRAIT)) {
                echo Search::showFooter($output_type,
-                                       Dropdown::getDropdownName("glpi_knowbaseitemcategories",
+                                       Dropdown::getDropdownName(KnowbaseItemCategory::getTable(),
                                                                  $params['knowbaseitemcategories_id']));
             } else {
                echo Search::showFooter($output_type);
@@ -1508,7 +1508,7 @@ class KnowbaseItem extends CommonDBTM {
 
 
       if (KnowbaseItemTranslation::isKbTranslationActive()
-          && (countElementsInTable('glpi_knowbaseitemtranslations') > 0)) {
+          && (countElementsInTable(KnowbaseItemTranslation::getTable()) > 0)) {
          $join .= "LEFT JOIN `glpi_knowbaseitemtranslations`
                      ON (`glpi_knowbaseitems`.`id` = `glpi_knowbaseitemtranslations`.`knowbaseitems_id`
                            AND `glpi_knowbaseitemtranslations`.`language` = '".$_SESSION['glpilanguage']."')";
@@ -1741,12 +1741,12 @@ class KnowbaseItem extends CommonDBTM {
                }
                echo "<td>".__('Group')."</td>";
                echo "<td>";
-               $names     = Dropdown::getDropdownName('glpi_groups', $data['groups_id'],1);
+               $names     = Dropdown::getDropdownName(Group::getTable(), $data['groups_id'],1);
                $groupname = sprintf(__('%1$s %2$s'), $names["name"],
                                     Html::showToolTip($names["comment"], array('display' => false)));
                if ($data['entities_id'] >= 0) {
                   $groupname = sprintf(__('%1$s / %2$s'), $groupname,
-                                       Dropdown::getDropdownName('glpi_entities',
+                                       Dropdown::getDropdownName(Entity::getTable(),
                                                                  $data['entities_id']));
                   if ($data['is_recursive']) {
                      $groupname = sprintf(__('%1$s %2$s'), $groupname,
@@ -1772,7 +1772,7 @@ class KnowbaseItem extends CommonDBTM {
                }
                echo "<td>".__('Entity')."</td>";
                echo "<td>";
-               $names      = Dropdown::getDropdownName('glpi_entities', $data['entities_id'],1);
+               $names      = Dropdown::getDropdownName(Entity::getTable(), $data['entities_id'],1);
                $entityname = sprintf(__('%1$s %2$s'), $names["name"],
                                     Html::showToolTip($names["comment"], array('display' => false)));
                if ($data['is_recursive']) {
@@ -1798,12 +1798,12 @@ class KnowbaseItem extends CommonDBTM {
                }
                echo "<td>"._n('Profile', 'Profiles', 1)."</td>";
                echo "<td>";
-               $names       = Dropdown::getDropdownName('glpi_profiles', $data['profiles_id'], 1);
+               $names       = Dropdown::getDropdownName(Profile::getTable(), $data['profiles_id'], 1);
                $profilename = sprintf(__('%1$s %2$s'), $names["name"],
                                     Html::showToolTip($names["comment"], array('display' => false)));
                if ($data['entities_id'] >= 0) {
                   $profilename = sprintf(__('%1$s / %2$s'), $profilename,
-                                       Dropdown::getDropdownName('glpi_entities',
+                                       Dropdown::getDropdownName(Entity::getTable(),
                                                                  $data['entities_id']));
                   if ($data['is_recursive']) {
                      $profilename = sprintf(__('%1$s %2$s'), $profilename,

@@ -143,7 +143,7 @@ class Infocom extends CommonDBChild {
 
             default :
                if ($_SESSION['glpishow_count_on_tabs']) {
-                  $nb = countElementsInTable('glpi_infocoms',
+                  $nb = countElementsInTable($this->getTable(),
                                              "`itemtype` = '".$item->getType()."'
                                                AND `items_id` = '".$item->getID()."'");
                }
@@ -183,7 +183,7 @@ class Infocom extends CommonDBChild {
                     getEntitiesRestrictRequest(" AND ", "glpi_infocoms", '',
                                                $_SESSION['glpiactiveentities']);
 
-      return countElementsInTable(array('glpi_infocoms'), $restrict);
+      return countElementsInTable(self::getTable(), $restrict);
    }
 
 
@@ -516,11 +516,11 @@ class Infocom extends CommonDBChild {
             $cron_status = 1;
             if ($task) {
                $task->log(sprintf(__('%1$s: %2$s')."\n",
-                                  Dropdown::getDropdownName("glpi_entities", $entity), $message));
+                                  Dropdown::getDropdownName(Entity::getTable(), $entity), $message));
                $task->addVolume(1);
             } else {
                Session::addMessageAfterRedirect(sprintf(__('%1$s: %2$s'),
-                                                        Dropdown::getDropdownName("glpi_entities",
+                                                        Dropdown::getDropdownName(Entity::getTable(),
                                                                                   $entity),
                                                         $message));
             }
@@ -535,7 +535,7 @@ class Infocom extends CommonDBChild {
             }
 
          } else {
-            $entityname = Dropdown::getDropdownName('glpi_entities', $entity);
+            $entityname = Dropdown::getDropdownName(Entity::getTable(), $entity);
             //TRANS: %s is entity name
             $msg = sprintf(__('%1$s: %2$s'), $entityname, __('send infocom alert failed'));
             if ($task) {
@@ -1022,7 +1022,7 @@ class Infocom extends CommonDBChild {
             echo "<td>".__('Supplier')."</td>";
             echo "<td>";
             if ($withtemplate == 2) {
-               echo Dropdown::getDropdownName("glpi_suppliers", $ic->fields["suppliers_id"]);
+               echo Dropdown::getDropdownName(Supplier::getTable(), $ic->fields["suppliers_id"]);
             } else {
                Supplier::dropdown(array('value'  => $ic->fields["suppliers_id"],
                                         'entity' => $item->getEntityID(),

@@ -77,8 +77,8 @@ class Search {
       $params = self::manageParams($itemtype, $_GET);
       echo "<div class='search_page'>";
       self::showGenericSearch($itemtype, $params);
-      self::showList($itemtype, $params);
       echo "</div>";
+      echo "<div id='search_list'></div>";
    }
 
 
@@ -93,9 +93,29 @@ class Search {
    static function showList($itemtype, $params) {
 
       $data = self::prepareDatasForSearch($itemtype, $params);
-      self::constructSQL($data);
-      self::constructDatas($data);
-      self::displayDatas($data);
+//echo "<pre>";
+//print_r($data);
+//echo "</pre>";
+
+      /*
+       * Specifications (1/2) by David Durieux
+       *
+       * * [search] Get IDs for each table into array
+       * * [search] make array add, diff... of each array
+       */
+       $ids = self::search_get_all_ids($data);
+       $ids = self::search_ids_operations($ids);
+
+      /*
+       * Specifications (2/2) by David Durieux
+       *
+       * * [prepare_display] with the array IDs found, get the id + name (+ comment) of each column
+       * * [prepare_display] convert each column to the field / html code..
+       * * [display] display the data
+       */
+       $prepared_data = self::prepareDisplayIdName($data, $ids);
+       $prepared_data = self::prepareColumns($data, $prepared_data);
+       self::displayDatas($prepared_data);
    }
 
    /**
@@ -241,20 +261,21 @@ class Search {
       }
 
       if (count($p['criteria']) > 0) {
-         foreach ($p['criteria'] as $key => $val) {
-            if (!in_array($val['field'], $data['toview'])) {
-               if (isset($val['field']) && ($val['field'] != 'all') && ($val['field'] != 'view')) {
-                  array_push($data['toview'], $val['field']);
-               } else if ($val['field'] == 'all'){
-                  $data['search']['all_search'] = true;
-               } else if ($val['field'] == 'view'){
-                  $data['search']['view_search'] = true;
-               }
-            }
-            if (isset($val['value']) && (strlen($val['value']) > 0)) {
-               $data['search']['no_search'] = false;
-            }
-         }
+         $data['search']['criteria'] = $p['criteria'];
+//         foreach ($p['criteria'] as $key => $val) {
+//            if (!in_array($val['field'], $data['toview'])) {
+//               if (isset($val['field']) && ($val['field'] != 'all') && ($val['field'] != 'view')) {
+//                  array_push($data['toview'], $val['field']);
+//               } else if ($val['field'] == 'all'){
+//                  $data['search']['all_search'] = true;
+//               } else if ($val['field'] == 'view'){
+//                  $data['search']['view_search'] = true;
+//               }
+//            }
+//            if (isset($val['value']) && (strlen($val['value']) > 0)) {
+//               $data['search']['no_search'] = false;
+//            }
+//         }
       }
 
       if (count($p['metacriteria'])) {
@@ -830,7 +851,7 @@ class Search {
 
                   $tmpquery = $SELECT.", '$ctype' AS TYPE,
                                       `$reftable`.`id` AS refID, "."
-                                      `$ctable`.`entities_id` AS ENTITY ".
+                                      `$ctable`.`entity_id` AS ENTITY ".
                               $FROM.
                               $WHERE;
                   if ($data['item']->maybeDeleted()) {
@@ -1328,7 +1349,15 @@ class Search {
 
          // Display column Headers for toview items
          $metanames = array();
+         $datatypes_number = array();
          foreach ($data['data']['cols'] as $key => $val) {
+            $datatype_number = FALSE;
+            if (isset($val['searchopt']['datatype'])
+                    && in_array($val['searchopt']['datatype'], array('timestamp',
+                        'number', 'count', 'decimal'))) {
+               $datatype_number = TRUE;
+            }
+            $datatypes_number[$key] = $datatype_number;
             $linkto = '';
             if (!$val['meta']
                 && (!isset($val['searchopt']['nosort'])
@@ -1365,7 +1394,8 @@ class Search {
                                                    $header_num, $linkto,
                                                    (!$val['meta']
                                                     && ($data['search']['sort'] == $val['id'])),
-                                                   $data['search']['order']);
+                                                   $data['search']['order'],
+                                                   '', $datatype_number);
          }
 
          // Add specific column Header
@@ -1436,7 +1466,7 @@ class Search {
 
                } else if (($data['item'] instanceof CommonDBTM)
                            && $data['item']->maybeRecursive()
-                           && !in_array($row["entities_id"], $_SESSION["glpiactiveentities"])) {
+                           && !in_array($row["entity_id"], $_SESSION["glpiactiveentities"])) {
                   $tmpcheck = "&nbsp;";
 
                } else {
@@ -1450,13 +1480,14 @@ class Search {
             // Print other toview items
             foreach ($data['data']['cols'] as $colkey => $col) {
                if (!$col['meta']) {
-                  echo self::showItem($data['display_type'], $row[$colkey]['displayname'],
+                  echo self::showItem($data['display_type'], $row[$colkey]['name'],
                                        $item_num, $row_num,
                                        self::displayConfigItem($data['itemtype'], $col['id'],
-                                                               $row, $colkey));
+                                                               $row, $colkey),
+                                       $datatypes_number[$colkey]);
                } else { // META case
                   echo self::showItem($data['display_type'], $row[$colkey]['displayname'],
-                                      $item_num, $row_num);
+                                      $item_num, $row_num, '', $datatypes_number[$colkey]);
                }
             }
 
@@ -1468,7 +1499,7 @@ class Search {
                   }
                }
                echo self::showItem($data['display_type'], $typenames[$row["TYPE"]],
-                                   $item_num, $row_num);
+                                   $item_num, $row_num, '', $datatypes_number[$colkey]);
             }
             // End Line
             echo self::showEndLine($data['display_type']);
@@ -1814,6 +1845,147 @@ class Search {
    **/
    static function showGenericSearch($itemtype, array $params) {
       global $CFG_GLPI;
+
+      $filters = array();
+      $searchopt = &self::getOptions($itemtype);
+      $optgroup = '';
+
+$script = "
+// Fix for Selectize
+$('#builder-widgets').on('afterCreateRuleInput.queryBuilder', function(e, rule) {
+  if (rule.filter.plugin == 'selectize') {
+    rule.\$el.find('.rule-value-container').css('min-width', '200px')
+      .find('.selectize-control').removeClass('form-control');
+  }
+});
+
+
+$('#builder-widgets').queryBuilder({
+  plugins: [],
+  allow_empty: true,
+  lang_code: 'fr',
+  filters: [";
+
+      foreach ($searchopt as $search_id=>$search_option) {
+         if (!is_int($search_id)) {
+            $optgroup = $search_option;
+         } else {
+            $type = 'string';
+            $input = 'text';
+            $on_initialize = '';
+            $plugin_config = '';
+            if (isset($search_option['datatype'])) {
+               if (in_array($search_option['datatype'], array('string', 'date', 'datetime'))) {
+                  $type = $search_option['datatype'];
+               } else if ($search_option['datatype'] == 'bool') {
+                  $type = 'integer';
+                  $input = 'radio';
+               } else if ($search_option['datatype'] == 'number') {
+                  $type = 'integer';
+               } else if ($search_option['datatype'] == 'decimal') {
+                  $type = 'double';
+               } else if ($search_option['datatype'] == 'dropdown') {
+                  $input = 'select';
+               }
+            }
+            $script .= "{ \n"
+                    . " id: ".$search_id.",\n"
+                    . " label: '".addslashes($search_option['name'])."',\n"
+                    . " type: '".$type."',\n"
+                    . " optgroup: '".$optgroup."',\n"
+                    . " input: '".$input."',\n";
+            if ($input == 'radio') {
+               $script .= " values: {\n"
+               . "    1: 'Yes',\n"
+               . "    0: 'No',\n"
+               . " },\n";
+            } else if ($input == 'select') {
+               $script .= " plugin: 'selectize',\n"
+                    . " plugin_config: {\n"
+                    . "    valueField: 'id',\n"
+                    . "    labelField: 'text',\n"
+                    . "    searchField: 'text',\n"
+                    . "    sortField: 'text',\n"
+                    . "    create: false,\n"
+                    . "    render: {\n"
+                    . "       option: function (item, escape) {\n"
+                    . "          return '<div>' + escape(item.title) + '</div>';\n"
+                    . "       }\n"
+                    . "    },\n"
+                    . "    load: function(query, callback) {\n"
+                    . "       if (!query.length) return callback();"
+                    . "       var that = this;\n"
+                    . "       $.ajax('".$CFG_GLPI['root_doc']."/ajax/getDropdownValue.php', {\n"
+                    . "          data: {\n"
+                    . "             searchText: query,"
+                    . "             value: query,\n";
+               $params = array('valuename' => 'name',
+                               'width'     => 100,
+                               'itemtype'  => getItemTypeForTable($search_option['table']));
+
+               foreach ($params as $key => $val) {
+                  $script .= "             $key: ".json_encode($val).",\n";
+               }
+
+               $script .= ""
+                    . "          },\n"
+                    . "          dataType: 'json',\n"
+                    . "          type: 'POST',\n"
+                    . "          error: function() {\n"
+                    . "             callback();\n"
+                    . "          },\n"
+                    . "          success: function(res) {\n"
+                    . "              callback(res.results);\n"
+                    . "          }\n"
+                    . "       });\n"
+                    . "    },\n"
+                    . " },\n"
+                    . " valueSetter: function(rule, value) {".
+                                 "   rule.\$el.find('.rule-value-container input')[0].selectize.setValue(value);".
+                                 "},";
+            }
+            $script .= "},";
+
+         }
+      }
+
+
+$script .= "]
+
+});
+
+$('#btn-reset').on('click', function() {
+  $('#builder-widgets').queryBuilder('reset');
+});
+
+$('#btn-search').on('click', function() {
+  var result = $('#builder-widgets').queryBuilder('getRules');
+
+  $.ajax({
+    url: 'http://127.0.0.1/glpi090/ajax/searchitemtype.php',
+    type: 'POST',
+    data: {'itemtype': '".$itemtype."', 'params': result},
+    success: function(data) {
+      $('#search_list').html(data);
+    }
+  });
+});
+
+
+";
+
+echo '<div id="builder-widgets" class="tab_cadrehov"></div>';
+echo '<button class="btn btn-primary parse-json" id="btn-reset" data-target="widgets">Reset</button>';
+echo ' <button class="btn btn-primary parse-json" id="btn-search" data-target="widgets">Search</button>';
+echo Html::scriptBlock($script);
+
+// When click on search button, run the search
+//Ajax::updateItemOnEvent('btn-get2', 'search_list', 'http://127.0.0.1/glpi090/ajax/searchitemtype.php',
+//        array('itemtype' => $itemtype, 'params' => "$('#builder-widgets').queryBuilder('getRules')"), array('click'));
+
+return;
+
+
 
       // Default values of parameters
       $p['sort']         = '';
@@ -2229,9 +2401,9 @@ class Search {
             }
       }
       if ($itemtable == 'glpi_entities') {
-         $ret .= "`$itemtable`.`id` AS entities_id, '1' AS is_recursive, ";
+         $ret .= "`$itemtable`.`id` AS entity_id, '1' AS is_recursive, ";
       } else if ($mayberecursive) {
-         $ret .= "`$itemtable`.`entities_id`, `$itemtable`.`is_recursive`, ";
+         $ret .= "`$itemtable`.`entity_id`, `$itemtable`.`is_recursive`, ";
       }
       return $ret;
    }
@@ -2341,7 +2513,7 @@ class Search {
                           "_".self::computeComplexJoinID($searchopt[$ID]['joinparams']['beforejoin']
                                                                    ['joinparams']);
                      $addaltemail
-                        = "GROUP_CONCAT(DISTINCT CONCAT(`$ticket_user_table`.`users_id`, ' ',
+                        = "GROUP_CONCAT(DISTINCT CONCAT(`$ticket_user_table`.`user_id`, ' ',
                                                         `$ticket_user_table`.`alternative_email`)
                                                         SEPARATOR '".self::LONGSEP."') AS `".$NAME."_".$num."_2`, ";
                   }
@@ -2370,8 +2542,8 @@ class Search {
             if (($itemtype == 'User')
                 && ($ID == 20)) {
                return " GROUP_CONCAT(`$table$addtable`.`$field` SEPARATOR '".self::LONGSEP."') AS `".$NAME."_$num`,
-                        GROUP_CONCAT(`glpi_profiles_users$addtable2`.`entities_id` SEPARATOR '".self::LONGSEP."')
-                                    AS `".$NAME."_".$num."_entities_id`,
+                        GROUP_CONCAT(`glpi_profiles_users$addtable2`.`entity_id` SEPARATOR '".self::LONGSEP."')
+                                    AS `".$NAME."_".$num."_entity_id`,
                         GROUP_CONCAT(`glpi_profiles_users$addtable2`.`is_recursive` SEPARATOR '".self::LONGSEP."')
                                     AS `".$NAME."_".$num."_is_recursive`,
                         GROUP_CONCAT(`glpi_profiles_users$addtable2`.`is_dynamic` SEPARATOR '".self::LONGSEP."')
@@ -2385,8 +2557,8 @@ class Search {
                 && ($ID == 80)) {
                return " GROUP_CONCAT(`$table$addtable`.`completename` SEPARATOR '".self::LONGSEP."')
                                     AS `".$NAME."_$num`,
-                        GROUP_CONCAT(`glpi_profiles_users$addtable2`.`profiles_id` SEPARATOR '".self::LONGSEP."')
-                                    AS `".$NAME."_".$num."_profiles_id`,
+                        GROUP_CONCAT(`glpi_profiles_users$addtable2`.`profile_id` SEPARATOR '".self::LONGSEP."')
+                                    AS `".$NAME."_".$num."_profile_id`,
                         GROUP_CONCAT(`glpi_profiles_users$addtable2`.`is_recursive` SEPARATOR '".self::LONGSEP."')
                                     AS `".$NAME."_".$num."_is_recursive`,
                         GROUP_CONCAT(`glpi_profiles_users$addtable2`.`is_dynamic` SEPARATOR '".self::LONGSEP."')
@@ -2398,7 +2570,7 @@ class Search {
          case "glpi_auth_tables.name":
             $user_searchopt = self::getOptions('User');
             return " `glpi_users`.`authtype` AS `".$NAME."_".$num."`,
-                     `glpi_users`.`auths_id` AS `".$NAME."_".$num."_auths_id`,
+                     `glpi_users`.`auth_id` AS `".$NAME."_".$num."_auth_id`,
                      `glpi_authldaps".$addtable."_".
                            self::computeComplexJoinID($user_searchopt[30]['joinparams'])."`.`$field`
                               AS `".$NAME."_".$num."_ldapname`,
@@ -2608,14 +2780,14 @@ class Search {
             $condition = '';
             if (!Session::haveRight("project", Project::READALL)) {
                $teamtable  = 'glpi_projectteams';
-               $condition .= "(`glpi_projects`.users_id = '".Session::getLoginUserID()."'
+               $condition .= "(`glpi_projects`.user_id = '".Session::getLoginUserID()."'
                                OR (`$teamtable`.`itemtype` = 'User'
-                                   AND `$teamtable`.`items_id` = '".Session::getLoginUserID()."')";
+                                   AND `$teamtable`.`item_id` = '".Session::getLoginUserID()."')";
                if (count($_SESSION['glpigroups'])) {
-                  $condition .= " OR (`glpi_projects`.`groups_id`
+                  $condition .= " OR (`glpi_projects`.`group_id`
                                        IN (".implode(",",$_SESSION['glpigroups'])."))";
                   $condition .= " OR (`$teamtable`.`itemtype` = 'Group'
-                                      AND `$teamtable`.`items_id`
+                                      AND `$teamtable`.`item_id`
                                           IN (".implode(",",$_SESSION['glpigroups'])."))";
                }
                $condition .= ") ";
@@ -2659,31 +2831,31 @@ class Search {
                $condition = "(";
 
                if (Session::haveRight("ticket", Ticket::READMY)) {
-                    $condition .= " $requester_table.users_id = '".Session::getLoginUserID()."'
-                                    OR $observer_table.users_id = '".Session::getLoginUserID()."'
-                                    OR `glpi_tickets`.`users_id_recipient` = '".Session::getLoginUserID()."'";
+                    $condition .= " $requester_table.user_id = '".Session::getLoginUserID()."'
+                                    OR $observer_table.user_id = '".Session::getLoginUserID()."'
+                                    OR `glpi_tickets`.`user_id_recipient` = '".Session::getLoginUserID()."'";
                } else {
                     $condition .= "0=1";
                }
 
                if (Session::haveRight("ticket", Ticket::READGROUP)) {
                   if (count($_SESSION['glpigroups'])) {
-                     $condition .= " OR $requestergroup_table.`groups_id`
+                     $condition .= " OR $requestergroup_table.`group_id`
                                              IN (".implode(",",$_SESSION['glpigroups']).")";
-                     $condition .= " OR $observergroup_table.`groups_id`
+                     $condition .= " OR $observergroup_table.`group_id`
                                              IN (".implode(",",$_SESSION['glpigroups']).")";
                   }
                }
 
                if (Session::haveRight("ticket", Ticket::OWN)) {// Can own ticket : show assign to me
-                  $condition .= " OR $assign_table.users_id = '".Session::getLoginUserID()."' ";
+                  $condition .= " OR $assign_table.user_id = '".Session::getLoginUserID()."' ";
                }
 
                if (Session::haveRight("ticket", Ticket::READASSIGN)) { // assign to me
 
-                  $condition .=" OR $assign_table.`users_id` = '".Session::getLoginUserID()."'";
+                  $condition .=" OR $assign_table.`user_id` = '".Session::getLoginUserID()."'";
                   if (count($_SESSION['glpigroups'])) {
-                     $condition .= " OR $assigngroup_table.`groups_id`
+                     $condition .= " OR $assigngroup_table.`group_id`
                                              IN (".implode(",",$_SESSION['glpigroups']).")";
                   }
                   if (Session::haveRight('ticket', Ticket::ASSIGN)) {
@@ -2694,7 +2866,7 @@ class Search {
                if (Session::haveRightsOr('ticketvalidation',
                                          array(TicketValidation::VALIDATEINCIDENT,
                                                TicketValidation::VALIDATEREQUEST))) {
-                  $condition .= " OR `glpi_ticketvalidations`.`users_id_validate`
+                  $condition .= " OR `glpi_ticketvalidations`.`user_id_validate`
                                           = '".Session::getLoginUserID()."'";
                }
                $condition .= ") ";
@@ -2741,10 +2913,10 @@ class Search {
                   $condition = "(";
 
                   if (Session::haveRight("$right", $itemtype::READMY)) {
-                     $condition .= " $requester_table.users_id = '".Session::getLoginUserID()."'
-                                    OR $observer_table.users_id = '".Session::getLoginUserID()."'
-                                    OR $assign_table.users_id = '".Session::getLoginUserID()."'
-                                    OR `glpi_".$table."`.`users_id_recipient` = '".Session::getLoginUserID()."'";
+                     $condition .= " $requester_table.user_id = '".Session::getLoginUserID()."'
+                                    OR $observer_table.user_id = '".Session::getLoginUserID()."'
+                                    OR $assign_table.user_id = '".Session::getLoginUserID()."'
+                                    OR `glpi_".$table."`.`user_id_recipient` = '".Session::getLoginUserID()."'";
                   } else {
                      $condition .= "0=1";
                   }
@@ -2931,7 +3103,7 @@ class Search {
                   $toadd     = self::makeTextCriteria("`$linktable`.`alternative_email`", $val,
                                                       $nott, $tmplink);
                   if ($val == '^$') {
-                     return $link." ((`$linktable`.`users_id` IS NULL)
+                     return $link." ((`$linktable`.`user_id` IS NULL)
                             OR `$linktable`.`alternative_email` IS NULL)";
                   }
                }
@@ -3068,7 +3240,7 @@ class Search {
             }
             break;
 
-         case "glpi_tickets_tickets.tickets_id_1" :
+         case "glpi_tickets_tickets.ticket_id_1" :
             $tmplink = 'OR';
             $compare = '=';
             if ($nott) {
@@ -3081,8 +3253,8 @@ class Search {
                $toadd2 = " OR `$table`.`$field` IS NULL";
             }
 
-            return $link." (((`$table`.`tickets_id_1` $compare '$val'
-                              $tmplink `$table`.`tickets_id_2` $compare '$val')
+            return $link." (((`$table`.`ticket_id_1` $compare '$val'
+                              $tmplink `$table`.`ticket_id_2` $compare '$val')
                              AND `glpi_tickets`.`id` <> '$val')
                             $toadd2)";
 
@@ -3350,7 +3522,7 @@ class Search {
          // No link
           case 'User' :
              return self::addLeftJoin($itemtype, $ref_table, $already_link_tables,
-                                      "glpi_profiles_users", "profiles_users_id", 0, 0,
+                                      "glpi_profiles_users", "profile_user_id", 0, 0,
                                       array('jointype' => 'child'));
 
          case 'Reminder' :
@@ -3363,7 +3535,7 @@ class Search {
             // Same structure in addDefaultWhere
             $out  = '';
             $out .= self::addLeftJoin($itemtype, $ref_table, $already_link_tables,
-                                      "glpi_projecttaskteams", "projecttaskteams_id", 0, 0,
+                                      "glpi_projecttaskteams", "projecttaskteam_id", 0, 0,
                                       array('jointype' => 'child'));
             return $out;
 
@@ -3372,7 +3544,7 @@ class Search {
             $out = '';
             if (!Session::haveRight("project", Project::READALL)) {
                $out .= self::addLeftJoin($itemtype, $ref_table, $already_link_tables,
-                                          "glpi_projectteams", "projectteams_id", 0, 0,
+                                          "glpi_projectteams", "projectteam_id", 0, 0,
                                           array('jointype' => 'child'));
             }
             return $out;
@@ -3385,13 +3557,13 @@ class Search {
 
                // show mine : requester
                $out .= self::addLeftJoin($itemtype, $ref_table, $already_link_tables,
-                                         "glpi_tickets_users", "tickets_users_id", 0, 0,
+                                         "glpi_tickets_users", "tickets_user_id", 0, 0,
                                          $searchopt[4]['joinparams']['beforejoin']['joinparams']);
 
                if (Session::haveRight("ticket", Ticket::READGROUP)) {
                   if (count($_SESSION['glpigroups'])) {
                      $out .= self::addLeftJoin($itemtype, $ref_table, $already_link_tables,
-                                               "glpi_groups_tickets", "groups_tickets_id", 0, 0,
+                                               "glpi_groups_tickets", "groups_ticket_id", 0, 0,
                                                $searchopt[71]['joinparams']['beforejoin']
                                                          ['joinparams']);
                   }
@@ -3399,29 +3571,29 @@ class Search {
 
                // show mine : observer
                $out .= self::addLeftJoin($itemtype, $ref_table, $already_link_tables,
-                                         "glpi_tickets_users", "tickets_users_id", 0, 0,
+                                         "glpi_tickets_users", "tickets_user_id", 0, 0,
                                          $searchopt[66]['joinparams']['beforejoin']['joinparams']);
 
                if (count($_SESSION['glpigroups'])) {
                   $out .= self::addLeftJoin($itemtype, $ref_table, $already_link_tables,
-                                            "glpi_groups_tickets", "groups_tickets_id", 0, 0,
+                                            "glpi_groups_tickets", "groups_ticket_id", 0, 0,
                                             $searchopt[65]['joinparams']['beforejoin']['joinparams']);
                }
 
                if (Session::haveRight("ticket", Ticket::OWN)) { // Can own ticket : show assign to me
                   $out .= self::addLeftJoin($itemtype, $ref_table, $already_link_tables,
-                                            "glpi_tickets_users", "tickets_users_id", 0, 0,
+                                            "glpi_tickets_users", "tickets_user_id", 0, 0,
                                             $searchopt[5]['joinparams']['beforejoin']['joinparams']);
                }
 
                if (Session::haveRightsOr("ticket", array(Ticket::READMY, Ticket::READASSIGN))) { // show mine + assign to me
                   $out .= self::addLeftJoin($itemtype, $ref_table, $already_link_tables,
-                                            "glpi_tickets_users", "tickets_users_id", 0, 0,
+                                            "glpi_tickets_users", "tickets_user_id", 0, 0,
                                             $searchopt[5]['joinparams']['beforejoin']['joinparams']);
 
                   if (count($_SESSION['glpigroups'])) {
                      $out .= self::addLeftJoin($itemtype, $ref_table, $already_link_tables,
-                                               "glpi_groups_tickets", "groups_tickets_id", 0, 0,
+                                               "glpi_groups_tickets", "groups_ticket_id", 0, 0,
                                                $searchopt[8]['joinparams']['beforejoin']
                                                          ['joinparams']);
                   }
@@ -3431,7 +3603,7 @@ class Search {
                                          array(TicketValidation::VALIDATEINCIDENT,
                                                TicketValidation::VALIDATEREQUEST))) {
                   $out .= self::addLeftJoin($itemtype, $ref_table, $already_link_tables,
-                                            "glpi_ticketvalidations", "ticketvalidations_id", 0, 0,
+                                            "glpi_ticketvalidations", "ticketvalidation_id", 0, 0,
                                             $searchopt[58]['joinparams']['beforejoin']['joinparams']);
                }
             }
@@ -3443,12 +3615,12 @@ class Search {
                   $right       = 'change';
                   $table       = 'changes';
                   $groupetable = "glpi_changes_groups";
-                  $linkfield   = "changes_groups_id";
+                  $linkfield   = "changes_group_id";
                } else if ($itemtype == 'Problem') {
                   $right       = 'problem';
                   $table       = 'problems';
                   $groupetable = "glpi_groups_problems";
-                  $linkfield   = "groups_problems_id";
+                  $linkfield   = "groups_problem_id";
                }
 
                // Same structure in addDefaultWhere
@@ -3459,7 +3631,7 @@ class Search {
                   if (Session::haveRight("$right", $itemtype::READMY)) {
                      // show mine : requester
                      $out .= self::addLeftJoin($itemtype, $ref_table, $already_link_tables,
-                                               "glpi_".$table."_users", $table."_users_id", 0, 0,
+                                               "glpi_".$table."_users", $table."_user_id", 0, 0,
                                                $searchopt[4]['joinparams']['beforejoin']['joinparams']);
                      if (count($_SESSION['glpigroups'])) {
                         $out .= self::addLeftJoin($itemtype, $ref_table, $already_link_tables,
@@ -3469,7 +3641,7 @@ class Search {
 
                      // show mine : observer
                      $out .= self::addLeftJoin($itemtype, $ref_table, $already_link_tables,
-                                               "glpi_".$table."_users", $table."_users_id", 0, 0,
+                                               "glpi_".$table."_users", $table."_user_id", 0, 0,
                                                $searchopt[66]['joinparams']['beforejoin']['joinparams']);
                      if (count($_SESSION['glpigroups'])) {
                         $out .= self::addLeftJoin($itemtype, $ref_table, $already_link_tables,
@@ -3479,7 +3651,7 @@ class Search {
 
                      // show mine : assign
                      $out .= self::addLeftJoin($itemtype, $ref_table, $already_link_tables,
-                                               "glpi_".$table."_users", $table."_users_id", 0, 0,
+                                               "glpi_".$table."_users", $table."_user_id", 0, 0,
                                                $searchopt[5]['joinparams']['beforejoin']['joinparams']);
                      if (count($_SESSION['glpigroups'])) {
                         $out .= self::addLeftJoin($itemtype, $ref_table, $already_link_tables,
@@ -3663,10 +3835,10 @@ class Search {
                      $user_searchopt     = self::getOptions('User');
 
                      $specific_leftjoin  = self::addLeftJoin($itemtype, $rt, $already_link_tables,
-                                                             "glpi_authldaps", 'auths_id', 0, 0,
+                                                             "glpi_authldaps", 'auth_id', 0, 0,
                                                              $user_searchopt[30]['joinparams']);
                      $specific_leftjoin .= self::addLeftJoin($itemtype, $rt, $already_link_tables,
-                                                             "glpi_authmails", 'auths_id', 0, 0,
+                                                             "glpi_authmails", 'auth_id', 0, 0,
                                                              $user_searchopt[31]['joinparams']);
                      break;
             }
@@ -3720,7 +3892,7 @@ class Search {
                   }
                   // Itemtype join
                   $specific_leftjoin = " LEFT JOIN `$new_table` $AS
-                                          ON (`$rt`.`id` = `$nt`.`".$addmain."items_id`
+                                          ON (`$rt`.`id` = `$nt`.`".$addmain."item_id`
                                               AND `$nt`.`".$addmain."itemtype` = '$used_itemtype'
                                               $addcondition) ";
                   break;
@@ -3751,7 +3923,7 @@ class Search {
                      }
                      $specific_leftjoin .= "LEFT JOIN `glpi_dropdowntranslations` AS `$transAS`
                                              ON (`$transAS`.`itemtype` = '$transitemtype'
-                                                 AND `$transAS`.`items_id` = `$new_table`.`id`
+                                                 AND `$transAS`.`item_id` = `$new_table`.`id`
                                                  AND `$transAS`.`language` = '".
                                                        $_SESSION['glpilanguage']."'
                                                  AND `$transAS`.`field` = '$field')";
@@ -3798,7 +3970,7 @@ class Search {
          case 'Budget' :
             array_push($already_link_tables2,getTableForItemType($to_type));
             return "$LINK `glpi_infocoms`
-                        ON (`$from_table`.`id` = `glpi_infocoms`.`items_id`
+                        ON (`$from_table`.`id` = `glpi_infocoms`.`item_id`
                             AND `glpi_infocoms`.`itemtype` = '$from_type')
                     $LINK `$to_table`
                         ON (`glpi_infocoms`.`$to_fk` = `$to_table`.`id`) ";
@@ -3817,7 +3989,7 @@ class Search {
             return " $LINK `glpi_items_".$table."` AS glpi_items_".$table."_to_$to_type
                         ON (`glpi_".$table."`.`id` = `glpi_items_".$table."_to_$to_type`.`".$table."_id`)
                      $LINK `$to_table`
-                        ON (`$to_table`.`id` = `glpi_items_".$table."_to_$to_type`.`items_id`
+                        ON (`$to_table`.`id` = `glpi_items_".$table."_to_$to_type`.`item_id`
                      AND `glpi_items_".$table."_to_$to_type`.`itemtype` = '$to_type')";
 
          case 'Computer' :
@@ -3826,7 +3998,7 @@ class Search {
                   array_push($already_link_tables2, getTableForItemType($to_type));
                   array_push($already_link_tables2, "glpi_computers_items_$to_type");
                   return " $LINK `glpi_computers_items` AS `glpi_computers_items_$to_type`
-                              ON (`glpi_computers_items_$to_type`.`computers_id`
+                              ON (`glpi_computers_items_$to_type`.`computer_id`
                                        = `glpi_computers`.`id`
                                   AND `glpi_computers_items_$to_type`.`itemtype` = '$to_type'
                                   AND NOT `glpi_computers_items_$to_type`.`is_deleted`)
@@ -3837,7 +4009,7 @@ class Search {
                   array_push($already_link_tables2, getTableForItemType($to_type));
                   array_push($already_link_tables2, "glpi_computers_items_$to_type");
                   return " $LINK `glpi_computers_items` AS `glpi_computers_items_$to_type`
-                              ON (`glpi_computers_items_$to_type`.`computers_id`
+                              ON (`glpi_computers_items_$to_type`.`computer_id`
                                        = `glpi_computers`.`id`
                                   AND `glpi_computers_items_$to_type`.`itemtype` = '$to_type'
                                   AND NOT `glpi_computers_items_$to_type`.`is_deleted`)
@@ -3848,7 +4020,7 @@ class Search {
                   array_push($already_link_tables2, getTableForItemType($to_type));
                   array_push($already_link_tables2, "glpi_computers_items_$to_type");
                   return " $LINK `glpi_computers_items` AS `glpi_computers_items_$to_type`
-                              ON (`glpi_computers_items_$to_type`.`computers_id`
+                              ON (`glpi_computers_items_$to_type`.`computer_id`
                                        = `glpi_computers`.`id`
                                   AND `glpi_computers_items_$to_type`.`itemtype` = '$to_type'
                                   AND NOT `glpi_computers_items_$to_type`.`is_deleted`)
@@ -3860,7 +4032,7 @@ class Search {
                   array_push($already_link_tables2,getTableForItemType($to_type));
                   array_push($already_link_tables2, "glpi_computers_items_$to_type");
                   return " $LINK `glpi_computers_items` AS `glpi_computers_items_$to_type`
-                              ON (`glpi_computers_items_$to_type`.`computers_id`
+                              ON (`glpi_computers_items_$to_type`.`computer_id`
                                        = `glpi_computers`.`id`
                                   AND `glpi_computers_items_$to_type`.`itemtype` = '$to_type'
                                   AND NOT `glpi_computers_items_$to_type`.`is_deleted`)
@@ -3873,18 +4045,18 @@ class Search {
                   array_push($already_link_tables2,"glpi_softwarelicenses_$to_type");
                   return " $LINK `glpi_computers_softwareversions`
                                     AS `glpi_computers_softwareversions_$to_type`
-                              ON (`glpi_computers_softwareversions_$to_type`.`computers_id`
+                              ON (`glpi_computers_softwareversions_$to_type`.`computer_id`
                                        = `glpi_computers`.`id`
                                   AND `glpi_computers_softwareversions_$to_type`.`is_deleted` = '0')
                            $LINK `glpi_softwareversions` AS `glpi_softwareversions_$to_type`
-                              ON (`glpi_computers_softwareversions_$to_type`.`softwareversions_id`
+                              ON (`glpi_computers_softwareversions_$to_type`.`softwareversion_id`
                                        = `glpi_softwareversions_$to_type`.`id`)
                            $LINK `glpi_softwares`
-                              ON (`glpi_softwareversions_$to_type`.`softwares_id`
+                              ON (`glpi_softwareversions_$to_type`.`software_id`
                                        = `glpi_softwares`.`id`)
                            LEFT JOIN `glpi_softwarelicenses` AS `glpi_softwarelicenses_$to_type`
                               ON (`glpi_softwares`.`id`
-                                       = `glpi_softwarelicenses_$to_type`.`softwares_id`".
+                                       = `glpi_softwarelicenses_$to_type`.`software_id`".
                                   getEntitiesRestrictRequest(' AND',
                                                              "glpi_softwarelicenses_$to_type",
                                                              '', '', true).") ";
@@ -3901,7 +4073,7 @@ class Search {
                                   AND `glpi_computers_items_$to_type`.`itemtype` = '$from_type'
                                   AND NOT `glpi_computers_items_$to_type`.`is_deleted`)
                            $LINK `glpi_computers`
-                              ON (`glpi_computers_items_$to_type`.`computers_id`
+                              ON (`glpi_computers_items_$to_type`.`computer_id`
                                        = `glpi_computers`.`id`) ";
             }
             break;
@@ -3916,7 +4088,7 @@ class Search {
                                   AND `glpi_computers_items_$to_type`.`itemtype` = '$from_type'
                                   AND NOT `glpi_computers_items_$to_type`.`is_deleted`)
                            $LINK `glpi_computers`
-                              ON (`glpi_computers_items_$to_type`.`computers_id`
+                              ON (`glpi_computers_items_$to_type`.`computer_id`
                                        = `glpi_computers`.`id` ".
                                   getEntitiesRestrictRequest("AND", 'glpi_computers').") ";
             }
@@ -3933,7 +4105,7 @@ class Search {
                                   AND `glpi_computers_items_$to_type`.`itemtype` = '$from_type'
                                   AND NOT `glpi_computers_items_$to_type`.`is_deleted`)
                            $LINK `glpi_computers`
-                              ON (`glpi_computers_items_$to_type`.`computers_id`
+                              ON (`glpi_computers_items_$to_type`.`computer_id`
                                        = `glpi_computers`.`id`) ";
             }
             break;
@@ -3948,7 +4120,7 @@ class Search {
                                   AND `glpi_computers_items_$to_type`.`itemtype` = '$from_type'
                                   AND NOT `glpi_computers_items_$to_type`.`is_deleted`)
                            $LINK `glpi_computers`
-                              ON (`glpi_computers_items_$to_type`.`computers_id`
+                              ON (`glpi_computers_items_$to_type`.`computer_id`
                                        = `glpi_computers.id`) ";
             }
             break;
@@ -3960,15 +4132,15 @@ class Search {
                   array_push($already_link_tables2,"glpi_softwareversions_$to_type");
                   array_push($already_link_tables2,"glpi_softwareversions_$to_type");
                   return " $LINK `glpi_softwareversions` AS `glpi_softwareversions_$to_type`
-                              ON (`glpi_softwareversions_$to_type`.`softwares_id`
+                              ON (`glpi_softwareversions_$to_type`.`software_id`
                                        = `glpi_softwares`.`id`)
                            $LINK `glpi_computers_softwareversions`
                                     AS `glpi_computers_softwareversions_$to_type`
-                              ON (`glpi_computers_softwareversions_$to_type`.`softwareversions_id`
+                              ON (`glpi_computers_softwareversions_$to_type`.`softwareversion_id`
                                        = `glpi_softwareversions_$to_type`.`id`
                                   AND `glpi_computers_softwareversions_$to_type`.`is_deleted` = '0')
                            $LINK `glpi_computers`
-                              ON (`glpi_computers_softwareversions_$to_type`.`computers_id`
+                              ON (`glpi_computers_softwareversions_$to_type`.`computer_id`
                                        = `glpi_computers`.`id` ".
                                   getEntitiesRestrictRequest("AND", 'glpi_computers').") ";
             }
@@ -4175,8 +4347,8 @@ class Search {
                   for ($k=0 ; $k<$data[$num]['count'] ; $k++) {
                      if (strlen(trim($data[$num][$k]['name'])) > 0) {
                         $text = sprintf(__('%1$s - %2$s'), $data[$num][$k]['name'],
-                                        Dropdown::getDropdownName('glpi_entities',
-                                                                  $data[$num][$k]['entities_id']));
+                                        Dropdown::getDropdownName(Entity::getTable(),
+                                                                  $data[$num][$k]['entity_id']));
                         $comp = '';
                         if ($data[$num][$k]['is_recursive']) {
                            $comp = __('R');
@@ -4214,8 +4386,8 @@ class Search {
                      if (isset($data[$num][$k]['name'])
                          && (strlen(trim($data[$num][$k]['name'])) > 0)) {
                         $text = sprintf(__('%1$s - %2$s'), $data[$num][$k]['name'],
-                                        Dropdown::getDropdownName('glpi_profiles',
-                                                                  $data[$num][$k]['profiles_id']));
+                                        Dropdown::getDropdownName(Profile::getTable(),
+                                                                  $data[$num][$k]['profile_id']));
                         $comp = '';
                         if ($data[$num][$k]['is_recursive']) {
                            $comp = __('R');
@@ -4257,18 +4429,18 @@ class Search {
                }
                return NOT_AVAILABLE;
 
-            case "glpi_tickets_tickets.tickets_id_1" :
+            case "glpi_tickets_tickets.ticket_id_1" :
                $out        = "";
                $displayed  = array();
                for ($k=0 ; $k<$data[$num]['count'] ; $k++) {
 
-                  $linkid = ($data[$num][$k]['tickets_id_2'] == $data['id'])
+                  $linkid = ($data[$num][$k]['ticket_id_2'] == $data['id'])
                                  ? $data[$num][$k]['name']
-                                 : $data[$num][$k]['tickets_id_2'];
+                                 : $data[$num][$k]['ticket_id_2'];
                   if (($linkid > 0) && !isset($displayed[$linkid])) {
                      $text  = "<a ";
                      $text .= "href=\"".$CFG_GLPI["root_doc"]."/front/ticket.form.php?id=$linkid\">";
-                     $text .= Dropdown::getDropdownName('glpi_tickets', $linkid)."</a>";
+                     $text .= Dropdown::getDropdownName(Ticket::getTable(), $linkid)."</a>";
                      if (count($displayed)) {
                         $out .= self::LBBR;
                      }
@@ -4397,7 +4569,7 @@ class Search {
                   $percentage  = 0;
                   $totaltime   = 0;
                   $currenttime = 0;
-                  $sltField    = 'slts_id';
+                  $sltField    = 'slt_id';
 
                   switch ($table.'.'.$field) {
                      // If ticket has been taken into account : no progression display
@@ -4416,8 +4588,8 @@ class Search {
                      $totaltime   = $slt->getActiveTimeBetween($item->fields['date'],
                                                                $data[$num][0]['name']);
                   } else {
-                     $calendars_id = Entity::getUsedConfig('calendars_id',
-                                                           $item->fields['entities_id']);
+                     $calendars_id = Entity::getUsedConfig('calendar_id',
+                                                           $item->fields['entity_id']);
                      if ($calendars_id != 0) { // Ticket entity have calendar
                         $calendar = new Calendar();
                         $calendar->getFromDB($calendars_id);
@@ -4493,7 +4665,7 @@ class Search {
                return $data[$num][0]['name'];
 
             case "glpi_auth_tables.name" :
-               return Auth::getMethodName($data[$num][0]['name'], $data[$num][0]['auths_id'], 1,
+               return Auth::getMethodName($data[$num][0]['name'], $data[$num][0]['auth_id'], 1,
                                           $data[$num][0]['ldapname'].$data[$num][0]['mailname']);
 
             case "glpi_reservationitems.comment" :
@@ -4669,7 +4841,7 @@ class Search {
                if (($item = getItemForItemtype($itemtype))
                    && $item->getFromDB($data['id'])
                    && $link->getfromDB($data[$num][0]['id'])
-                   && ($item->fields['entities_id'] == $link->fields['entities_id'])) {
+                   && ($item->fields['entity_id'] == $link->fields['entity_id'])) {
                   if (count($data[$num])) {
                      $count_display = 0;
                      foreach ($data[$num] as$val) {
@@ -4691,7 +4863,7 @@ class Search {
 
             case 'glpi_reservationitems._virtual' :
                if ($data[$num][0]['is_active']) {
-                  return "<a href='reservation.php?reservationitems_id=".
+                  return "<a href='reservation.php?reservationitem_id=".
                                           $data["refID"]."' title=\"".__s('See planning')."\">".
                                           "<img src=\"".$CFG_GLPI["root_doc"].
                                           "/pics/reservation-3.png\" alt='' title=''></a>";
@@ -5082,23 +5254,20 @@ class Search {
               && !isset($params["reset"])
               && !isset($_SESSION['glpisearch'][$itemtype]))) {
 
-         $query = "SELECT `bookmarks_id`
-                   FROM `glpi_bookmarks_users`
-                   WHERE `users_id`='".Session::getLoginUserID()."'
-                         AND `itemtype` = '$itemtype'";
-         if ($result = $DB->query($query)) {
-            if ($DB->numrows($result) > 0) {
-               $IDtoload = $DB->result($result, 0, 0);
-               // Set session variable
-               $_SESSION['glpisearch'][$itemtype] = array();
-               // Load bookmark on main window
-               $bookmark = new Bookmark();
-               // Only get datas for bookmarks
-               if ($forcebookmark) {
-                  $params = $bookmark->getParameters($IDtoload);
-               } else {
-                  $bookmark->load($IDtoload, false);
-               }
+         $rows = $DB->dbh->bookmark_user()->where('user_id', Session::getLoginUserID());
+         $row = $rows->where('itemtype', $itemtype)->fetch();
+         if (count($row) > 0) {
+            $data = $row->getData();
+            $IDtoload = $data['id'];
+            // Set session variable
+            $_SESSION['glpisearch'][$itemtype] = array();
+            // Load bookmark on main window
+            $bookmark = new Bookmark();
+            // Only get datas for bookmarks
+            if ($forcebookmark) {
+               $params = $bookmark->getParameters($IDtoload);
+            } else {
+               $bookmark->load($IDtoload, false);
             }
          }
       }
@@ -5345,7 +5514,7 @@ class Search {
 
                $search[$itemtype][24]['table']         = 'glpi_users';
                $search[$itemtype][24]['field']         = 'name';
-               $search[$itemtype][24]['linkfield']     = 'users_id_tech';
+               $search[$itemtype][24]['linkfield']     = 'user_id_tech';
                $search[$itemtype][24]['name']          = __('Technician in charge of the hardware');
 
                $search[$itemtype][80]['table']         = 'glpi_entities';
@@ -5644,11 +5813,12 @@ class Search {
     * @param $issort          is the sort column ? (default 0)
     * @param $order           order type ASC or DESC (defaut '')
     * @param $options  string options to add (default '')
+    * @param $datatype boolean if False, align at left, otherwise at right
     *
     * @return string to display
    **/
    static function showHeaderItem($type, $value, &$num, $linkto="", $issort=0, $order="",
-                                  $options="") {
+                                  $options="", $datatype_number=FALSE) {
       global $CFG_GLPI;
 
       $out = "";
@@ -5677,7 +5847,11 @@ class Search {
             if ($issort) {
                $class = "order_$order";
             }
-            $out = "<th $options class='$class'>";
+            $style = " style='text-align: left'";
+            if ($datatype_number) {
+               $style = " style='text-align: right'";
+            }
+            $out = "<th $options class='$class'".$style.">";
             if (!empty($linkto)) {
                $out .= "<a href=\"$linkto\">";
             }
@@ -5703,7 +5877,7 @@ class Search {
     *
     *@return string to display
    **/
-   static function showItem($type, $value, &$num, $row, $extraparam='') {
+   static function showItem($type, $value, &$num, $row, $extraparam='', $datatype_number=FALSE) {
 
       $out = "";
       switch ($type) {
@@ -5736,9 +5910,15 @@ class Search {
             break;
 
          default :
-            $out = "<td $extraparam valign='top'>";
-
-            if (!preg_match('/'.self::LBHR.'/',$value)) {
+            $style = " style='text-align: left'";
+            if ($datatype_number) {
+               $style = " style='text-align: right'";
+            }
+            $out = "<td $extraparam valign='top'".$style.">";
+            if (is_array($value)) {
+               $values = $value;
+               $line_delimiter = '<br>';
+            } else if (!preg_match('/'.self::LBHR.'/',$value)) {
                $values = preg_split('/'.self::LBBR.'/i',$value);
                $line_delimiter = '<br>';
             } else {
@@ -5758,8 +5938,7 @@ class Search {
                                                       'autoclose' => false));
 
             } else {
-               $value = preg_replace('/'.self::LBBR.'/','<br>',$value);
-               $value = preg_replace('/'.self::LBHR.'/','<hr>',$value);
+               $value = implode($line_delimiter, $values);
                $out .= $value;
             }
             $out .= "</td>\n";
@@ -6253,4 +6432,646 @@ class Search {
       return $tab;
    }
 
+
+
+   /**
+    * Get all id of item used for search
+    *
+    * @global type $DB
+    * @param type $data
+    * @return type
+    */
+   static function search_get_all_ids($data) {
+      global $DB;
+
+      // Get criteria
+      $searchopt = &self::getOptions($data['itemtype']);
+      $this_table = getTableForItemType($data['itemtype']);
+      $table_search = array();
+      $other_table_search = array();
+
+/*
+ * Example:
+
+[condition] => AND
+[rules] => Array (
+        [0] => Array (
+                [id] => 1
+                [field] => 1
+                [type] => string
+                [input] => text
+                [operator] => contains
+                [value] => e
+            )
+        [1] => Array (
+                [id] => 1
+                [field] => 1
+                [type] => string
+                [input] => text
+                [operator] => contains
+                [value] => r
+            )
+        [2] => Array (
+                [condition] => OR
+                [rules] => Array (
+                        [0] => Array (
+                                 [id] => 23
+                                 [field] => 23
+                                 [type] => string
+                                 [input] => select
+                                 [operator] => equal
+                                 [value] => 228                            )
+                        [1] => Array (
+                                 [id] => 23
+                                 [field] => 23
+                                 [type] => string
+                                 [input] => select
+                                 [operator] => equal
+                                 [value] => 178
+                            )
+                    )
+            )
+    )
+ */
+      $result = array();
+      self::depth_search_ids($this_table, $data['search']['criteria'], 0, $searchopt, $result);
+      return $result;
+
+
+      foreach ($data['search']['criteria'] as $criteria) {
+         if ($criteria['field'] == 'view') {
+            // todo: manage all columns viewed
+
+         } else {
+            if ($criteria['value'] != "") {
+               if ($searchopt[$criteria['field']]['table'] == $this_table) {
+                  $table_search[] = array(
+                      'field'    => $searchopt[$criteria['field']]['field'],
+                      'operator' => self::convert_operator($criteria['searchtype']),
+                      'value'    => $criteria['value']
+                  );
+               } else if (!isset($searchopt[$criteria['field']]['joinparams'])
+                       || empty ($searchopt[$criteria['field']]['joinparams'])) {
+                  $link = 'AND';
+                  if (isset($criteria['link']) && !empty($criteria['link'])) {
+                     $link = $criteria['link'];
+                  }
+                  $other_table_search[$searchopt[$criteria['field']]['table']][] = array(
+                      'field'    => $searchopt[$criteria['field']]['field'],
+                      'operator' => self::convert_operator($criteria['searchtype']),
+                      'value'    => $criteria['value'],
+                      'link'     => $link
+                  );
+               } else {
+                  // todo: manage table different than the itemtype with joimparams
+
+
+               }
+            }
+         }
+      }
+
+      $rows = $DB->dbh->table($this_table)->select('id');
+      foreach ($table_search as $search) {
+         if ($search['operator'] == '=') {
+            $rows = $rows->where($search['field'], $search['value']);
+         } else if ($search['operator'] == '!=') {
+            $rows = $rows->whereNot($search['field'], $search['value']);
+         } else if ($search['operator'] == 'LIKE') {
+            $rows = $rows->where($search['field'].' LIKE :'.$search['field'],
+                    array(':'.$search['field'] => '%'.$search['value'].'%'));
+         } else {
+            echo "error";
+         }
+      }
+      if (count($other_table_search) == 0) {
+         if ($data['search']['start'] == 0) {
+            $rows = $rows->limit($data['search']['list_limit']);
+         } else {
+            $rows = $rows->limit($data['search']['start'], $data['search']['list_limit']);
+         }
+      }
+      $rows = $rows->fetchAll();
+      $ids = array();
+      $grp_ids = array();
+      foreach ($rows as $row) {
+         $row_data = $row->getData();
+         $grp_ids[] = $row_data['id'];
+      }
+      $ids['AND'][] = $grp_ids;
+
+      // Search in other items
+      foreach ($other_table_search as $itemtype=>$searches) {
+         $foreignkey = getTableForItemType($itemtype).'_id';
+         $rows = $DB->dbh->table(getTableForItemType($itemtype))->select('id');
+         foreach ($searches as $search) {
+            if ($search['operator'] == '=') {
+               $rows = $rows->where($search['field'], $search['value']);
+            } else if ($search['operator'] == '!=') {
+               $rows = $rows->whereNot($search['field'], $search['value']);
+            } else if ($search['operator'] == 'LIKE') {
+               $rows = $rows->where($search['field'].' LIKE :'.$search['field'],
+                       array(':'.$search['field'] => '%'.$search['value'].'%'));
+            } else {
+               echo "error";
+            }
+         }
+         $rows = $rows->fetchAll();
+         $this_table_ids = array();
+         foreach ($rows as $row) {
+            $row_data = $row->getData();
+            $this_table_ids[] = $row_data['id'];
+         }
+
+         // Get id of this itemtype
+         $rows = $DB->dbh->table($this_table)->select('id');
+         $rows = $rows->where($foreignkey, $this_table_ids);
+         $rows = $rows->fetchAll();
+         $grp_ids = array();
+         foreach ($rows as $row) {
+            $row_data = $row->getData();
+            $grp_ids[] = $row_data['id'];
+         }
+         $ids['AND'][] = $grp_ids;
+      }
+      return $ids;
+   }
+
+
+
+   static function depth_search_ids($table, $data, $depth, $searchopt, &$result) {
+      if ($data['condition'] == 'AND') {
+         // First: Dispatch
+         $queries = array(
+             $table => array()
+         );
+         foreach ($data['rules'] as $num => $search_fields) {
+            if (isset($search_fields['condition'])) {
+               self::depth_search_ids($table, $search_fields, ($depth + 1), $searchopt, $result);
+            } else if ($searchopt[$search_fields['id']]['table'] == $table) {
+               $search_fields['field'] = $searchopt[$search_fields['id']]['field'];
+               $queries[$table][] = $search_fields;
+            } else {
+               // todo
+
+            }
+         }
+         // Second: get ids of requests
+         foreach ($queries as $qtable=>$searches) {
+            $where = array(
+                'where'    => array(),
+                'wherenot' => array()
+            );
+            foreach ($searches as $search) {
+               switch ($search['operator']) {
+
+                  case 'equal':
+                  case 'in':
+                     $key = $search['field'];
+                     $value = $search['value'];
+                     $where['where'][$key] = $value;
+                     break;
+
+                  case 'not_equal':
+                  case 'not_in':
+                     $key = $search['field'];
+                     $value = $search['value'];
+                     $where['wherenot'][$key] = $value;
+                     break;
+
+                  case 'contains':
+                     $rand = mt_rand();
+                     $key = $search['field'].' LIKE :'.$search['field'].$rand;
+                     $value = array(':'.$search['field'].$rand => '%'.$search['value'].'%');
+                     $where['where'][$key] = $value;
+                     break;
+
+                  case 'not_contains':
+                     $rand = mt_rand();
+                     $key = $search['field'].' NOT LIKE :'.$search['field'].$rand;
+                     $value = array(':'.$search['field'].$rand => '%'.$search['value'].'%');
+                     $where['where'][$key] = $value;
+                     break;
+
+                  case 'begins_with':
+                     $rand = mt_rand();
+                     $key = $search['field'].' LIKE :'.$search['field'].$rand;
+                     $value = array(':'.$search['field'].$rand => $search['value'].'%');
+                     $where['where'][$key] = $value;
+                     break;
+
+                  case 'not_begins_with':
+                     $rand = mt_rand();
+                     $key = $search['field'].' NOT LIKE :'.$search['field'].$rand;
+                     $value = array(':'.$search['field'].$rand => $search['value'].'%');
+                     $where['where'][$key] = $value;
+                     break;
+
+                  case 'ends_with':
+                     $rand = mt_rand();
+                     $key = $search['field'].' LIKE :'.$search['field'].$rand;
+                     $value = array(':'.$search['field'].$rand => '%'.$search['value']);
+                     $where['where'][$key] = $value;
+                     break;
+
+                  case 'not_ends_with':
+                     $rand = mt_rand();
+                     $key = $search['field'].' NOT LIKE :'.$search['field'].$rand;
+                     $value = array(':'.$search['field'].$rand => '%'.$search['value']);
+                     $where['where'][$key] = $value;
+                     break;
+
+                  case 'is_empty':
+                     $key = $search['field'];
+                     $value = '';
+                     $where['where'][$key] = $value;
+                     break;
+
+                  case 'is_not_empty':
+                     $key = $search['field'];
+                     $value = '';
+                     $where['wherenot'][$key] = $value;
+                     break;
+
+                  case 'is_null':
+                     $key = $search['field'];
+                     $value = NULL;
+                     $where['where'][$key] = $value;
+
+                  case 'is_not_null':
+                     $key = $search['field'];
+                     $value = NULL;
+                     $where['wherenot'][$key] = $value;
+
+               }
+            }
+            if ($depth == 0) {
+               $result['operator'] = $data['condition'];
+               $result[] = self::get_search_ids($qtable, $where);
+            } else if ($depth == 1) {
+               $result[1]['operator'] = $data['condition'];
+               $result[1][] = self::get_search_ids($qtable, $where);
+            } else if ($depth == 2) {
+               $result[1][2]['operator'] = $data['condition'];
+               $result[1][2][] = self::get_search_ids($qtable, $where);
+            } else if ($depth == 3) {
+               $result[1][2][3]['operator'] = $data['condition'];
+               $result[1][2][3][] = self::get_search_ids($qtable, $where);
+            } else if ($depth == 4) {
+               $result[1][2][3][4]['operator'] = $data['condition'];
+               $result[1][2][3][4][] = self::get_search_ids($qtable, $where);
+            } else if ($depth == 5) {
+               $result[1][2][3][4][5]['operator'] = $data['condition'];
+               $result[1][2][3][4][5][] = self::get_search_ids($qtable, $where);
+            } else if ($depth == 6) {
+               $result[1][2][3][4][5][6]['operator'] = $data['condition'];
+               $result[1][2][3][4][5][6][] = self::get_search_ids($qtable, $where);
+            }
+         }
+      } else if ($data['condition'] == 'OR') {
+
+      }
+   }
+
+
+
+   static function get_search_ids($table, $where) {
+      global $DB;
+
+      $rows = $DB->dbh->table($table)->select('id');
+      foreach ($where['where'] as $field=>$values) {
+         $rows = $rows->where($field, $values);
+      }
+      foreach ($where['wherenot'] as $field=>$values) {
+         $rows = $rows->whereNot($field, $values);
+      }
+      $rows = $rows->fetchAll();
+      $ids = array();
+      foreach ($rows as $row) {
+         $row_data = $row->getData();
+         $ids[] = $row_data['id'];
+      }
+      return $ids;
+   }
+
+
+
+   /**
+    * Made operations on itemtype lists
+    *
+    * @param array $ids
+    * @return array
+    */
+   static function search_ids_operations($ids) {
+      $new_ids = array();
+      $first = TRUE;
+      $operator = $ids['operator'];
+      unset($ids['operator']);
+      foreach ($ids as $list_ids) {
+         if (count($list_ids) == 0) {
+            $list_ids = array();
+         }
+         if (isset($list_ids['operator'])) {
+            $list_ids = self::search_ids_operations($list_ids);
+         }
+         if ($first) {
+            $new_ids = $list_ids;
+            $first = FALSE;
+            continue;
+         }
+         if ($operator == 'AND') {
+            $new_ids = array_intersect($new_ids, $list_ids);
+         } else if ($operator == 'OR') {
+            $new_ids = array_merge($new_ids, $list_ids);
+         }
+      }
+      return $new_ids;
+   }
+
+
+
+   static function prepareDisplayIdName($data, $ids) {
+      global $DB;
+
+      $searchopt = &self::getOptions($data['itemtype']);
+      $data['data']['totalcount'] = count($ids);
+
+      $table = getTableForItemType($data['itemtype']);
+
+      $rows = $DB->dbh->table($table);
+      $rows = $rows->select('id');
+      $rows = $rows->select('name');
+      if (FieldExists($table, 'entity_id')) {
+         $rows = $rows->select('entity_id');
+      }
+      foreach ($data['toview'] as $key => $val) {
+         if ($searchopt[$val]['table'] == $table) {
+            $rows = $rows->select($searchopt[$val]['field']);
+         } else if (isset($searchopt[$val]['path'])
+                 && count($searchopt[$val]['path']) > 0) {
+            // do nothing
+         } else if (!isset($searchopt[$val]['joinparams'])
+                 || empty($searchopt[$val]['joinparams'])) {
+            $rows = $rows->select($searchopt[$val]['table'].'_id');
+         }
+      }
+
+      $rows = $rows->where('id', $ids);
+      if ($data['search']['start'] == 0) {
+         $rows = $rows->limit($data['search']['list_limit']);
+      } else {
+         $rows = $rows->limit($data['search']['start'], $data['search']['list_limit']);
+      }
+      $rows = $rows->fetchAll();
+      $row_num = 0;
+      $mapping = array();
+      $i = 0;
+      $linked_ids = array();
+      foreach ($rows as $row) {
+         if (!isset($data['data']['rows'][$row_num])) {
+            $data['data']['rows'][$row_num] = array();
+         }
+         $num = 0;
+         $row_data = $row->getData();
+         $data['data']['rows'][$row_num]['id'] = $row_data['id'];
+         if (isset($row_data['entity_id'])) {
+            $data['data']['rows'][$row_num]['entity_id'] = $row_data['entity_id'];
+         }
+         $mapping[$row_data['id']] = $i;
+         $i++;
+
+         foreach ($data['toview'] as $key => $val) {
+            if (!isset($data['data']['rows'][$row_num][$num])) {
+               $data['data']['rows'][$row_num][$num] = array();
+            }
+            if ($searchopt[$val]['table'] == $table) {
+               $data['data']['rows'][$row_num][$num]['id'] = $row_data['id'];
+               $data['data']['rows'][$row_num][$num]['name'] = $row_data[$searchopt[$val]['field']];
+               if (isset($row_data['comment'])) {
+                  $data['data']['rows'][$row_num][$num]['comment'] = $row_data['comments'];
+               }
+            } else if (isset($searchopt[$val]['path'])
+                    && count($searchopt[$val]['path']) > 0) {
+               // to nothing
+            } else if (!isset($searchopt[$val]['joinparams'])
+                    || empty($searchopt[$val]['joinparams'])) {
+               if (!isset($linked_ids[$searchopt[$val]['table']])) {
+                  $linked_ids[$searchopt[$val]['table']] = array();
+               }
+               if (!isset($linked_ids[$searchopt[$val]['table']][$searchopt[$val]['field']])) {
+                  $linked_ids[$searchopt[$val]['table']][$searchopt[$val]['field']] = array();
+               }
+               $item_id = $row_data[$searchopt[$val]['table'].'_id'];
+               if ($item_id > 0) {
+                  $data['data']['rows'][$row_num][$num]['id'] = $item_id;
+                  $data['data']['rows'][$row_num][$num]['_table'] = $searchopt[$val]['table'];
+                  $data['data']['rows'][$row_num][$num]['_field'] = $searchopt[$val]['field'];
+                  $linked_ids[$searchopt[$val]['table']][$searchopt[$val]['field']][] = $item_id;
+               }
+            }
+            $num++;
+         }
+         $row_num++;
+      }
+      // Get of other tables than table of itemtype
+      $linked_ids_info = array();
+      foreach ($linked_ids as $item_table=>$alldata) {
+         if (!isset($linked_ids_info[$item_table])) {
+            $linked_ids_info[$item_table] = array();
+         }
+         $rows = $DB->dbh->table($item_table);
+         $rows = $rows->select('id');
+         $merged_ids = array();
+         foreach ($alldata as $field=>$list_ids) {
+            $rows = $rows->select($field);
+            $merged_ids = array_merge($merged_ids, $list_ids);
+         }
+         $unique_ids = array_unique($merged_ids);
+         if (count($unique_ids) == 1 && $unique_ids[0] == 0) {
+            continue;
+         }
+         $rows = $rows->where('id', $unique_ids);
+         $rows = $rows->fetchAll();
+         foreach ($rows as $row) {
+            $row_data = $row->getData();
+            $linked_ids_info[$item_table][$row_data['id']] = $row_data;
+         }
+      }
+      // Get of other tables than table of itemtype with 'path' array
+      foreach ($data['toview'] as $key => $val) {
+         if (isset($searchopt[$val]['path'])
+                 && !empty($searchopt[$val]['path'])) {
+            $path = $searchopt[$val]['path'];
+            foreach ($mapping as $mapping_id=>$index) {
+               $data['data']['rows'][$index][$key] = array(
+                   'id'   => array(),
+                   'name' => array()
+               );
+            }
+            $rows = $DB->dbh->table($path[0]['table']);
+            if ($path[0]['field'] == 'items_id') {
+               $rows = $rows->where('items_id', array_keys($mapping));
+               $rows = $rows->where('itemtype', $data['itemtype']);
+            } else {
+               $rows = $rows->where($path[0]['field'], array_keys($mapping));
+            }
+            foreach ($rows as $row) {
+               $data_row = $row->getData();
+               $mydata = $data_row;
+               $my_row = array();
+               if (count($path) == 1) {
+                  $my_row['id'] = $mydata['id'];
+                  $my_row['name'] = $mydata[$searchopt[$val]['field']];
+               }
+               for ($i=1; $i < count($path);$i++) {
+                  if ($mydata[$path[$i]['field']] == 0) {
+                     $my_row['id'] = 0;
+                     $my_row['name'] = '';
+                     break;
+                  }
+                  $row2 = $DB->dbh->table($path[$i]['table']);
+                  if ($i == (count($path) - 1)) {
+                     $row2 = $row2->select('id', $searchopt[$val]['field']);
+                  } else {
+                     $row2 = $row2->select(getForeignKeyFieldForTable($path[($i+1)]['table']));
+                  }
+                  $row2 = $row2->where('id', $mydata[$path[$i]['field']])->fetch();
+                  $mydata = $row2->getData();
+                  if ($i == (count($path) - 1)) {
+                     $my_row['id'] = $mydata['id'];
+                     $my_row['name'] = $mydata[$searchopt[$val]['field']];
+                  }
+               }
+               if ($my_row['id'] > 0) {
+                  if ($path[0]['field'] == 'items_id') {
+                     $data['data']['rows'][$mapping[$data_row['items_id']]][$key]['id'][] = $my_row['id'];
+                     $data['data']['rows'][$mapping[$data_row['items_id']]][$key]['name'][] = $my_row['name'];
+                  } else {
+                     $data['data']['rows'][$mapping[$data_row[$path[0]['field']]]][$key]['id'][] = $my_row['id'];
+                     $data['data']['rows'][$mapping[$data_row[$path[0]['field']]]][$key]['name'][] = $my_row['name'];
+                  }
+               }
+            }
+         }
+      }
+
+
+      // Convert linked id to field name
+      foreach ($data['data']['rows'] as $row_num=>$row_data) {
+         foreach ($row_data as $num=>$values) {
+            if (isset($values['_table'])) {
+               if (isset($linked_ids_info[$values['_table']])) {
+                  if (count($linked_ids_info[$values['_table']]) > 0) {
+                     $data['data']['rows'][$row_num][$num] = array(
+                         'id'   => $values['id'],
+                         'name' => $linked_ids_info[$values['_table']][$values['id']][$values['_field']]
+                     );
+                  }
+               }
+            }
+         }
+      }
+      // Add empty value of no value
+      foreach ($data['data']['rows'] as $row_num=>$row_data) {
+         foreach ($row_data as $num=>$values) {
+            if (is_int($num) && !isset($values['name'])) {
+               $data['data']['rows'][$row_num][$num] = array(
+                   'id'   => 0,
+                   'name' => ''
+               );
+            }
+         }
+      }
+      return $data;
+   }
+
+
+
+   static function prepareColumns($data, $data) {
+
+      $data['data']['count'] = count($data['data']['rows']);
+
+      // Search case
+      $data['data']['begin'] = $data['search']['start'];
+      $data['data']['end']   = min($data['data']['totalcount'],
+                                   $data['search']['start']+$data['search']['list_limit'])-1;
+
+      // No search Case
+      if ($data['search']['no_search']) {
+         $data['data']['begin'] = 0;
+         $data['data']['end']   = min($data['data']['totalcount']-$data['search']['start'],
+                                      $data['search']['list_limit'])-1;
+      }
+      // Export All case
+      if ($data['search']['export_all']) {
+         $data['data']['begin'] = 0;
+         $data['data']['end']   = $data['data']['totalcount']-1;
+      }
+
+      // Get columns
+      $data['data']['cols'] = array();
+
+      $num       = 0;
+      $searchopt = &self::getOptions($data['itemtype']);
+
+      foreach ($data['toview'] as $key => $val) {
+         $data['data']['cols'][$num] = array();
+
+         $data['data']['cols'][$num]['itemtype']  = $data['itemtype'];
+         $data['data']['cols'][$num]['id']        = $val;
+         $data['data']['cols'][$num]['name']      = $searchopt[$val]["name"];
+         $data['data']['cols'][$num]['meta']      = 0;
+         $data['data']['cols'][$num]['searchopt'] = $searchopt[$val];
+         $num++;
+      }
+
+      // Display columns Headers for meta items
+      $already_printed = array();
+
+      if (count($data['search']['metacriteria'])) {
+         foreach ($data['search']['metacriteria'] as $metacriteria) {
+            if (isset($metacriteria['itemtype']) && !empty($metacriteria['itemtype'])
+                  && isset($metacriteria['value']) && (strlen($metacriteria['value']) > 0)) {
+
+               if (!isset($already_printed[$metacriteria['itemtype'].$metacriteria['field']])) {
+                  $searchopt = &self::getOptions($metacriteria['itemtype']);
+
+                  $data['data']['cols'][$num]['itemtype']
+                                                      = $metacriteria['itemtype'];
+                  $data['data']['cols'][$num]['id']   = $metacriteria['field'];
+                  $data['data']['cols'][$num]['name'] = $searchopt[$metacriteria['field']]["name"];
+                  $data['data']['cols'][$num]['meta'] = 1;
+                  $data['data']['cols'][$num]['searchopt']
+                                                      = $searchopt[$metacriteria['field']];
+                  $num++;
+
+                  $already_printed[$metacriteria['itemtype'].$metacriteria['field']] = 1;
+               }
+            }
+         }
+      }
+
+      // search group (corresponding of dropdown optgroup) of current col
+      foreach($data['data']['cols'] as $num => $col) {
+         // search current col in searchoptions ()
+         while (key($searchopt) !== null
+                && key($searchopt) != $col['id']) {
+            next($searchopt);
+         }
+         if (key($searchopt) !== null) {
+            //search optgroup (non array option)
+            while (key($searchopt) !== null
+                   && is_numeric(key($searchopt))
+                   && is_array(current($searchopt))) {
+               prev($searchopt);
+            }
+            if (key($searchopt) !== null
+                && key($searchopt) !== "common") {
+               $data['data']['cols'][$num]['groupname'] = current($searchopt);
+            }
+
+         }
+      }
+      return $data;
+   }
 }

@@ -1013,7 +1013,7 @@ class Change extends CommonITILObject {
             echo "</td></tr></table>";
 
             if ($tree) {
-               $restrict = "IN (".implode(',', getSonsOf('glpi_groups', $item->getID())).")";
+               $restrict = "IN (".implode(',', getSonsOf(Group::getTable(), $item->getID())).")";
             } else {
                $restrict = "='".$item->getID()."'";
             }

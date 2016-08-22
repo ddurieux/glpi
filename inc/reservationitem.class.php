@@ -527,16 +527,16 @@ class ReservationItem extends CommonDBChild {
                   if (isset($item->fields["peripheraltypes_id"])
                       && ($item->fields["peripheraltypes_id"] != 0)) {
 
-                     $typename = Dropdown::getDropdownName("glpi_peripheraltypes",
+                     $typename = Dropdown::getDropdownName(PeripheralType::getTable(),
                                                            $item->fields["peripheraltypes_id"]);
                   }
                }
                echo "<td><a href='reservation.php?reservationitems_id=".$row['id']."'>".
                           sprintf(__('%1$s - %2$s'), $typename, $row["name"])."</a></td>";
-               echo "<td>".Dropdown::getDropdownName("glpi_locations", $row["location"])."</td>";
+               echo "<td>".Dropdown::getDropdownName(Location::getTable(), $row["location"])."</td>";
                echo "<td>".nl2br($row["comment"])."</td>";
                if ($showentity) {
-                  echo "<td>".Dropdown::getDropdownName("glpi_entities", $row["entities_id"]).
+                  echo "<td>".Dropdown::getDropdownName(Entity::getTable(), $row["entities_id"]).
                        "</td>";
                }
                echo "</tr>\n";
@@ -636,12 +636,12 @@ class ReservationItem extends CommonDBChild {
             if ($task) {
                $task->addVolume(1);
                $task->log(sprintf(__('%1$s: %2$s')."\n",
-                                  Dropdown::getDropdownName("glpi_entities", $entity),
+                                  Dropdown::getDropdownName(Entity::getTable(), $entity),
                                   $message));
             } else {
                //TRANS: %1$s is a name, %2$s is text of message
                Session::addMessageAfterRedirect(sprintf(__('%1$s: %2$s'),
-                                                        Dropdown::getDropdownName("glpi_entities",
+                                                        Dropdown::getDropdownName(Entity::getTable(),
                                                                                   $entity),
                                                         $message));
             }
@@ -656,7 +656,7 @@ class ReservationItem extends CommonDBChild {
             }
 
          } else {
-            $entityname = Dropdown::getDropdownName('glpi_entities', $entity);
+            $entityname = Dropdown::getDropdownName(Entity::getTable(), $entity);
             //TRANS: %s is entity name
             $msg = sprintf(__('%1$s: %2$s'), $entityname, __('Send reservation alert failed'));
             if ($task) {

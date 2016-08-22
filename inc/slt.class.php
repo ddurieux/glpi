@@ -390,7 +390,7 @@ class SLT extends CommonDBChild {
          switch ($item->getType()) {
             case 'SLA' :
                if ($_SESSION['glpishow_count_on_tabs']) {
-                  $nb = countElementsInTable('glpi_slts', "`slas_id` = '".$item->getField('id')."'");
+                  $nb = countElementsInTable($this->getTable(), "`slas_id` = '".$item->getField('id')."'");
                }
                return self::createTabEntry(self::getTypeName(1), $nb);
          }
@@ -503,7 +503,7 @@ class SLT extends CommonDBChild {
             echo "</td>";
             echo "<th>".__('SLT')."</th>";
             echo "<td>";
-            echo Dropdown::getDropdownName('glpi_slts', $ticket->fields[$sltField])."&nbsp;";
+            echo Dropdown::getDropdownName(SLT::getTable(), $ticket->fields[$sltField])."&nbsp;";
             $commentsla = "";
             $slalevel   = new SlaLevel();
             $nextaction = new SlaLevel_Ticket();
@@ -564,7 +564,7 @@ class SLT extends CommonDBChild {
             echo $tt->getEndHiddenFieldValue($dateField, $ticket);
             echo "</td>";
             $slt_data = $this->getSltData("`type` = '$type'
-                                           AND `entities_id` = '".$ticket->fields['entities_id']."'");
+                                           AND `entity_id` = '".$ticket->fields['entity_id']."'");
             if ($canupdate
                 && !empty($slt_data)) {
                echo "<td>";
@@ -596,15 +596,15 @@ class SLT extends CommonDBChild {
          echo $tt->getEndHiddenFieldValue($dateField, $ticket);
          echo "</td>";
          $slt_data = $this->getSltData("`type` = '$type'
-                                        AND `entities_id` = '".$ticket->fields['entities_id']."'");
+                                        AND `entity_id` = '".$ticket->fields['entity_id']."'");
          if ($canupdate
              && !empty($slt_data)) {
             echo "<th>".$tt->getBeginHiddenFieldText($sltField);
             printf(__('%1$s%2$s'), __('SLT'), $tt->getMandatoryMark($sltField));
-            echo $tt->getEndHiddenFieldText('slas_id')."</th>";
+            echo $tt->getEndHiddenFieldText('sla_id')."</th>";
             echo "<td class='nopadding'>".$tt->getBeginHiddenFieldValue($sltField);
             Slt::dropdown(array('name'      => $sltField,
-                                'entity'    => $ticket->fields["entities_id"],
+                                'entity'    => $ticket->fields["entity_id"],
                                 'value'     => isset($ticket->fields[$sltField])
                                                   ? $ticket->fields[$sltField] : 0,
                                 'condition' => "`type` = '".$type."'"));

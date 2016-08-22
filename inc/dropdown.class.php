@@ -147,7 +147,7 @@ class Dropdown {
             // translation not needed - only for debug
             $output .= "entity_sons options is not available with entity option as array";
          } else {
-            $params['entity'] = getSonsOf('glpi_entities',$params['entity']);
+            $params['entity'] = getSonsOf(Entity::getTable(), $params['entity']);
          }
       }
 
@@ -268,12 +268,12 @@ class Dropdown {
     * @return string the value of the dropdown or &nbsp; if not exists
    **/
    static function getDropdownName($table, $id, $withcomment=0, $translate=true) {
-      global $DB, $CFG_GLPI;
+      global $DB;
 
       $item = getItemForItemtype(getItemTypeForTable($table));
 
       if ($item instanceof CommonTreeDropdown) {
-         return getTreeValueCompleteName($table,$id,$withcomment, $translate);
+         return getTreeValueCompleteName($table, $id, $withcomment, $translate);
       }
 
       $name    = "";
@@ -382,7 +382,7 @@ class Dropdown {
 
                   case "glpi_netpoints" :
                      $name = sprintf(__('%1$s (%2$s)'), $name,
-                                     self::getDropdownName("glpi_locations",
+                                     self::getDropdownName(Location::getTable(),
                                                            $data["locations_id"], false, $translate));
                      break;
 
@@ -390,14 +390,14 @@ class Dropdown {
                      if (!empty($data['locations_id'])) {
                         $comment .= "<br>".sprintf(__('%1$s: %2$s'),
                                                    "<span class='b'>".__('Location')."</span>",
-                                                   self::getDropdownName("glpi_locations",
+                                                   self::getDropdownName(Location::getTable(),
                                                                          $data["locations_id"],
                                                                          false, $translate));
 
                      }
                      if (!empty($data['budgettypes_id'])) {
                         $comment .= "<br>".sprintf(__('%1$s: %2$s'), "<span class='b'>".__('Type')."</span>",
-                                     self::getDropdownName("glpi_budgettypes",
+                                     self::getDropdownName(BudgetType::getTable(),
                                                            $data["budgettypes_id"], false, $translate));
 
                      }
@@ -716,7 +716,6 @@ class Dropdown {
     * @return array (group of dropdown) of array (itemtype => localized name)
    **/
    static function getDeviceItemTypes() {
-      global $CFG_GLPI;
       static $optgroup = NULL;
 
       if (!Session::haveRightsOr('device', array(CREATE, UPDATE, PURGE))) {

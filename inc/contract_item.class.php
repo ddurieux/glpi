@@ -180,7 +180,7 @@ class Contract_Item extends CommonDBRelation{
    **/
    static function countForItem(CommonDBTM $item) {
 
-      return countElementsInTable('glpi_contracts_items',
+      return countElementsInTable(self::getTable(),
                                   "`itemtype` = '".$item->getType()."'
                                    AND `items_id` ='".$item->getField('id')."'");
    }
@@ -484,10 +484,10 @@ class Contract_Item extends CommonDBRelation{
             echo "<a href='".$CFG_GLPI["root_doc"]."/front/contract.form.php?id=$cID'>".$name;
             echo "</a></td>";
             echo "<td class='center'>";
-            echo Dropdown::getDropdownName("glpi_entities", $con->fields["entities_id"])."</td>";
+            echo Dropdown::getDropdownName(Entity::getTable(), $con->fields["entities_id"])."</td>";
             echo "<td class='center'>".$con->fields["num"]."</td>";
             echo "<td class='center'>";
-            echo Dropdown::getDropdownName("glpi_contracttypes", $con->fields["contracttypes_id"]).
+            echo Dropdown::getDropdownName(ContractType::getTable(), $con->fields["contracttypes_id"]).
                "</td>";
             echo "<td class='center'>".$con->getSuppliersNames()."</td>";
             echo "<td class='center'>".Html::convDate($con->fields["begin_date"])."</td>";
@@ -626,7 +626,7 @@ class Contract_Item extends CommonDBRelation{
                                                        => $CFG_GLPI["contract_types"],
                                                      'entity_restrict'
                                                        => ($contract->fields['is_recursive']
-                                                           ?getSonsOf('glpi_entities',
+                                                           ?getSonsOf(Entity::getTable(),
                                                                       $contract->fields['entities_id'])
                                                            :$contract->fields['entities_id']),
                                                      'checkright'
@@ -707,7 +707,7 @@ class Contract_Item extends CommonDBRelation{
                   $prem = false;
                }
                echo "<td class='center'>";
-               echo Dropdown::getDropdownName("glpi_entities",$objdata['entity'])."</td>";
+               echo Dropdown::getDropdownName(Entity::getTable(), $objdata['entity'])."</td>";
                echo "<td class='center".
                       (isset($objdata['is_deleted']) && $objdata['is_deleted'] ? " tab_bg_2_2'" : "'");
                echo ">".$name."</td>";
@@ -717,7 +717,7 @@ class Contract_Item extends CommonDBRelation{
                       (isset($objdata["otherserial"])? "".$objdata["otherserial"]."" :"-")."</td>";
                echo "<td class='center'>";
                if (isset($objdata["states_id"])) {
-                  echo Dropdown::getDropdownName("glpi_states", $objdata['states_id']);
+                  echo Dropdown::getDropdownName(State::getTable(), $objdata['states_id']);
                } else {
                   echo '&nbsp;';
                }

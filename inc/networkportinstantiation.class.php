@@ -783,7 +783,7 @@ class NetworkPortInstantiation extends CommonDBChild {
             echo "&nbsp;". sprintf(__('%1$s on %2$s'), $netlink,
                                    "<span class='b'>".$device2->getLink()."</span>");
             if ($device1->fields["entities_id"] != $device2->fields["entities_id"]) {
-               echo "<br>(". Dropdown::getDropdownName("glpi_entities",
+               echo "<br>(". Dropdown::getDropdownName(Entity::getTable(),
                                                        $device2->getEntityID()) .")";
             }
 
@@ -803,7 +803,7 @@ class NetworkPortInstantiation extends CommonDBChild {
             }
             printf(__('%1$s on %2$s'), "<span class='b'>".$netname."</span>",
                    "<span class='b'>".$device2->getName()."</span>");
-            echo "<br>(" .Dropdown::getDropdownName("glpi_entities",
+            echo "<br>(" .Dropdown::getDropdownName(Entity::getTable(),
                                                     $device2->getEntityID()) .")";
          }
 
@@ -860,7 +860,7 @@ class NetworkPortInstantiation extends CommonDBChild {
          if (is_array($p['entity'])) {
             echo "entity_sons options is not available with entity option as array";
          } else {
-            $p['entity'] = getSonsOf('glpi_entities', $p['entity']);
+            $p['entity'] = getSonsOf(Entity::getTable(), $p['entity']);
          }
       }
 

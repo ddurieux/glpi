@@ -579,7 +579,7 @@ class QueuedMail extends CommonDBTM {
       echo "<tr class='tab_bg_1'>";
       echo "<td>"._n('Notification template', 'Notification templates', 1)."</td>";
       echo "<td>";
-      echo Dropdown::getDropdownName('glpi_notificationtemplates',
+      echo Dropdown::getDropdownName(NotificationTemplate::getTable(),
                                      $this->fields['notificationtemplates_id']);
       echo "</td>";
       echo "<td>&nbsp;</td>";

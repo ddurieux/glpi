@@ -1767,11 +1767,8 @@ class MailCollector  extends CommonDBTM {
    static function getNumberOfMailCollectors() {
       global $DB;
 
-      $query = "SELECT COUNT(*) AS cpt
-                FROM `glpi_mailcollectors`";
-      $result = $DB->query($query);
-
-      return $DB->result($result, 0, 'cpt');
+      $rows = $DB->dbh->mailcollector()->fetchAll();
+      return count($rows);
    }
 
 

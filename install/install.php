@@ -217,8 +217,15 @@ function step2($update) {
    echo "<form action='install.php' method='post'>";
    echo "<input type='hidden' name='update' value='".$update."'>";
    echo "<fieldset><legend>".__('Database connection parameters')."</legend>";
-   echo "<p><label class='block'>".__('SQL server (MariaDB or MySQL)') ." </label>";
-   echo "<input type='text' name='db_host'><p>";
+   echo "<p><label class='block'>".__('Database type')." </label>";
+   echo "<select name='db_type'>";
+   echo "<option value='mysql'>MySQL / MariaDB</option>";
+   echo "<option value='pgsql'>PostgreSQL</option>";
+   echo "<option value='sqlite'>SQLite3</option>";
+   echo "</select></p>";
+
+   echo "<p><label class='block'>".__('SQL server') ." </label>";
+   echo "<input type='text' name='db_host'></p>";
    echo "<p><label class='block'>".__('SQL user') ." </label>";
    echo "<input type='text' name='db_user'></p>";
    echo "<p><label class='block'>".__('SQL password')." </label>";
@@ -231,7 +238,7 @@ function step2($update) {
 
 
 //step 3 test mysql settings and select database.
-function step3($host, $user, $password, $update) {
+function step3($host, $user, $password, $update, $type) {
 
    error_reporting(16);
    echo "<h3>".__('Test of the connection at the database')."</h3>";
@@ -239,22 +246,20 @@ function step3($host, $user, $password, $update) {
    //Check if the port is in url
    $hostport = explode(":", $host);
    if (count($hostport) < 2) {
-     $link = new mysqli($hostport[0], $user, $password);
+     $dsn = $type.':host='.$hostport[0];
    } else {
-     $link = new mysqli($hostport[0], $user, $password, '', $hostport[1]);
+     $dsn = $type.':host='.$hostport[0].';port='.$hostport[1];
+   }
+   $options = array();
+   if ($type == 'mysql') {
+      $options = array(
+          PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+      );
    }
 
-
-   if ($link->connect_error
-       || empty($host)
+   if (empty($host)
        || empty($user)) {
-      echo "<p>".__("Can't connect to the database")."\n <br>".
-           sprintf(__('The server answered: %s'), $link->connect_error)."</p>";
-
-      if (empty($host)
-          || empty($user)) {
-         echo "<p>".__('The server or/and user field is empty')."</p>";
-      }
+      echo "<p>".__('The server or/and user field is empty')."</p>";
 
       echo "<form action='install.php' method='post'>";
       echo "<input type='hidden' name='update' value='".$update."'>";
@@ -262,32 +267,50 @@ function step3($host, $user, $password, $update) {
       echo "<p class='submit'><input type='submit' name='submit' class='submit' value='".
             __s('Back')."'></p>";
       Html::closeForm();
+      return;
+   }
 
-   } else {
+   try {
+      $pdo = new PDO($dsn.';dbname=glpi_test', $user, $password, $options);
+
       $_SESSION['db_access'] = array('host'     => $host,
                                      'user'     => $user,
-                                     'password' => $password);
+                                     'password' => $password,
+                                     'type'     => $type);
       echo  "<h3>".__('Database connection successful')."</h3>";
 
       if ($update == "no") {
          echo "<p>".__('Please select a database:')."</p>";
          echo "<form action='install.php' method='post'>";
 
-         if ($DB_list = $link->query("SHOW DATABASES")) {
-            while ($row = $DB_list->fetch_array()) {
+         $databases = array();
+         if ($type == 'mysql') {
+            $sql = 'SHOW DATABASES';
+            foreach ($pdo->query($sql) as $row) {
                if (!in_array($row['Database'], array("information_schema",
-                                                     "mysql",
-                                                     "performance_schema") )) {
-                  echo "<p>";
-                  echo "<label class='radio'>";
-                  echo "<input type='radio' name='databasename' value='". $row['Database']."'>";
-
-                  echo "<span class='outer'><span class='inner'></span></span>";
-                  echo $row['Database'];
-                  echo " </label>";
-                  echo " </p>";
+                                      "mysql",
+                                      "performance_schema") )) {
+                  $databases[] = $row['Database'];
                }
             }
+         } else if ($type == 'pgsql') {
+            $sql = 'SELECT datname FROM pg_database';
+            foreach ($pdo->query($sql) as $row) {
+               if (!in_array($row['datname'], array('postgres', 'template0',
+                   'template1'))) {
+                  $databases[] = $row['datname'];
+               }
+            }
+         }
+
+         foreach ($databases as $database) {
+            echo "<p>";
+            echo "<label class='radio'>";
+            echo "<input type='radio' name='databasename' value='".$database."'>";
+            echo "<span class='outer'><span class='inner'></span></span>";
+            echo $database;
+            echo " </label>";
+            echo " </p>";
          }
 
          echo "<p>";
@@ -301,10 +324,10 @@ function step3($host, $user, $password, $update) {
          echo "<input type='hidden' name='install' value='Etape_3'>";
          echo "<p class='submit'><input type='submit' name='submit' class='submit' value='".
                __('Continue')."'></p>";
-         $link->close();
          Html::closeForm();
 
       } else if ($update == "yes") {
+         // TODO
          echo "<p>".__('Please select the database to update:')."</p>";
          echo "<form action='install.php' method='post'>";
 
@@ -325,7 +348,16 @@ function step3($host, $user, $password, $update) {
          $link->close();
          Html::closeForm();
       }
+   } catch (PDOException $e) {
+      echo "<p>".__("Can't connect to the database")."\n <br>".
+           sprintf(__('The server answered: %s'), $e->getMessage())."</p>";
 
+      echo "<form action='install.php' method='post'>";
+      echo "<input type='hidden' name='update' value='".$update."'>";
+      echo "<input type='hidden' name='install' value='Etape_1'>";
+      echo "<p class='submit'><input type='submit' name='submit' class='submit' value='".
+            __s('Back')."'></p>";
+      Html::closeForm();
    }
 }
 
@@ -336,6 +368,7 @@ function step4 ($databasename, $newdatabasename) {
    $host     = $_SESSION['db_access']['host'];
    $user     = $_SESSION['db_access']['user'];
    $password = $_SESSION['db_access']['password'];
+   $type     = $_SESSION['db_access']['type'];
 
    //display the form to return to the previous step.
    echo "<h3>".__('Initialization of the database')."</h3>";
@@ -365,19 +398,58 @@ function step4 ($databasename, $newdatabasename) {
       Html::closeForm();
    }
 
-
    //Check if the port is in url
    $hostport = explode(":", $host);
    if (count($hostport) < 2) {
-     $link = new mysqli($hostport[0], $user, $password);
+     $dsn = $type.':host='.$hostport[0];
    } else {
-     $link = new mysqli($hostport[0], $user, $password, '', $hostport[1]);
+     $dsn = $type.':host='.$hostport[0].';port='.$hostport[1];
+   }
+   $options = array();
+   if ($type == 'mysql') {
+      $options = array(
+          PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+      );
    }
 
-   $databasename    = $link->real_escape_string($databasename);
-   $newdatabasename = $link->real_escape_string($newdatabasename);
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 
+   // Prepare conf for phinx
+   $_SERVER['PHINX_DBHOST'] = $hostport[0];
+   $_SERVER['PHINX_DBNAME'] = $databasename;
+   $_SERVER['PHINX_DBUSER'] = $user;
+   $_SERVER['PHINX_DBPASS'] = $password;
+
+   $app = require '../vendor/robmorgan/phinx/app/phinx.php';
+   $wrap = new Phinx\Wrapper\TextWrapper($app,
+           array('configuration' => 'phinx.yml', 'parser' => 'YAML'));
+
+   $pdo = new PDO($dsn.';dbname=glpi_test', $user, $password, $options);
    if (!empty($databasename)) { // use db already created
+
+      if (DBConnection::createMainConfig($host, $user, $password, $databasename, $type)) {
+
+         // Execute the command and determine if it was successful.
+         $output = call_user_func(array($wrap, 'getMigrate'), 'production_'.$type, null);
+         $error  = $wrap->getExitCode() > 0;
+
+         echo "<pre>";
+         echo $output;
+         echo "</pre>";
+         echo $error;
+
+         echo "<p>".__('OK - database was initialized')."</p>";
+
+         next_form();
+
+      } else { // can't create config_db file
+         echo "<p>".__('Impossible to write the database setup file')."</p>";
+         prev_form($host, $user, $password);
+      }
+      // old code x x x x x x x x x x x x
+return;
       $DB_selected = $link->select_db($databasename);
 
       if (!$DB_selected) {
@@ -399,6 +471,25 @@ function step4 ($databasename, $newdatabasename) {
       }
 
    } else if (!empty($newdatabasename)) { // create new db
+
+      $sth = $pdo->prepare('CREATE DATABASE :dbname');
+      $sth->execute(array(':dbname' => $newdatabasename));
+
+      // Execute the command and determine if it was successful.
+      $output = call_user_func(array($wrap, 'getMigrate'), 'production_'.$type, null);
+      $error  = $wrap->getExitCode() > 0;
+
+      echo "<pre>";
+      echo $output;
+      echo "</pre>";
+      echo $error;
+
+      return;
+
+
+
+      // OLD x x x x x x x x x
+
       // Try to connect
       if ($link->select_db($newdatabasename)) {
          echo "<p>".__('Database created')."</p>";
@@ -587,7 +678,8 @@ if (!isset($_POST["install"])) {
       case "Etape_2" : // mysql settings ok, go test mysql settings and select database.
          checkConfigFile();
          header_html(sprintf(__('Step %d'), 2));
-         step3($_POST["db_host"],$_POST["db_user"],$_POST["db_pass"],$_POST["update"]);
+         step3($_POST["db_host"], $_POST["db_user"], $_POST["db_pass"],
+               $_POST["update"], $_POST['db_type']);
          break;
 
       case "Etape_3" : // Create and fill database

@@ -669,7 +669,7 @@ class Html {
     * @param $with_session with session information (true by default)
    **/
    static function displayDebugInfos($with_session=true, $ajax=false) {
-      global $CFG_GLPI, $DEBUG_SQL, $SQL_TOTAL_REQUEST, $SQL_TOTAL_TIMER, $DEBUG_AUTOLOAD;
+      global $CFG_GLPI, $SQL_TOTAL_TIMER, $DEBUG_AUTOLOAD, $DB;
 
       // Only for debug mode so not need to be translated
       if ($_SESSION['glpi_use_mode'] == Session::DEBUG_MODE) { // mode debug
@@ -695,20 +695,26 @@ class Html {
 
          if ($CFG_GLPI["debug_sql"]) {
             echo "<div id='debugsql$rand'>";
-            echo "<div class='b'>".$SQL_TOTAL_REQUEST." Queries ";
-            echo "took  ".array_sum($DEBUG_SQL['times'])."s</div>";
+            echo "<div class='b'>".$DB->sql_total_request." Queries ";
+            echo "took  ".array_sum($DB->debug_sql['times'])."s</div>";
 
-            echo "<table class='tab_cadre'><tr><th>N&#176; </th><th>Queries</th><th>Time</th>";
-            echo "<th>Errors</th></tr>";
+            echo "<table class='tab_cadre'><tr><th>N&#176; </th><th>Queries</th>";
+            echo "<th>Parameters</th><th>Time</th><th>Errors</th></tr>";
 
-            foreach ($DEBUG_SQL['queries'] as $num => $query) {
+            foreach ($DB->debug_sql['queries'] as $num => $query) {
                echo "<tr class='tab_bg_".(($num%2)+1)."'><td>$num</td><td>";
                echo self::cleanSQLDisplay($query);
                echo "</td><td>";
-               echo $DEBUG_SQL['times'][$num];
+               if (isset($DB->debug_sql['params'][$num])) {
+                  echo $DB->debug_sql['params'][$num];
+               } else {
+                  echo "&nbsp;";
+               }
                echo "</td><td>";
-               if (isset($DEBUG_SQL['errors'][$num])) {
-                  echo $DEBUG_SQL['errors'][$num];
+               echo $DB->debug_sql['times'][$num];
+               echo "</td><td>";
+               if (isset($DB->debug_sql['errors'][$num])) {
+                  echo $DB->debug_sql['errors'][$num];
                } else {
                   echo "&nbsp;";
                }
@@ -1088,6 +1094,9 @@ class Html {
           && !CommonGLPI::isLayoutExcludedPage()) {
          echo Html::css($CFG_GLPI["root_doc"]."/lib/jqueryplugins/jquery-ui-scrollable-tabs/css/jquery.scrollabletab.min.css");
       }
+      echo Html::css($CFG_GLPI["root_doc"]."/lib/jqueryplugins/query-builder/query-builder.default.min.css");
+      echo Html::css($CFG_GLPI["root_doc"]."/lib/jqueryplugins/query-builder/query-builder.bootstrap.css");
+      echo Html::css($CFG_GLPI["root_doc"]."/lib/jqueryplugins/selectize/selectize.css");
 
       //  CSS link
       echo Html::css($CFG_GLPI["root_doc"]."/css/styles.css");
@@ -1157,6 +1166,8 @@ class Html {
       echo Html::script($CFG_GLPI["root_doc"]."/lib/jqueryplugins/autogrow/jquery.autogrow-textarea.min.js");
       echo Html::script($CFG_GLPI["root_doc"]."/lib/jqueryplugins/fullcalendar/lib/moment.min.js");
       echo Html::script($CFG_GLPI["root_doc"]."/lib/jqueryplugins/fullcalendar/fullcalendar.min.js");
+      echo Html::script($CFG_GLPI["root_doc"]."/lib/jqueryplugins/query-builder/query-builder.standalone.min.js");
+      echo Html::script($CFG_GLPI["root_doc"]."/lib/jqueryplugins/selectize/selectize.min.js");
 
       // layout
       if (CommonGLPI::isLayoutWithMain()
@@ -1189,6 +1200,14 @@ class Html {
          if (file_exists(GLPI_ROOT.$filename)) {
             echo Html::script($CFG_GLPI["root_doc"].$filename);
          }
+
+         // query-builder
+         $filename = "/lib/jqueryplugins/query-builder/i18n/query-builder.".
+                 $CFG_GLPI["languages"][$_SESSION['glpilanguage']][2].".js";
+         if (file_exists(GLPI_ROOT.$filename)) {
+            echo Html::script($CFG_GLPI["root_doc"].$filename);
+         }
+
       }
 
       // Some Javascript-Functions which we may need later
@@ -1436,9 +1455,7 @@ class Html {
 //             }
 //          }
 
-
          $_SESSION['glpimenu'] = $menu;
-//          echo 'menu load';
       } else {
          $menu = $_SESSION['glpimenu'];
       }

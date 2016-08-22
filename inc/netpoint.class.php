@@ -122,7 +122,7 @@ class Netpoint extends CommonDropdown {
          $value = 0;
       }
       if ($value > 0) {
-         $tmpname = Dropdown::getDropdownName("glpi_netpoints",$value,1);
+         $tmpname = Dropdown::getDropdownName(Netpoint::getTable(), $value, 1);
          if ($tmpname["name"] != "&nbsp;") {
             $name          = $tmpname["name"];
             $comment       = $tmpname["comment"];
@@ -263,7 +263,7 @@ class Netpoint extends CommonDropdown {
       } else {
          $start = 0;
       }
-      $number = countElementsInTable('glpi_netpoints', "`locations_id`='$ID'");
+      $number = countElementsInTable(self::getTable(), "`locations_id`='$ID'");
 
       if ($canedit) {
          echo "<div class='first-bloc'>";
@@ -425,7 +425,7 @@ class Netpoint extends CommonDropdown {
       }
 
       $row->addCell($row->getHeaderByName($column_name),
-                    Dropdown::getDropdownName("glpi_netpoints", $item->fields["netpoints_id"]),
+                    Dropdown::getDropdownName(Netpoint::getTable(), $item->fields["netpoints_id"]),
                     $father);
    }
 

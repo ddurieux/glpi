@@ -652,7 +652,7 @@ class Item_Devices extends CommonDBRelation {
             $spec_cell = $current_row->addCell($specificity_columns[$field], $content, $spec_cell);
          }
 
-         if (countElementsInTable('glpi_infocoms', "`itemtype`='".$this->getType()."' AND
+         if (countElementsInTable(Infocom::getTable(), "`itemtype`='".$this->getType()."' AND
                                                     `items_id`='".$link['id']."'")) {
             $content = array(array('function'   => 'Infocom::showDisplayLink',
                                    'parameters' => array($this->getType(), $link['id'])));

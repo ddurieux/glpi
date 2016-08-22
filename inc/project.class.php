@@ -640,7 +640,7 @@ class Project extends CommonDBTM {
             foreach ($DB->request($query) as $color) {
                $color = $color['color'];
             }
-            $first_col = Dropdown::getDropdownName('glpi_projectstates', $item->fields["projectstates_id"]);
+            $first_col = Dropdown::getDropdownName(ProjectState::getTable(), $item->fields["projectstates_id"]);
          }
          echo Search::showItem($p['output_type'], $first_col, $item_num, $p['row_num'],
                                "$align bgcolor='$color'");
@@ -660,7 +660,7 @@ class Project extends CommonDBTM {
 
          // Second TER column
          if (count($_SESSION["glpiactiveentities"]) > 1) {
-            $second_col = Dropdown::getDropdownName('glpi_entities', $item->fields['entities_id']);
+            $second_col = Dropdown::getDropdownName(Entity::getTable(), $item->fields['entities_id']);
             echo Search::showItem($p['output_type'], $second_col, $item_num, $p['row_num'],
                                   $align." width=100");
          }
@@ -690,7 +690,7 @@ class Project extends CommonDBTM {
          $fifth_col = "";
 
          if ($item->fields["groups_id"]) {
-            $fifth_col .= Dropdown::getDropdownName("glpi_groups", $item->fields["groups_id"]);
+            $fifth_col .= Dropdown::getDropdownName(Group::getTable(), $item->fields["groups_id"]);
             $fifth_col .= "<br>";
          }
 
@@ -1043,7 +1043,7 @@ class Project extends CommonDBTM {
 
          $params = array('itemtypes'       => ProjectTeam::$available_types,
                          'entity_restrict' => ($project->fields['is_recursive']
-                                               ? getSonsOf('glpi_entities',
+                                               ? getSonsOf(Entity::getTable(),
                                                            $project->fields['entities_id'])
                                                : $project->fields['entities_id']),
                          );

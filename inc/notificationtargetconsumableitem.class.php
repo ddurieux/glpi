@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -63,7 +63,7 @@ class NotificationTargetConsumableItem extends NotificationTarget {
 
       $events                                    = $this->getAllEvents();
 
-      $this->datas['##consumable.entity##']      = Dropdown::getDropdownName('glpi_entities',
+      $this->datas['##consumable.entity##']      = Dropdown::getDropdownName(Entity::getTable(),
                                                                              $options['entities_id']);
       $this->datas['##lang.consumable.entity##'] = __('Entity');
       $this->datas['##consumable.action##']      = $events[$event];

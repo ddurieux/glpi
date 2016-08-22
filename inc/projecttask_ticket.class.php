@@ -77,14 +77,14 @@ class ProjectTask_Ticket extends CommonDBRelation{
          switch ($item->getType()) {
             case 'ProjectTask' :
                if ($_SESSION['glpishow_count_on_tabs']) {
-                  $nb = countElementsInTable('glpi_projecttasks_tickets',
+                  $nb = countElementsInTable($this->getTable(),
                                              "`projecttasks_id` = '".$item->getID()."'");
                }
                return self::createTabEntry(Ticket::getTypeName(Session::getPluralNumber()), $nb);
 
             case 'Ticket' :
                if ($_SESSION['glpishow_count_on_tabs']) {
-                  $nb = countElementsInTable('glpi_projecttasks_tickets',
+                  $nb = countElementsInTable($this->getTable(),
                                              "`tickets_id` = '".$item->getID()."'");
                }
                return self::createTabEntry(ProjectTask::getTypeName(Session::getPluralNumber()), $nb);
@@ -418,7 +418,7 @@ class ProjectTask_Ticket extends CommonDBRelation{
                                                    false)."</td>";
                echo "<td>";
                if ($data['projecttasks_id']>0) {
-                  $father = Dropdown::getDropdownName('glpi_projecttasks', $data['projecttasks_id']);
+                  $father = Dropdown::getDropdownName(ProjectTask::getTable(), $data['projecttasks_id']);
                   echo "<a id='ProjectTask".$data["projecttasks_id"].$rand."' href='projecttask.form.php?id=".
                         $data['projecttasks_id']."'>".$father.
                         (empty($father)?"(".$data['projecttasks_id'].")":"")."</a>";

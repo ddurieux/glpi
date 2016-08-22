@@ -118,7 +118,7 @@ class Contact_Supplier extends CommonDBRelation{
                     getEntitiesRestrictRequest(" AND ", "glpi_contacts", '',
                                                $_SESSION['glpiactiveentities'], true);
 
-      return countElementsInTable(array('glpi_contacts_suppliers', 'glpi_contacts'), $restrict);
+      return countElementsInTable(array(self::getTable(), Contact::getTable()), $restrict);
    }
 
 
@@ -132,7 +132,7 @@ class Contact_Supplier extends CommonDBRelation{
                     getEntitiesRestrictRequest(" AND ", "glpi_suppliers", '',
                                                $_SESSION['glpiactiveentities'], true);
 
-      return countElementsInTable(array('glpi_contacts_suppliers', 'glpi_suppliers'), $restrict);
+      return countElementsInTable(array(self::getTable(), Supplier::getTable()), $restrict);
    }
 
 
@@ -258,10 +258,10 @@ class Contact_Supplier extends CommonDBRelation{
             }
             echo "<td class='center'>";
             echo "<a href='".$CFG_GLPI["root_doc"]."/front/supplier.form.php?id=".$data["entID"]."'>".
-                   Dropdown::getDropdownName("glpi_suppliers", $data["entID"])."</a></td>";
-            echo "<td class='center'>".Dropdown::getDropdownName("glpi_entities", $data["entity"]);
+                   Dropdown::getDropdownName(Supplier::getTable(), $data["entID"])."</a></td>";
+            echo "<td class='center'>".Dropdown::getDropdownName(Entity::getTable(), $data["entity"]);
             echo "</td>";
-            echo "<td class='center'>".Dropdown::getDropdownName("glpi_suppliertypes", $data["type"]);
+            echo "<td class='center'>".Dropdown::getDropdownName(SupplierType::getTable(), $data["type"]);
             echo "</td>";
             echo "<td class='center' width='80'>".$data["phone"]."</td>";
             echo "<td class='center' width='80'>".$data["fax"]."</td>";
@@ -388,7 +388,7 @@ class Contact_Supplier extends CommonDBRelation{
             echo "<td class='center'>";
             echo "<a href='".$CFG_GLPI["root_doc"]."/front/contact.form.php?id=".$data["id"]."'>".
                    sprintf(__('%1$s %2$s'), $data["name"], $data["firstname"])."</a></td>";
-            echo "<td class='center' width='100'>".Dropdown::getDropdownName("glpi_entities",
+            echo "<td class='center' width='100'>".Dropdown::getDropdownName(Entity::getTable(),
                                                                              $data["entity"]);
             echo "</td>";
             echo "<td class='center' width='100'>".$data["phone"]."</td>";
@@ -397,7 +397,7 @@ class Contact_Supplier extends CommonDBRelation{
             echo "<td class='center' width='100'>".$data["fax"]."</td>";
             echo "<td class='center'>";
             echo "<a href='mailto:".$data["email"]."'>".$data["email"]."</a></td>";
-            echo "<td class='center'>".Dropdown::getDropdownName("glpi_contacttypes",
+            echo "<td class='center'>".Dropdown::getDropdownName(ContactType::getTable(),
                                                                  $data["contacttypes_id"])."</td>";
             echo "</tr>";
          }

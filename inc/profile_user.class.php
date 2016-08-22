@@ -524,7 +524,7 @@ class Profile_User extends CommonDBRelation {
                echo "<a href=\"javascript:showHideDiv('entity$temp$rand','imgcat$temp', '".
                         $CFG_GLPI['root_doc']."/pics/folder.png','".$CFG_GLPI['root_doc']."/pics/folder-open.png');\">";
                echo "<img alt='' name='imgcat$temp' src=\"".$CFG_GLPI['root_doc']."/pics/folder.png\">&nbsp;";
-               echo "<span class='b'>".Dropdown::getDropdownName('glpi_entities', $data["entity"]).
+               echo "<span class='b'>".Dropdown::getDropdownName(Entity::getTable(), $data["entity"]).
                      "</span>";
                echo "</a>";
 
@@ -613,38 +613,28 @@ class Profile_User extends CommonDBRelation {
    static function getUserEntities($user_ID, $is_recursive=true, $default_first=false) {
       global $DB;
 
-      $query = "SELECT DISTINCT `entities_id`, `is_recursive`
-                FROM `glpi_profiles_users`
-                WHERE `users_id` = '$user_ID'";
-      $result = $DB->query($query);
-
-      if ($DB->numrows($result) > 0) {
-         $entities = array();
-
-         while ($data = $DB->fetch_assoc($result)) {
-            if ($data['is_recursive'] && $is_recursive) {
-               $tab      = getSonsOf('glpi_entities', $data['entities_id']);
-               $entities = array_merge($tab, $entities);
-            } else {
-               $entities[] = $data['entities_id'];
-            }
+      $rows = $DB->dbh->profile_user()->where('user_id', $user_ID)->fetchAll();
+      $entities = array();
+      foreach ($rows as $row) {
+         $data = $row->getData();
+         if ($data['is_recursive'] && $is_recursive) {
+            $tab      = getSonsOf(Entity::getTable(), $data['entity_id']);
+            $entities = array_merge($tab, $entities);
+         } else {
+            $entities[] = $data['entity_id'];
          }
-
-         // Set default user entity at the begin
-         if ($default_first) {
-            $user = new User();
-            if ($user->getFromDB($user_ID)) {
-               $ent = $user->getField('entities_id');
-               if (in_array($ent, $entities)) {
-                  array_unshift($entities, $ent);
-               }
-            }
-         }
-
-         return array_unique($entities);
       }
-
-      return array();
+      // Set default user entity at the begin
+      if ($default_first) {
+         $user = new User();
+         if ($user->getFromDB($user_ID)) {
+            $ent = $user->getField('entity_id');
+            if (in_array($ent, $entities)) {
+               array_unshift($entities, $ent);
+            }
+         }
+      }
+      return array_unique($entities);
    }
 
 
@@ -679,10 +669,10 @@ class Profile_User extends CommonDBRelation {
 
          while ($data = $DB->fetch_assoc($result)) {
             if ($data['is_recursive'] && $is_recursive) {
-               $tab      = getSonsOf('glpi_entities', $data['entities_id']);
+               $tab      = getSonsOf(Entity::getTable(), $data['entitiy_id']);
                $entities = array_merge($tab, $entities);
             } else {
-               $entities[] = $data['entities_id'];
+               $entities[] = $data['entity_id'];
             }
          }
 
@@ -704,19 +694,12 @@ class Profile_User extends CommonDBRelation {
    static function getUserProfiles($user_ID, $sqlfilter='') {
       global $DB;
 
-      $query = "SELECT DISTINCT `profiles_id`
-                FROM `glpi_profiles_users`
-                WHERE `users_id` = '$user_ID'
-                      $sqlfilter";
-      $result = $DB->query($query);
-
+      $rows = $DB->dbh->profile_user()->where('user_id', $user_ID)->fetchAll();
       $profiles = array();
-      if ($DB->numrows($result) > 0) {
-         while ($data = $DB->fetch_assoc($result)) {
-            $profiles[$data['profiles_id']] = $data['profiles_id'];
-         }
+      foreach ($rows as $row) {
+         $line = $row->getData();
+         $profiles[$line['profile_id']] = $line['profile_id'];
       }
-
       return $profiles;
    }
 
@@ -743,7 +726,7 @@ class Profile_User extends CommonDBRelation {
       foreach ($DB->request($query) as $data) {
          if ($child
              && $data['is_recursive']) {
-            foreach (getSonsOf('glpi_entities', $data['entities_id']) as $id) {
+            foreach (getSonsOf(Entity::getTable(), $data['entities_id']) as $id) {
                $entities[$id] = $id;
             }
          } else {
@@ -776,7 +759,7 @@ class Profile_User extends CommonDBRelation {
       foreach ($DB->request($query) as $data) {
          if ($child
              && $data['is_recursive']) {
-            foreach (getSonsOf('glpi_entities', $data['entities_id']) as $id) {
+            foreach (getSonsOf(Entity::getTable(), $data['entities_id']) as $id) {
                $entities[$id] = $id;
             }
          } else {
@@ -900,8 +883,8 @@ class Profile_User extends CommonDBRelation {
    function getRawName() {
 
       $name = sprintf(__('%1$s, %2$s'),
-                      Dropdown::getDropdownName('glpi_profiles', $this->fields['profiles_id']),
-                      Dropdown::getDropdownName('glpi_entities', $this->fields['entities_id']));
+                      Dropdown::getDropdownName(Profile::getTable(), $this->fields['profiles_id']),
+                      Dropdown::getDropdownName(Entity::getTable(), $this->fields['entities_id']));
 
       if (isset($this->fields['is_dynamic']) && $this->fields['is_dynamic']) {
          //TRANS: D for Dynamic

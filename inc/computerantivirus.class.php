@@ -62,7 +62,7 @@ class ComputerAntivirus extends CommonDBChild {
           && Computer::canView()) {
          $nb = 0;
          if ($_SESSION['glpishow_count_on_tabs']) {
-            $nb = countElementsInTable('glpi_computerantiviruses',
+            $nb = countElementsInTable($this->getTable(),
                                        "computers_id = '".$item->getID()."' AND `is_deleted`='0'");
          }
          return self::createTabEntry(self::getTypeName(Session::getPluralNumber()), $nb);
@@ -430,7 +430,7 @@ class ComputerAntivirus extends CommonDBChild {
                   echo "<td>".Dropdown::getYesNo($data['is_dynamic'])."</td>";
                }
                if ($data['manufacturers_id']) {
-                  echo "<td>".Dropdown::getDropdownName('glpi_manufacturers',
+                  echo "<td>".Dropdown::getDropdownName(Manufacturer::getTable(),
                                                         $data['manufacturers_id'])."</td>";
                } else {
                   echo "<td></td>";

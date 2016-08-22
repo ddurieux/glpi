@@ -173,7 +173,7 @@ class NotificationTargetChange extends NotificationTargetCommonITILObject {
                      //Object location
                      if ($item2->getField('locations_id') != NOT_AVAILABLE) {
                         $tmp['##item.location##']
-                               = Dropdown::getDropdownName('glpi_locations',
+                               = Dropdown::getDropdownName(Location::getTable(),
                                                            $item2->getField('locations_id'));
                      }
 
@@ -188,7 +188,7 @@ class NotificationTargetChange extends NotificationTargetCommonITILObject {
                      //Object group
                      if ($item2->getField('groups_id')) {
                         $tmp['##item.group##']
-                                       = Dropdown::getDropdownName('glpi_groups',
+                                       = Dropdown::getDropdownName(Group::getTable(),
                                                                    $item2->getField('groups_id'));
                      }
 

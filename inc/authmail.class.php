@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -243,7 +243,7 @@ class AuthMail extends CommonDBTM {
     * @return boolean
    **/
    static function useAuthMail() {
-      return (countElementsInTable('glpi_authmails', "`is_active`") > 0);
+      return (countElementsInTable(AuthMail::getTable(), "`is_active`") > 0);
    }
 
 

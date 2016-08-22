@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -384,15 +384,15 @@ class Stat extends CommonGLPI {
          switch ($type) {
             case 'group_tree' :
             case 'groups_tree_assign' :
-               $subname = Dropdown::getDropdownName('glpi_groups', $value2);
+               $subname = Dropdown::getDropdownName(Group::getTable(), $value2);
                break;
 
             case 'itilcategories_tree' :
-               $subname = Dropdown::getDropdownName('glpi_itilcategories', $value2);
+               $subname = Dropdown::getDropdownName(ITILCategory::getTable(), $value2);
                break;
 
             case 'locations_tree' :
-               $subname = Dropdown::getDropdownName('glpi_locations', $value2);
+               $subname = Dropdown::getDropdownName(Location::getTable(), $value2);
                break;
          }
 
@@ -802,7 +802,7 @@ class Stat extends CommonGLPI {
             if ($value == $value2) {
                $categories = array($value);
             } else {
-               $categories = getSonsOf("glpi_itilcategories", $value);
+               $categories = getSonsOf(ITILCategory::getTable(), $value);
             }
             $condition  = implode("','",$categories);
             $WHERE     .= " AND `$table`.`itilcategories_id` IN ('$condition')";
@@ -812,7 +812,7 @@ class Stat extends CommonGLPI {
             if ($value == $value2) {
                $categories = array($value);
             } else {
-               $categories = getSonsOf('glpi_locations', $value);
+               $categories = getSonsOf(Location::getTable(), $value);
             }
             $condition  = implode("','",$categories);
             $WHERE     .= " AND `$table`.`locations_id` IN ('$condition')";
@@ -825,7 +825,7 @@ class Stat extends CommonGLPI {
             if ($value == $value2) {
                $groups = array($value);
             } else {
-               $groups = getSonsOf("glpi_groups", $value);
+               $groups = getSonsOf(Group::getTable(), $value);
             }
             $condition = implode("','",$groups);
 

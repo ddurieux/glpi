@@ -157,12 +157,12 @@ class RuleRightCollection extends RuleCollection {
       switch ($name) {
          case "entity" :
             echo "<td class='center'>".__('Entity')." </td>\n";
-            echo "<td class='center'>".Dropdown::getDropdownName("glpi_entities", $value)."</td>";
+            echo "<td class='center'>".Dropdown::getDropdownName(Entity::getTable(), $value)."</td>";
             break;
 
          case "profile" :
             echo "<td class='center'>"._n('Profile', 'Profiles', Session::getPluralNumber())." </td>\n";
-            echo "<td class='center'>".Dropdown::getDropdownName("glpi_profiles", $value)."</td>";
+            echo "<td class='center'>".Dropdown::getDropdownName(Profile::getTable(), $value)."</td>";
             break;
 
          case "is_recursive" :

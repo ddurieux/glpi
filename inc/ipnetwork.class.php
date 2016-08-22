@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -564,21 +564,21 @@ class IPNetwork extends CommonImplicitTreeDropdown {
          case "is contained by" :
             $ORDER_ORIENTATION = 'ASC';
             if ($recursive) {
-               $entitiesID = getSonsOf('glpi_entities', $entityID);
+               $entitiesID = getSonsOf(Entity::getTable(), $entityID);
             }
             break;
 
          case "contains" :
             $ORDER_ORIENTATION = 'DESC';
             if ($recursive) {
-               $entitiesID = getAncestorsOf('glpi_entities', $entityID);
+               $entitiesID = getAncestorsOf(Entity::getTable(), $entityID);
             }
           break;
 
          case "equals" :
             $ORDER_ORIENTATION = '';
             if ($recursive) {
-               $entitiesID = getSonsAndAncestorsOf('glpi_entities', $entityID);
+               $entitiesID = getSonsAndAncestorsOf(Entity::getTable(), $entityID);
             }
             break;
       }

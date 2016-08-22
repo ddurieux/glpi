@@ -151,25 +151,23 @@ class Auth extends CommonGLPI {
          }
          $query.=" `$key`='$value'";
       }
-
-      $result = $DB->query($query);
-      if ($DB->numrows($result) == 0) {
-         $this->addToError(__('Incorrect username or password'));
-         return 0;
-
-      } else {
-         $pwd = $DB->result($result, 0, "password");
+      $result = $DB->dbh->user()->where($options)->fetch();
+      if ($result->exists()) {
+         $userdata = $result->getData();
+         $pwd = $userdata["password"];
 
          if (empty($pwd)) {
             //If the user has an LDAP DN, then store it in the Auth object
-            $user_dn = $DB->result($result, 0, "user_dn");
+            $user_dn = $userdata["user_dn"];
             if ($user_dn) {
                $this->user_dn = $user_dn;
             }
             return 2;
-
          }
          return 1;
+      } else {
+         $this->addToError(__('Incorrect username or password'));
+         return 0;
       }
    }
 
@@ -350,40 +348,29 @@ class Auth extends CommonGLPI {
          return false;
       }
 
-      $query = "SELECT `id`,`password`
-                FROM `glpi_users`
-                WHERE `name` = '" . $name . "'";
-      $result = $DB->query($query);
-
-      if (!$result) {
+      $result = $DB->dbh->user()->where('name', $name)->fetch();
+      if (!$result->exists()) {
          $this->addToError(__('Incorrect username or password'));
-         return false;
+         return FALSE;
       }
-      if ($result) {
-         if ($DB->numrows($result) == 1) {
-            $password_db = $DB->result($result, 0, "password");
-
-            if (self::checkPassword($password, $password_db)) {
-
-               // Update password if needed
-               if (self::needRehash($password_db)) {
-                  $input['id']        = $DB->result($result, 0, "id");
-                  // Set glpiID to allow passwod update
-                  $_SESSION['glpiID'] = $input['id'];
-                  $input['password']  = $password;
-                  $input['password2'] = $password;
-                  $user               = new User();
-                  $user->update($input);
-               }
-               return true;
-            }
+      $userdata = $result->getData();
+      $password_db = $userdata["password"];
+      if (self::checkPassword($password, $password_db)) {
+         // Update password if needed
+         if (self::needRehash($password_db)) {
+            $input['id']        = $userdata['id'];
+            // Set glpiID to allow passwod update
+            $_SESSION['glpiID'] = $input['id'];
+            $input['password']  = $password;
+            $input['password2'] = $password;
+            $user               = new User();
+            $user->update($input);
          }
-         $this->addToError(__('Incorrect username or password'));
-         return false;
+         return TRUE;
       }
-      $this->addToError("#".$DB->errno().": ".$DB->error());
-      return false;
-   } // connection_db()
+      $this->addToError(__('Incorrect username or password'));
+      return FALSE;
+   }
 
 
    /**
@@ -410,7 +397,7 @@ class Auth extends CommonGLPI {
             return true;
 
          case self::EXTERNAL :
-            $ssovariable = Dropdown::getDropdownName('glpi_ssovariables',
+            $ssovariable = Dropdown::getDropdownName(SsoVariable::getTable(),
                                                      $CFG_GLPI["ssovariables_id"]);
             $login_string = '';
             // MoYo : checking REQUEST create a security hole for me !
@@ -536,8 +523,8 @@ class Auth extends CommonGLPI {
    function getAuthMethods() {
 
       //Return all the authentication methods in an array
-      $this->authtypes = array('ldap' => getAllDatasFromTable('glpi_authldaps'),
-                               'mail' => getAllDatasFromTable('glpi_authmails'));
+      $this->authtypes = array('ldap' => getAllDatasFromTable(AuthLDAP::getTable()),
+                               'mail' => getAllDatasFromTable(AuthMail::getTable()));
    }
 
 
@@ -938,7 +925,7 @@ class Auth extends CommonGLPI {
          case self::DB_GLPI :
             return __('GLPI internal database');
 
-         case self::API: 
+         case self::API:
             return __("API");
 
          case self::NOT_YET_AUTHENTIFIED :
@@ -1064,7 +1051,7 @@ class Auth extends CommonGLPI {
       // Existing auth method
       //Look for the field in $_SERVER AND $_REQUEST
       // MoYo : checking REQUEST create a security hole for me !
-      $ssovariable = Dropdown::getDropdownName('glpi_ssovariables', $CFG_GLPI["ssovariables_id"]);
+      $ssovariable = Dropdown::getDropdownName(SsoVariable::getTable(), $CFG_GLPI["ssovariables_id"]);
       if ($CFG_GLPI["ssovariables_id"]
           && ((isset($_SERVER[$ssovariable]) && !empty($_SERVER[$ssovariable]))
               /*|| (isset($_REQUEST[$ssovariable]) && !empty($_REQUEST[$ssovariable]))*/)) {

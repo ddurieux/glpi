@@ -519,7 +519,7 @@ class Supplier extends CommonDBTM {
                      }
                      echo "<td class='center top' rowspan='$nb'>".$title."</td>";
                   }
-                  echo "<td class='center'>".Dropdown::getDropdownName("glpi_entities",
+                  echo "<td class='center'>".Dropdown::getDropdownName(Entity::getTable(),
                                                                        $data["entities_id"])."</td>";
                   echo "<td class='center";
                   echo ((isset($data['is_deleted']) && $data['is_deleted']) ?" tab_bg_2_2'" :"'").">";

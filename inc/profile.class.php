@@ -320,7 +320,7 @@ class Profile extends CommonDBTM {
       // check if right if the last write profile on Profile object
       if (($this->fields['profile'] & UPDATE)
           && isset($input['profile']) && !($input['profile'] & UPDATE)
-          && (countElementsInTable("glpi_profilerights",
+          && (countElementsInTable(ProfileRight::getTable(),
                                    "`name` = 'profile' AND `rights` & ".UPDATE))) {
          Session::addMessageAfterRedirect(__("This profile is the last with write rights on profiles"),
          false, ERROR);
@@ -342,7 +342,7 @@ class Profile extends CommonDBTM {
       global $DB;
 
       if (($this->fields['profile'] & DELETE)
-          && (countElementsInTable("glpi_profilerights",
+          && (countElementsInTable(ProfileRight::getTable(),
                                    "`name` = 'profile' AND `rights` & ".DELETE))) {
           Session::addMessageAfterRedirect(__("This profile is the last with write rights on profiles"),
                                            false, ERROR);
@@ -510,8 +510,8 @@ class Profile extends CommonDBTM {
       }
       if (count($IDs) == 0) {
          // Check all profiles (means more right than all possible profiles)
-         return (countElementsInTable('glpi_profiles')
-                     == countElementsInTable('glpi_profiles',
+         return (countElementsInTable(self::getTable())
+                     == countElementsInTable(self::getTable(),
                                              self::getUnderActiveProfileRestrictRequest('')));
       }
       $under_profiles = array();

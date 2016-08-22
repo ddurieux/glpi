@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -342,7 +342,7 @@ class Event extends CommonDBTM {
                       LIMIT ".intval($start).",".intval($_SESSION['glpilist_limit']);
 
       // Number of results
-      $numrows = countElementsInTable("glpi_events");
+      $numrows = countElementsInTable(self::getTable());
       // Get results
       $result = $DB->query($query_limit);
       $number = $DB->numrows($result);

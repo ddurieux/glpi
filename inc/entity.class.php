@@ -1351,7 +1351,7 @@ class Entity extends CommonTreeDropdown {
          $toadd[self::CONFIG_PARENT] = __('Inheritance of the parent entity');
       }
       $entities = array($entity->fields['entities_id']);
-      foreach (getAncestorsOf('glpi_entities',  $entity->fields['entities_id']) as $ent) {
+      foreach (getAncestorsOf(Entity::getTable(),  $entity->fields['entities_id']) as $ent) {
          if (Session::haveAccessToEntity($ent)) {
             $entities[] = $ent;
          }
@@ -2157,7 +2157,7 @@ class Entity extends CommonTreeDropdown {
 
       if (strstr($url,"[REQUESTTYPE_NAME]")) {
          $url = str_replace("[REQUESTTYPE_NAME]",
-                            urlencode(Dropdown::getDropdownName('glpi_requesttypes',
+                            urlencode(Dropdown::getDropdownName(RequestType::getTable(),
                                                                 $ticket->fields['requesttypes_id'])),
                             $url);
       }
@@ -2178,7 +2178,7 @@ class Entity extends CommonTreeDropdown {
 
       if (strstr($url,"[TICKETCATEGORY_NAME]")) {
          $url = str_replace("[TICKETCATEGORY_NAME]",
-                            urlencode(Dropdown::getDropdownName('glpi_itilcategories',
+                            urlencode(Dropdown::getDropdownName(ITILCategory::getTable(),
                                                                 $ticket->fields['itilcategories_id'])),
                             $url);
       }
@@ -2198,7 +2198,7 @@ class Entity extends CommonTreeDropdown {
 
       if (strstr($url,"[SOLUTIONTYPE_NAME]")) {
          $url = str_replace("[SOLUTIONTYPE_NAME]",
-                            urlencode(Dropdown::getDropdownName('glpi_solutiontypes',
+                            urlencode(Dropdown::getDropdownName(SolutionType::getTable(),
                                                                 $ticket->fields['solutiontypes_id'])),
                             $url);
       }
@@ -2209,7 +2209,7 @@ class Entity extends CommonTreeDropdown {
 
       if (strstr($url,"[SLA_NAME]")) {
          $url = str_replace("[SLA_NAME]",
-                            urlencode(Dropdown::getDropdownName('glpi_slas',
+                            urlencode(Dropdown::getDropdownName(SLA::getTable(),
                                                                 $ticket->fields['slas_id'])),
                             $url);
       }
@@ -2220,7 +2220,7 @@ class Entity extends CommonTreeDropdown {
 
       if (strstr($url,"[SLALEVEL_NAME]")) {
          $url = str_replace("[SLALEVEL_NAME]",
-                            urlencode(Dropdown::getDropdownName('glpi_slalevels',
+                            urlencode(Dropdown::getDropdownName(SlaLevel::getTable(),
                                                                 $ticket->fields['slalevels_id'])),
                             $url);
       }
@@ -2402,7 +2402,7 @@ class Entity extends CommonTreeDropdown {
                      if ($type == Infocom::ON_STATUS_CHANGE) {
                                        // TRANS %s is the name of the state
                         return sprintf(__('Fill when shifting to state %s'),
-                                       Dropdown::getDropdownName('glpi_states', $sid));
+                                       Dropdown::getDropdownName(State::getTable(), $sid));
                      }
                   }
             }
@@ -2427,13 +2427,13 @@ class Entity extends CommonTreeDropdown {
             if ($values[$field] == self::CONFIG_PARENT) {
                return __('Inheritance of the parent entity');
             }
-            return Dropdown::getDropdownName('glpi_entities', $values[$field]);
+            return Dropdown::getDropdownName(Entity::getTable(), $values[$field]);
 
          case 'tickettemplates_id' :
             if ($values[$field] == self::CONFIG_PARENT) {
                return __('Inheritance of the parent entity');
             }
-            return Dropdown::getDropdownName('glpi_tickettemplates', $values[$field]);
+            return Dropdown::getDropdownName(TicketTemplate::getTable(), $values[$field]);
 
          case 'calendars_id' :
             switch ($values[$field]) {
@@ -2443,7 +2443,7 @@ class Entity extends CommonTreeDropdown {
                case 0 :
                   return __('24/7');
             }
-            return Dropdown::getDropdownName('glpi_calendars', $values[$field]);
+            return Dropdown::getDropdownName(Calendar::getTable(), $values[$field]);
 
       }
       return parent::getSpecificValueToDisplay($field, $values, $options);

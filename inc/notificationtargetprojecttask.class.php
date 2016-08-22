@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -220,7 +220,7 @@ class NotificationTargetProjectTask extends NotificationTarget {
       $this->datas["##projecttask.name##"]
                   = $item->getField('name');
       $this->datas["##projecttask.project##"]
-                  = Dropdown::getDropdownName('glpi_projects', $item->getField('projects_id'));
+                  = Dropdown::getDropdownName(Project::getTable(), $item->getField('projects_id'));
       $this->datas["##projecttask.projecturl##"]
                   = $this->formatURL($options['additionnaloption']['usertype'],
                                      "Project_".$item->getField("projects_id"));
@@ -267,21 +267,21 @@ class NotificationTargetProjectTask extends NotificationTarget {
       $this->datas["##projecttask.father##"] = '';
       if ($item->getField('projecttasks_id')) {
          $this->datas["##projecttask.father##"]
-                              = Dropdown::getDropdownName('glpi_projecttasks',
+                              = Dropdown::getDropdownName(ProjectTask::getTable(),
                                                           $item->getField('projecttasks_id'));
       }
 
       $this->datas["##projecttask.state##"] = '';
       if ($item->getField('projectstates_id')) {
          $this->datas["##projecttask.state##"]
-                              = Dropdown::getDropdownName('glpi_projectstates',
+                              = Dropdown::getDropdownName(ProjectState::getTable(),
                                                           $item->getField('projectstates_id'));
       }
 
       $this->datas["##projecttask.type##"] = '';
       if ($item->getField('projecttasktypes_id')) {
          $this->datas["##projecttask.type##"]
-                              = Dropdown::getDropdownName('glpi_projecttasktypes',
+                              = Dropdown::getDropdownName(ProjectTaskType::getTable(),
                                                           $item->getField('projecttasktypes_id'));
       }
 
@@ -327,9 +327,9 @@ class NotificationTargetProjectTask extends NotificationTarget {
          $tmp['##task.description##']    = $task['content'];
          $tmp['##task.comments##']       = $task['comment'];
 
-         $tmp['##task.state##']          = Dropdown::getDropdownName('glpi_projectstates',
+         $tmp['##task.state##']          = Dropdown::getDropdownName(ProjectState::getTable(),
                                                                      $task['projectstates_id']);
-         $tmp['##task.type##']           = Dropdown::getDropdownName('glpi_projecttasktypes',
+         $tmp['##task.type##']           = Dropdown::getDropdownName(ProjectTaskType::getTable(),
                                                                      $task['projecttasktypes_id']);
          $tmp['##task.percent##']        = Dropdown::getValueWithUnit($task['percent_done'],"%");
 
@@ -425,7 +425,7 @@ class NotificationTargetProjectTask extends NotificationTarget {
                                       = $this->formatURL($options['additionnaloption']['usertype'],
                                                          $downloadurl);
             $tmp['##document.heading##']
-                                      = Dropdown::getDropdownName('glpi_documentcategories',
+                                      = Dropdown::getDropdownName(DocumentCategory::getTable(),
                                                                   $data['documentcategories_id']);
 
             $tmp['##document.filename##']

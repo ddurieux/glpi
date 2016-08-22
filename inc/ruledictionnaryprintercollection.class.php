@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -270,7 +270,7 @@ class RuleDictionnaryPrinterCollection extends RuleCollection {
          $manufacturer = "";
 
          if (isset($res_rule["manufacturer"])) {
-            $manufacturer = addslashes(Dropdown::getDropdownName("glpi_manufacturers",
+            $manufacturer = addslashes(Dropdown::getDropdownName(Manufacturer::getTable(),
                                                                  $res_rule["manufacturer"]));
          } else {
             $manufacturer = addslashes($p['manufacturer']);
@@ -328,7 +328,7 @@ class RuleDictionnaryPrinterCollection extends RuleCollection {
                                         AND `items_id` = '$ID'") as $connection) {
 
          //Direct connection exists in the target printer ?
-         if (!countElementsInTable("glpi_computers_items",
+         if (!countElementsInTable(Computer_Item::getTable(),
                                    "`itemtype` = 'Printer'
                                        AND `items_id` = '$new_printers_id'
                                        AND `computers_id`='".$connection["computers_id"]."'")) {

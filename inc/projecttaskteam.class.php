@@ -109,7 +109,7 @@ class ProjectTaskTeam extends CommonDBRelation {
 
       $restrict = "`glpi_projecttaskteams`.`projecttasks_id` = '".$item->getField('id') ."'";
 
-      return countElementsInTable(array('glpi_projecttaskteams'), $restrict);
+      return countElementsInTable(self::getTable(), $restrict);
    }
 
 

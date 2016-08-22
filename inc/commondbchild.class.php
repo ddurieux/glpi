@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -789,22 +789,21 @@ abstract class CommonDBChild extends CommonDBConnexity {
          $items_id = -99;
       }
 
-      $query = "SELECT *
-                FROM `" . static::getTable() . "`
-                WHERE `".static::$items_id."` = '".$item->getID()."'";
+      $rows = $DB->dbh->table(static::getTable())->where(static::$items_id, $item->getID());
 
       if (preg_match('/^itemtype/', static::$itemtype)) {
-         $query .= " AND `itemtype` = '".$item->getType()."'";
+         $rows = $rows->where('itemtype', $item->getType());
       }
 
       $current_item = new static();
 
       if ($current_item->maybeDeleted()) {
-         $query .= " AND `is_deleted` = '0'";
+         $rows = $rows->where('is_deleted', 0);
       }
-
+      $rows = $rows->fetchAll();
       $count = 0;
-      foreach ($DB->request($query) as $data) {
+      foreach ($rows as $row) {
+         $data = $row->getData();
 
          $current_item->fields = $data;
 
@@ -814,7 +813,6 @@ abstract class CommonDBChild extends CommonDBConnexity {
          $count++;
 
          $current_item->showChildForItemForm($canedit, $field_name, $current_item->getID());
-
       }
 
       if ($canedit) {

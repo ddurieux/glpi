@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -32,7 +32,7 @@
  */
 
 /** @file
-* @brief 
+* @brief
 */
 
 if (!defined('GLPI_ROOT')) {
@@ -119,7 +119,7 @@ class NetworkPortWifi extends NetworkPortInstantiation {
       DeviceNetworkCard::getHTMLTableCellsForItem($row, $this, NULL, $options);
 
       $row->addCell($row->getHeaderByName('Instantiation', 'ESSID'),
-                    Dropdown::getDropdownName("glpi_wifinetworks",
+                    Dropdown::getDropdownName(WifiNetwork::getTable(),
                                               $this->fields["wifinetworks_id"]));
 
       $row->addCell($row->getHeaderByName('Instantiation', 'Mode'), $this->fields['mode']);

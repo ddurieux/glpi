@@ -469,7 +469,7 @@ class Budget extends CommonDropdown{
                         echo "<td class='center top' rowspan='$nb'>".
                               ($nb>1 ? sprintf(__('%1$s: %2$s'), $typename, $nb) : $typename)."</td>";
                      }
-                     echo "<td class='center'>".Dropdown::getDropdownName("glpi_entities",
+                     echo "<td class='center'>".Dropdown::getDropdownName(Entity::getTable(),
                                                                           $data["entities_id"]);
                      echo "</td><td class='center";
                      echo (isset($data['is_deleted']) && $data['is_deleted'] ? " tab_bg_2_2'" : "'");
@@ -654,7 +654,7 @@ class Budget extends CommonDropdown{
       foreach ($allentities as $entity => $data) {
          if (isset($entities_values[$entity])) {
             echo "<tr class='tab_bg_1'>";
-            echo "<td class='b'>".Dropdown::getDropdownName('glpi_entities', $entity)."</td>";
+            echo "<td class='b'>".Dropdown::getDropdownName(Entity::getTable(), $entity)."</td>";
             if (count($found_types)) {
                foreach ($found_types as $type => $typename) {
                   echo "<td class='numeric'>";

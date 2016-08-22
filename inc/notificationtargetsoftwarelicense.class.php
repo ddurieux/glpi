@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -63,7 +63,7 @@ class NotificationTargetSoftwareLicense extends NotificationTarget {
 
       $this->datas['##license.action##'] = $events[$event];
 
-      $this->datas['##license.entity##'] = Dropdown::getDropdownName('glpi_entities',
+      $this->datas['##license.entity##'] = Dropdown::getDropdownName(Entity::getTable(),
                                                                      $options['entities_id']);
 
       foreach ($options['licenses'] as $id => $license) {

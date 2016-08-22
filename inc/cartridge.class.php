@@ -1203,7 +1203,7 @@ class Cartridge extends CommonDBChild {
 
       $restrict = "`glpi_cartridges`.`cartridgeitems_id` = '".$item->getField('id') ."'";
 
-      return countElementsInTable(array('glpi_cartridges'), $restrict);
+      return countElementsInTable(Cartridge::getTable(), $restrict);
    }
 
 
@@ -1214,7 +1214,7 @@ class Cartridge extends CommonDBChild {
 
       $restrict = "`glpi_cartridges`.`printers_id` = '".$item->getField('id') ."'";
 
-      return countElementsInTable(array('glpi_cartridges'), $restrict);
+      return countElementsInTable(Cartridge::getTable(), $restrict);
    }
 
 

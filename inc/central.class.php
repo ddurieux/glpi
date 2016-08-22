@@ -185,27 +185,29 @@ class Central extends CommonGLPI {
       }
 
       if ($_SESSION['glpi_use_mode'] == Session::DEBUG_MODE) {
-         if (!DBMysql::isMySQLStrictMode($comment)) {
-            echo "<tr><th colspan='2'>";
-            $message = sprintf(__('SQL strict mode is not fully enabled, recommended for development: %s'), $comment);
-            Html::displayTitle($CFG_GLPI['root_doc']."/pics/warning.png", $message, $message);
-            echo "</th></tr>";
-         }
+         // todo david
+//         if (!DBMysql::isMySQLStrictMode($comment)) {
+//            echo "<tr><th colspan='2'>";
+//            $message = sprintf(__('SQL strict mode is not fully enabled, recommended for development: %s'), $comment);
+//            Html::displayTitle($CFG_GLPI['root_doc']."/pics/warning.png", $message, $message);
+//            echo "</th></tr>";
+//         }
       }
 
       if ($_SESSION['glpi_use_mode'] == Session::DEBUG_MODE) {
-         $crashedtables = DBMysql::checkForCrashedTables();
-         if (!empty($crashedtables)) {
-            $tables = array();
-            foreach ($crashedtables as $crashedtable) {
-               $tables[] = $crashedtable['table'];
-            }
-            echo "<tr><th colspan='2'>";
-            $message = __('The following SQL tables are marked as crashed:');
-            $message.= implode(',', $tables);
-            Html::displayTitle($CFG_GLPI['root_doc']."/pics/warning.png", $message, $message);
-            echo "</th></tr>";
-         }
+      // todo david
+//         $crashedtables = DBMysql::checkForCrashedTables();
+//         if (!empty($crashedtables)) {
+//            $tables = array();
+//            foreach ($crashedtables as $crashedtable) {
+//               $tables[] = $crashedtable['table'];
+//            }
+//            echo "<tr><th colspan='2'>";
+//            $message = __('The following SQL tables are marked as crashed:');
+//            $message.= implode(',', $tables);
+//            Html::displayTitle($CFG_GLPI['root_doc']."/pics/warning.png", $message, $message);
+//            echo "</th></tr>";
+//         }
       }
 
 

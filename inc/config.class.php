@@ -936,7 +936,7 @@ class Config extends CommonDBTM {
       $userpref  = false;
       $url       = Toolbox::getItemTypeFormURL(__CLASS__);
 
-      if (array_key_exists('last_login',$data)) {
+      if (array_key_exists('last_login', $data)) {
          $userpref = true;
          if ($data["id"] === Session::getLoginUserID()) {
             $url  = $CFG_GLPI['root_doc']."/front/preference.php";
@@ -2263,18 +2263,15 @@ class Config extends CommonDBTM {
    static function getConfigurationValues($context, array $names=array()) {
       global $DB;
 
-      if (count($names) == 0) {
-         $query = "SELECT *
-                   FROM `glpi_configs`
-                   WHERE `context` = '$context'";
-      } else {
-         $query = "SELECT *
-                   FROM `glpi_configs`
-                   WHERE `context` = '$context'
-                     AND `name` IN ('".implode("', '", $names)."')";
+      $result = $DB->dbh->config();
+      $result2 = $result->where('context', $context);
+      if (count($names) > 0) {
+         $result2 = $result2->where('name', $names);
       }
+      $rows = $result2->fetchall();
       $result = array();
-      foreach ($DB->request($query) as $line) {
+      foreach ($rows as $row) {
+         $line = $row->getData();
          $result[$line['name']] = $line['value'];
       }
       return $result;

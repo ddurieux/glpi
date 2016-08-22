@@ -459,11 +459,11 @@ abstract class CommonDBRelation extends CommonDBConnexity {
                return true;
             }
             if (($item1->isRecursive())
-                && in_array($entity1, getAncestorsOf("glpi_entities", $entity2))) {
+                && in_array($entity1, getAncestorsOf(Entity::getTable(), $entity2))) {
                return true;
             }
             if (($item2->isRecursive())
-                && in_array($entity2, getAncestorsOf("glpi_entities", $entity1))) {
+                && in_array($entity2, getAncestorsOf(Entity::getTable(), $entity1))) {
                return true;
             }
             return false;

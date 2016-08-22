@@ -88,24 +88,24 @@ class Location extends CommonTreeDropdown {
 
       $tab                      = array();
 
-      $tab[3]['table']          = 'glpi_locations';
+      $tab[3]['table']          = self::getTable();
       $tab[3]['field']          = 'completename';
       $tab[3]['name']           = __('Location');
       $tab[3]['datatype']       = 'dropdown';
 
-      $tab[91]['table']         = 'glpi_locations';
+      $tab[91]['table']         = self::getTable();
       $tab[91]['field']         = 'building';
       $tab[91]['name']          = __('Building number');
       $tab[91]['massiveaction'] = false;
       $tab[91]['datatype']      = 'string';
 
-      $tab[92]['table']         = 'glpi_locations';
+      $tab[92]['table']         = self::getTable();
       $tab[92]['field']         = 'room';
       $tab[92]['name']          = __('Room number');
       $tab[92]['massiveaction'] = false;
       $tab[92]['datatype']      = 'string';
 
-      $tab[93]['table']         = 'glpi_locations';
+      $tab[93]['table']         = self::getTable();
       $tab[93]['field']         = 'comment';
       $tab[93]['name']          = __('Location comments');
       $tab[93]['massiveaction'] = false;
@@ -282,7 +282,7 @@ class Location extends CommonTreeDropdown {
             $item = getItemForItemtype($data['type']);
             $item->getFromDB($data['id']);
             echo "<tr class='tab_bg_1'><td class='center top'>".$item->getTypeName()."</td>";
-            echo "<td class='center'>".Dropdown::getDropdownName("glpi_entities",
+            echo "<td class='center'>".Dropdown::getDropdownName(Entity::getTable(),
                                                                  $item->getEntityID());
             echo "</td><td class='center'>".$item->getLink()."</td>";
             echo "<td class='center'>".

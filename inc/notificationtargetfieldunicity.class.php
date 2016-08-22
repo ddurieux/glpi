@@ -69,7 +69,7 @@ class NotificationTargetFieldUnicity extends NotificationTarget {
                                                               $options['field'],
                                                               $options['double']));
       }
-      $this->datas['##unicity.entity##']      = Dropdown::getDropdownName('glpi_entities',
+      $this->datas['##unicity.entity##']      = Dropdown::getDropdownName(Entity::getTable(),
                                                                           $options['entities_id']);
       if ($options['refuse']) {
          $this->datas['##unicity.action##'] = __('Record into the database denied');

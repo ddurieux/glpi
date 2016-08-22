@@ -188,7 +188,7 @@ class TicketFollowup  extends CommonDBTM {
          $nb = 0;
          if (self::canCreate()) {
             if ($_SESSION['glpishow_count_on_tabs']) {
-               $nb = countElementsInTable('glpi_ticketfollowups',
+               $nb = countElementsInTable($this->getTable(),
                                           "`tickets_id` = '".$item->getID()."'");
             }
             return self::createTabEntry(self::getTypeName(Session::getPluralNumber()), $nb);
@@ -480,7 +480,7 @@ class TicketFollowup  extends CommonDBTM {
 
       if (isset($this->fields['requesttypes_id'])) {
          if ($this->fields['requesttypes_id']) {
-            return Dropdown::getDropdownName('glpi_requesttypes', $this->fields['requesttypes_id']);
+            return Dropdown::getDropdownName(RequestType::getTable(), $this->fields['requesttypes_id']);
          }
          return $this->getTypeName();
       }
@@ -507,7 +507,7 @@ class TicketFollowup  extends CommonDBTM {
       $name = $this->getTypeName();
       if ($this->fields['requesttypes_id']) {
          $name = sprintf(__('%1$s - %2$s'), $name,
-                         Dropdown::getDropdownName('glpi_requesttypes',
+                         Dropdown::getDropdownName(RequestType::getTable(),
                                                    $this->fields['requesttypes_id']));
       }
       echo "<td>".$name."</td>";
@@ -963,7 +963,7 @@ class TicketFollowup  extends CommonDBTM {
                               Html::convDateTime($data['date']));
             if ($data['requesttypes_id']) {
                $name = sprintf(__('%1$s - %2$s'), $name,
-                         Dropdown::getDropdownName('glpi_requesttypes',
+                         Dropdown::getDropdownName(RequestType::getTable(),
                                                    $data['requesttypes_id']));
             }
             if ($showprivate && $data["is_private"]) {
@@ -1119,7 +1119,7 @@ class TicketFollowup  extends CommonDBTM {
       $tab[2]['name']         = __('Request source');
       $tab[2]['forcegroupby'] = true;
       $tab[2]['datatype']     = 'dropdown';
-      
+
       $tab[3]['table']        = $this->getTable();
       $tab[3]['field']        = 'date';
       $tab[3]['name']         = __('Date');

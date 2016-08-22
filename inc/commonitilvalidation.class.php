@@ -1113,7 +1113,7 @@ abstract class CommonITILValidation  extends CommonDBChild {
       $tab[57]['massiveaction']     = false;
       $tab[57]['joinparams']        = array('jointype' => 'child');
 
-      $tab[58]['table']             = 'glpi_users';
+      $tab[58]['table']             = User::getTable();
       $tab[58]['field']             = 'name';
       $tab[58]['name']              = __('Requester');
       $tab[58]['datatype']          = 'itemlink';
@@ -1128,7 +1128,7 @@ abstract class CommonITILValidation  extends CommonDBChild {
                                              => array('table'      => static::getTable(),
                                                       'joinparams' => array('jointype' => 'child')));
 
-      $tab[59]['table']             = 'glpi_users';
+      $tab[59]['table']             = User::getTable();
       $tab[59]['field']             = 'name';
       $tab[59]['linkfield']         = 'users_id_validate';
       $tab[59]['name']              = __('Approver');

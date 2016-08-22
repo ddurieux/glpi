@@ -233,7 +233,7 @@ class RSSFeed extends CommonDBTM {
                   // Restrict to entities
                   $entities    = array($group['entities_id']);
                   if ($group['is_recursive']) {
-                     $entities = getSonsOf('glpi_entities', $group['entities_id']);
+                     $entities = getSonsOf(Entity::getTable(), $group['entities_id']);
                   }
                   if (Session::haveAccessToOneOfEntities($entities, true)) {
                      return true;
@@ -250,7 +250,7 @@ class RSSFeed extends CommonDBTM {
             foreach ($data as $entity) {
                $entities    = array($entity['entities_id']);
                if ($entity['is_recursive']) {
-                  $entities = getSonsOf('glpi_entities', $entity['entities_id']);
+                  $entities = getSonsOf(Entity::getTable(), $entity['entities_id']);
                }
                if (Session::haveAccessToOneOfEntities($entities, true)) {
                   return true;
@@ -272,7 +272,7 @@ class RSSFeed extends CommonDBTM {
                // Restrict to entities
                $entities    = array($profile['entities_id']);
                if ($profile['is_recursive']) {
-                  $entities = getSonsOf('glpi_entities',$profile['entities_id']);
+                  $entities = getSonsOf(Entity::getTable(), $profile['entities_id']);
                }
                if (Session::haveAccessToOneOfEntities($entities, true)) {
                   return true;
@@ -907,11 +907,8 @@ class RSSFeed extends CommonDBTM {
             return false;
          }
 
-         $query = "SELECT `glpi_rssfeeds`.*
-                   FROM `glpi_rssfeeds`
-                   WHERE `glpi_rssfeeds`.`users_id` = '$users_id'
-                         AND `glpi_rssfeeds`.`is_active` = '1'
-                   ORDER BY `glpi_rssfeeds`.`name`";
+         $rows = $DB->dbh->rssfeed()->where('user_id', $users_id)->where('is_active', 1);
+         $rows = $rows->orderBy('name', 'ASC');
 
          $titre = "<a href='".$CFG_GLPI["root_doc"]."/front/rssfeed.php'>".
                     _n('Personal RSS feed', 'Personal RSS feeds', Session::getPluralNumber())."</a>";
@@ -1113,12 +1110,12 @@ class RSSFeed extends CommonDBTM {
                }
                echo "<td>".__('Group')."</td>";
 
-               $names   = Dropdown::getDropdownName('glpi_groups', $data['groups_id'],1);
+               $names   = Dropdown::getDropdownName(Group::getTable(), $data['groups_id'],1);
                $entname = sprintf(__('%1$s %2$s'), $names["name"],
                                   Html::showToolTip($names["comment"], array('display' => false)));
                if ($data['entities_id'] >= 0) {
                   $entname .= sprintf(__('%1$s / %2$s'), $entname,
-                                      Dropdown::getDropdownName('glpi_entities',
+                                      Dropdown::getDropdownName(Entity::getTable(),
                                                                $data['entities_id']));
                   if ($data['is_recursive']) {
                      //TRANS: R for Recursive
@@ -1143,7 +1140,7 @@ class RSSFeed extends CommonDBTM {
                   echo "</td>";
                }
                echo "<td>".__('Entity')."</td>";
-               $names   = Dropdown::getDropdownName('glpi_entities', $data['entities_id'],1);
+               $names   = Dropdown::getDropdownName(Entity::getTable(), $data['entities_id'],1);
                $tooltip = Html::showToolTip($names["comment"], array('display' => false));
                $entname = sprintf(__('%1$s %2$s'), $names["name"], $tooltip);
                if ($data['is_recursive']) {
@@ -1168,12 +1165,12 @@ class RSSFeed extends CommonDBTM {
                }
                echo "<td>"._n('Profile', 'Profiles', 1)."</td>";
 
-               $names   = Dropdown::getDropdownName('glpi_profiles',$data['profiles_id'],1);
+               $names   = Dropdown::getDropdownName(Profile::getTable(), $data['profiles_id'],1);
                $tooltip = Html::showToolTip($names["comment"], array('display' => false));
                $entname = sprintf(__('%1$s %2$s'), $names["name"], $tooltip);
                if ($data['entities_id'] >= 0) {
                   $entname .= sprintf(__('%1$s / %2$s'), $entname,
-                                      Dropdown::getDropdownName('glpi_entities',
+                                      Dropdown::getDropdownName(Entity::getTable(),
                                                                 $data['entities_id']));
                   if ($data['is_recursive']) {
                      $entname .= sprintf(__('%1$s %2$s'), $entname,

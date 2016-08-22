@@ -1117,7 +1117,7 @@ class MassiveAction {
                             || ($link_entity_type == $item->getEntityID())
                             || ($ent->fields["is_recursive"]
                                 && in_array($link_entity_type,
-                                            getAncestorsOf("glpi_entities",
+                                            getAncestorsOf(Entity::getTable(),
                                                            $item->getEntityID())))) {
                            $input2["items_id"] = $key;
                            $input2["itemtype"] = $item->getType();
@@ -1170,7 +1170,7 @@ class MassiveAction {
 
                               if (isset($item2->fields["is_recursive"])
                                   && $item2->fields["is_recursive"]) {
-                                 $link_entity_type = getSonsOf("glpi_entities",
+                                 $link_entity_type = getSonsOf(Entity::getTable(),
                                                                $item2->fields["entities_id"]);
                               } else {
                                  $link_entity_type[] = $item2->fields["entities_id"];

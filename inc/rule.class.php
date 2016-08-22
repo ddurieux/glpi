@@ -1866,7 +1866,7 @@ class Rule extends CommonDBTM {
       echo "<td>".Dropdown::getYesNo($this->fields["is_active"])."</td>";
 
       if ($display_entities) {
-         $entname = Dropdown::getDropdownName('glpi_entities', $this->fields['entities_id']);
+         $entname = Dropdown::getDropdownName(Entity::getTable(), $this->fields['entities_id']);
          if ($this->maybeRecursive()
              && $this->fields['is_recursive']) {
             $entname = sprintf(__('%1$s %2$s'), $entname, "<span class='b'>(".__('R').")</span>");
@@ -2172,7 +2172,7 @@ class Rule extends CommonDBTM {
                          && $item->getFromDB($pattern)
                          && $item->isEntityAssign()) {
                         $addentity = sprintf(__('%1$s (%2$s)'), $addentity,
-                                             Dropdown::getDropdownName('glpi_entities',
+                                             Dropdown::getDropdownName(Entity::getTable(),
                                                                        $item->getEntityID()));
                      }
                   }
@@ -2364,7 +2364,7 @@ class Rule extends CommonDBTM {
                return getUserName($value);
 
             case "dropdown_groups_validate" :
-               return Dropdown::getDropdownName('glpi_groups', $value);
+               return Dropdown::getDropdownName(Group::getTable(), $value);
 
             case "dropdown_validation_percent" :
                return Dropdown::getValueWithUnit($value,'%');
@@ -2983,7 +2983,7 @@ class Rule extends CommonDBTM {
                      $types[] = 'RuleMailCollector';
                   }
                   if (count($types)) {
-                     $nb = countElementsInTable(array('glpi_rules', 'glpi_ruleactions'),
+                     $nb = countElementsInTable(array($this->getTable(), RuleAction::getTable()),
                                                 "`glpi_ruleactions`.`rules_id` = `glpi_rules`.`id`
                                                   AND `glpi_rules`.`sub_type`
                                                          IN ('".implode("','",$types)."')
@@ -2996,7 +2996,7 @@ class Rule extends CommonDBTM {
 
             case 'SLA' :
                if ($_SESSION['glpishow_count_on_tabs']) {
-                  $nb = countElementsInTable('glpi_ruleactions',
+                  $nb = countElementsInTable(RuleAction::getTable(),
                                              "`field` = 'slas_id'
                                                 AND `value` = '".$item->getID()."'");
                }

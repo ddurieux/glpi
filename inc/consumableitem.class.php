@@ -399,11 +399,11 @@ class ConsumableItem extends CommonDBTM {
 
                if (NotificationEvent::raiseEvent('alert', new ConsumableItem(), $options)) {
                   if ($task) {
-                     $task->log(Dropdown::getDropdownName("glpi_entities",
+                     $task->log(Dropdown::getDropdownName(Entity::getTable(),
                                                           $entity)." :  $message\n");
                      $task->addVolume(1);
                   } else {
-                     Session::addMessageAfterRedirect(Dropdown::getDropdownName("glpi_entities",
+                     Session::addMessageAfterRedirect(Dropdown::getDropdownName(Entity::getTable(),
                                                                                 $entity).
                                                       " :  $message");
                   }
@@ -419,7 +419,7 @@ class ConsumableItem extends CommonDBTM {
                   }
 
                } else {
-                  $entityname = Dropdown::getDropdownName('glpi_entities', $entity);
+                  $entityname = Dropdown::getDropdownName(Entity::getTable(), $entity);
                   //TRANS: %s is entity name
                   $msg = sprintf(__('%s: send consumable alert failed'), $entityname);
                   if ($task) {

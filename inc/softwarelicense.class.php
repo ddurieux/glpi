@@ -258,7 +258,7 @@ class SoftwareLicense extends CommonDBTM {
          $this->fields['number']       = 1;
          $soft                         = new Software();
          if ($soft->getFromDB($softwares_id)
-             && in_array($_SESSION['glpiactive_entity'], getAncestorsOf('glpi_entities',
+             && in_array($_SESSION['glpiactive_entity'], getAncestorsOf(Entity::getTable(),
                                                                         $soft->getEntityID()))) {
             $options['entities_id'] = $soft->getEntityID();
          }
@@ -288,7 +288,7 @@ class SoftwareLicense extends CommonDBTM {
          $softwares_id = $this->fields["softwares_id"];
          echo "<input type='hidden' name='softwares_id' value='$softwares_id'>";
          echo "<a href='software.form.php?id=".$softwares_id."'>".
-                Dropdown::getDropdownName("glpi_softwares", $softwares_id)."</a>";
+                Dropdown::getDropdownName(Software::getTable(), $softwares_id)."</a>";
       } else {
          Dropdown::show('Software',
                         array('condition'   => "`is_template`='0' AND `is_deleted`='0'",
@@ -760,7 +760,7 @@ class SoftwareLicense extends CommonDBTM {
             $options['licenses']    = $items;
 
             if (NotificationEvent::raiseEvent('alert', new self(), $options)) {
-               $entityname = Dropdown::getDropdownName("glpi_entities", $entity);
+               $entityname = Dropdown::getDropdownName(Entity::getTable(), $entity);
                if ($task) {
                   //TRANS: %1$s is the entity, %2$s is the message
                   $task->log(sprintf(__('%1$s: %2$s')."\n", $entityname, $message));
@@ -781,7 +781,7 @@ class SoftwareLicense extends CommonDBTM {
                }
 
             } else {
-               $entityname = Dropdown::getDropdownName('glpi_entities', $entity);
+               $entityname = Dropdown::getDropdownName(Entity::getTable(), $entity);
                //TRANS: %s is entity name
                $msg = sprintf(__('%1$s: %2$s'), $entityname, __('Send licenses alert failed'));
                if ($task) {
@@ -912,7 +912,7 @@ class SoftwareLicense extends CommonDBTM {
       $showmassiveactions  = $canedit;
 
       // Total Number of events
-      $number = countElementsInTable("glpi_softwarelicenses",
+      $number = countElementsInTable(self::getTable(),
                                      "glpi_softwarelicenses.softwares_id = $softwares_id " .
                                           getEntitiesRestrictRequest('AND', 'glpi_softwarelicenses',
                                                                      '', '', true));

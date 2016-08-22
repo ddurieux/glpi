@@ -222,7 +222,7 @@ class ObjectLock extends CommonDBTM {
          ") ;
          echo $ret;
       }
-      
+
       $ret = Html::scriptBlock("
          $(function(){
             var lockStatusTimer ;
@@ -251,7 +251,7 @@ class ObjectLock extends CommonDBTM {
          });
       ");
       echo $ret ;
-      
+
       $msg = "<table><tr><td class=red nowrap>";
 
       $msg .= __('Locked by ')."<a href='".$user->getLinkURL()."'>$completeUserName</a> -> ".
@@ -540,20 +540,20 @@ class ObjectLock extends CommonDBTM {
           && ($CFG_GLPI["lock_lockprofile_id"] > 0)
           && in_array($itemtype, $CFG_GLPI['lock_item_list'])) {
 
-         $tab[200]['table']         = 'glpi_users';
+         $tab[200]['table']         = User::getTable();
          $tab[200]['field']         = 'name';
          $tab[200]['datatype']      = 'dropdown';
          $tab[200]['right']         = 'all';
          $tab[200]['name']          = __('Locked by');
          $tab[200]['forcegroupby']  = true;
          $tab[200]['massiveaction'] = false;
-        $tab[200]['joinparams']    = array('jointype' => '',
+         $tab[200]['joinparams']    = array('jointype' => '',
                                            'beforejoin'
                                              => array('table'      => getTableForItemType('ObjectLock'),
                                                       'joinparams' => array('jointype'
                                                                                => "itemtype_item")));
 
-         $tab[201]['table']         = getTableForItemType('ObjectLock');
+         $tab[201]['table']         = ObjectLock::getTable();
          $tab[201]['field']         = 'date_mod';
          $tab[201]['datatype']      = 'datetime';
          $tab[201]['name']          = __('Locked date');

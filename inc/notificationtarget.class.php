@@ -1228,7 +1228,7 @@ class NotificationTarget extends CommonDBChild {
 
             if ($notif->getFromDB($data['id'])) {
                echo "<tr class='tab_bg_2'><td>".$notif->getLink();
-               echo "</td><td>".Dropdown::getDropdownName('glpi_entities', $notif->getEntityID());
+               echo "</td><td>".Dropdown::getDropdownName(Entity::getTable(), $notif->getEntityID());
                echo "</td><td>".Dropdown::getYesNo($notif->getField('is_active'))."</td><td>";
                $itemtype = $notif->getField('itemtype');
                if ($tmp = getItemForItemtype($itemtype)) {
@@ -1240,7 +1240,7 @@ class NotificationTarget extends CommonDBChild {
                echo "</td><td>".NotificationEvent::getEventName($itemtype,
                                                                 $notif->getField('event'));
                echo "</td>".
-                    "<td>".Dropdown::getDropdownName('glpi_notificationtemplates',
+                    "<td>".Dropdown::getDropdownName(NotificationTemplate::getTable(),
                                                      $notif->getField('notificationtemplates_id'));
                echo "</td></tr>";
             }

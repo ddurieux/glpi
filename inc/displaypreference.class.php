@@ -121,24 +121,21 @@ class DisplayPreference extends CommonDBTM {
    static function getForTypeUser($itemtype, $user_id) {
       global $DB;
 
-      $query = "SELECT *
-                FROM `glpi_displaypreferences`
-                WHERE `itemtype` = '$itemtype'
-                      AND (`users_id` = '$user_id' OR `users_id` = '0')
-                ORDER BY `users_id`, `rank`";
-      $result = $DB->query($query);
+      $rows = $DB->dbh->displaypreference()->where('itemtype', $itemtype);
+      $rows = $rows->where("(user_id = '$user_id' OR user_id = '0')");
+      $rows = $rows->orderBy('user_id')->orderBy('rank')->fetchAll();
 
       $default_prefs = array();
       $user_prefs = array();
 
-      while ($data = $DB->fetch_assoc($result)) {
-         if ($data["users_id"] != 0) {
+      foreach ($rows as $row) {
+         $data = $row->getData();
+         if ($data["user_id"] != 0) {
             $user_prefs[] = $data["num"];
          } else {
             $default_prefs[] = $data["num"];
          }
       }
-
       return count($user_prefs) ? $user_prefs : $default_prefs;
    }
 

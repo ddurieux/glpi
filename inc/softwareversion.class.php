@@ -121,7 +121,7 @@ class SoftwareVersion extends CommonDBChild {
          echo "<input type='hidden' name='softwares_id' value='$softwares_id'>";
       }
       echo "<a href='software.form.php?id=".$softwares_id."'>".
-             Dropdown::getDropdownName("glpi_softwares", $softwares_id)."</a>";
+             Dropdown::getDropdownName(Software::getTable(), $softwares_id)."</a>";
       echo "</td>";
       echo "<td rowspan='4' class='middle'>".__('Comments')."</td>";
       echo "<td class='center middle' rowspan='4'>";
@@ -233,7 +233,7 @@ class SoftwareVersion extends CommonDBChild {
       $result = $DB->query($query);
       $number = $DB->numrows($result);
       $values = array();
-      
+
       if ($number) {
          while ($data = $DB->fetch_assoc($result)) {
             $ID     = $data['id'];
@@ -309,7 +309,7 @@ class SoftwareVersion extends CommonDBChild {
                echo "<td><a href='softwareversion.form.php?id=".$data['id']."'>";
                echo $data['name'].(empty($data['name'])?"(".$data['id'].")":"")."</a></td>";
                echo "<td>".$data['sname']."</td>";
-               echo "<td class='right'>".Dropdown::getDropdownName('glpi_operatingsystems',
+               echo "<td class='right'>".Dropdown::getDropdownName(OperatingSystem::getTable(),
                                                                    $data['operatingsystems_id']);
                echo "</td>";
                echo "<td class='numeric'>$nb</td>";

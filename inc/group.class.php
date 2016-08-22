@@ -596,7 +596,7 @@ class Group extends CommonTreeDropdown {
 
       // include item of child groups ?
       if ($tree) {
-         $grprestrict = "IN (".implode(',', getSonsOf('glpi_groups', $this->getID())).")";
+         $grprestrict = "IN (".implode(',', getSonsOf(Group::getTable(), $this->getID())).")";
       } else {
          $grprestrict = "='".$this->getID()."'";
       }
@@ -783,7 +783,7 @@ class Group extends CommonTreeDropdown {
             }
             echo "</td><td>".$item->getTypeName(1);
             echo "</td><td>".$item->getLink(array('comments' => true));
-            echo "</td><td>".Dropdown::getDropdownName("glpi_entities", $item->getEntityID());
+            echo "</td><td>".Dropdown::getDropdownName(Entity::getTable(), $item->getEntityID());
             if ($tree || $user) {
                echo "</td><td>";
                if ($grp = $item->getField($field)) {

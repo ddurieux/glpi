@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -285,21 +285,21 @@ class NotificationTargetProject extends NotificationTarget {
       $this->datas["##project.father##"] = '';
       if ($item->getField('projects_id')) {
          $this->datas["##project.father##"]
-                              = Dropdown::getDropdownName('glpi_projects',
+                              = Dropdown::getDropdownName(Project::getTable(),
                                                           $item->getField('projects_id'));
       }
 
       $this->datas["##project.state##"] = '';
       if ($item->getField('projectstates_id')) {
          $this->datas["##project.state##"]
-                              = Dropdown::getDropdownName('glpi_projectstates',
+                              = Dropdown::getDropdownName(ProjectState::getTable(),
                                                           $item->getField('projectstates_id'));
       }
 
       $this->datas["##project.type##"] = '';
       if ($item->getField('projecttypes_id')) {
          $this->datas["##project.type##"]
-                              = Dropdown::getDropdownName('glpi_projecttypes',
+                              = Dropdown::getDropdownName(ProjectType::getTable(),
                                                           $item->getField('projecttypes_id'));
       }
 
@@ -313,7 +313,7 @@ class NotificationTargetProject extends NotificationTarget {
       $this->datas["##project.managergroup##"] = '';
       if ($item->getField('groups_id')) {
          $this->datas["##project.managergroup##"]
-                              = Dropdown::getDropdownName('glpi_groups',
+                              = Dropdown::getDropdownName(Group::getTable(),
                                                           $item->getField('groups_id'));
       }
       // Team infos
@@ -350,9 +350,9 @@ class NotificationTargetProject extends NotificationTarget {
          $tmp['##task.description##']    = $task['content'];
          $tmp['##task.comments##']       = $task['comment'];
 
-         $tmp['##task.state##']          = Dropdown::getDropdownName('glpi_projectstates',
+         $tmp['##task.state##']          = Dropdown::getDropdownName(ProjectState::getTable(),
                                                                      $task['projectstates_id']);
-         $tmp['##task.type##']           = Dropdown::getDropdownName('glpi_projecttasktypes',
+         $tmp['##task.type##']           = Dropdown::getDropdownName(ProjectTaskType::getTable(),
                                                                      $task['projecttasktypes_id']);
          $tmp['##task.percent##']        = Dropdown::getValueWithUnit($task['percent_done'],"%");
 
@@ -392,7 +392,7 @@ class NotificationTargetProject extends NotificationTarget {
          $tmp['##cost.datebegin##']    = Html::convDate($cost['begin_date']);
          $tmp['##cost.dateend##']      = Html::convDate($cost['end_date']);
          $tmp['##cost.cost##']         = Html::formatNumber($cost['cost']);
-         $tmp['##cost.budget##']       = Dropdown::getDropdownName('glpi_budgets',
+         $tmp['##cost.budget##']       = Dropdown::getDropdownName(Budget::getTable(),
                                                                      $cost['budgets_id']);
          $this->datas["##project.totalcost##"] += $cost['cost'];
          $this->datas['costs'][]                = $tmp;
@@ -471,7 +471,7 @@ class NotificationTargetProject extends NotificationTarget {
                                         = $this->formatURL($options['additionnaloption']['usertype'],
                                                           $downloadurl);
             $tmp['##document.heading##']
-                                        = Dropdown::getDropdownName('glpi_documentcategories',
+                                        = Dropdown::getDropdownName(DocumentCategory::getTable(),
                                                                     $data['documentcategories_id']);
 
             $tmp['##document.filename##']
@@ -512,7 +512,7 @@ class NotificationTargetProject extends NotificationTarget {
                   //Object location
                   if ($item2->getField('locations_id') != NOT_AVAILABLE) {
                      $tmp['##item.location##']
-                                    = Dropdown::getDropdownName('glpi_locations',
+                                    = Dropdown::getDropdownName(Location::getTable(),
                                                                   $item2->getField('locations_id'));
                   }
 
@@ -527,7 +527,7 @@ class NotificationTargetProject extends NotificationTarget {
                   //Object group
                   if ($item2->getField('groups_id')) {
                      $tmp['##item.group##']
-                                    = Dropdown::getDropdownName('glpi_groups',
+                                    = Dropdown::getDropdownName(Group::getTable(),
                                                                   $item2->getField('groups_id'));
                   }
 

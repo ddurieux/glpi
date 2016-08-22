@@ -939,7 +939,7 @@ class Reservation extends CommonDBChild {
                      if (isset($item->fields["peripheraltypes_id"])
                          && ($item->fields["peripheraltypes_id"] != 0)) {
 
-                        $typename = Dropdown::getDropdownName("glpi_peripheraltypes",
+                        $typename = Dropdown::getDropdownName(PeripheralType::getTable(),
                                                               $item->fields["peripheraltypes_id"]);
                      }
                   }

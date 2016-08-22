@@ -195,7 +195,7 @@ class NetworkPort_Vlan extends CommonDBRelation {
                <a href='".$CFG_GLPI["root_doc"]."/front/vlan.form.php?id=".$data["id"]."'>".$name.
               "</a>";
          echo "</td>";
-         echo "<td class='center'>".Dropdown::getDropdownName("glpi_entities", $data["entities_id"]);
+         echo "<td class='center'>".Dropdown::getDropdownName(Entity::getTable(), $data["entities_id"]);
          echo "</td><td class='center'>".Dropdown::getYesNo($data["tagged"])."</td>";
          echo "<td class='numeric'>".$data["tag"]."</td>";
          echo "</tr>";

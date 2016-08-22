@@ -376,7 +376,7 @@ class ProjectTask extends CommonDBChild {
          echo "<input type='hidden' name='is_recursive' value='$recursive'>";
       }
       echo "<a href='project.form.php?id=".$projects_id."'>".
-             Dropdown::getDropdownName("glpi_projects", $projects_id)."</a>";
+             Dropdown::getDropdownName(Project::getTable(), $projects_id)."</a>";
       echo "</td>";
       echo "<td>".__('As child of')."</td>";
       echo "<td>";
@@ -909,7 +909,7 @@ class ProjectTask extends CommonDBChild {
                                                    false)."</td>";
                echo "<td>";
                if ($data['projecttasks_id']>0) {
-                  $father = Dropdown::getDropdownName('glpi_projecttasks', $data['projecttasks_id']);
+                  $father = Dropdown::getDropdownName(ProjectTask::getTable(), $data['projecttasks_id']);
                   echo "<a id='ProjectTask".$data["projecttasks_id"].$rand."' href='projecttask.form.php?id=".
                            $data['projecttasks_id']."'>".$father.
                            (empty($father)?"(".$data['projecttasks_id'].")":"")."</a>";
@@ -999,7 +999,7 @@ class ProjectTask extends CommonDBChild {
 
          $params = array('itemtypes'       => ProjectTeam::$available_types,
                          'entity_restrict' => ($task->fields['is_recursive']
-                                               ? getSonsOf('glpi_entities',
+                                               ? getSonsOf(Entity::getTable(),
                                                            $task->fields['entities_id'])
                                                : $task->fields['entities_id']),
                          );
@@ -1142,7 +1142,7 @@ class ProjectTask extends CommonDBChild {
 
          $parents = 0;
          if ($task->fields['projecttasks_id'] > 0) {
-            $parents = count(getAncestorsOf("glpi_projecttasks", $ID));
+            $parents = count(getAncestorsOf(ProjectTask::getTable(), $ID));
          }
 
          if ($task->fields['is_milestone']){

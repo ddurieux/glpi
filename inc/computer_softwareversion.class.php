@@ -1028,7 +1028,7 @@ class Computer_SoftwareVersion extends CommonDBRelation {
             echo "<td class='center'>".Dropdown::getYesNo($data['is_dynamic'])."</td>";
          }
 
-         echo "<td class='center'>". Dropdown::getDropdownName("glpi_softwarecategories",
+         echo "<td class='center'>". Dropdown::getDropdownName(SoftwareCategory::getTable(),
                                                                   $data['softwarecategories_id']);
          echo "</td>";
          echo "<td class='center'>" .Dropdown::getYesNo($data["softvalid"]) . "</td>";
@@ -1082,7 +1082,7 @@ class Computer_SoftwareVersion extends CommonDBRelation {
 
       if ($data["softwarelicensetypes_id"]) {
          $serial = sprintf(__('%1$s (%2$s)'), $serial,
-                           Dropdown::getDropdownName("glpi_softwarelicensetypes",
+                           Dropdown::getDropdownName(SoftwareLicenseType::getTable(),
                                                      $data["softwarelicensetypes_id"]));
       }
       echo "</td><td class='b'>" .$data["name"]." - ". $serial;
@@ -1171,7 +1171,7 @@ class Computer_SoftwareVersion extends CommonDBRelation {
             // Installation allowed for template
             if (Software::canView()) {
                if ($_SESSION['glpishow_count_on_tabs']) {
-                  $nb = countElementsInTable('glpi_computers_softwareversions',
+                  $nb = countElementsInTable($this->getTable(),
                                              "computers_id = '".$item->getID()."'
                                                   AND `is_deleted`='0'");
                }

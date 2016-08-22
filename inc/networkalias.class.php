@@ -342,9 +342,9 @@ class NetworkAlias extends FQDNLabel {
          }
          echo "<a href='".static::getFormURL()."?id=".$data["id"]."'>".$name."</a>";
          echo "</td>";
-         echo "<td class='center' $showviewjs>".Dropdown::getDropdownName("glpi_fqdns",
+         echo "<td class='center' $showviewjs>".Dropdown::getDropdownName(FQDN::getTable(),
                                                                           $data["fqdns_id"]);
-         echo "<td class='center' $showviewjs>".Dropdown::getDropdownName("glpi_entities",
+         echo "<td class='center' $showviewjs>".Dropdown::getDropdownName(Entity::getTable(),
                                                                           $data["entities_id"]);
          echo "</tr>";
       }

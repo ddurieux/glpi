@@ -308,7 +308,7 @@ class NotificationTargetTicket extends NotificationTargetCommonITILObject {
       $datas['##ticket.type##']
                         = Ticket::getTicketTypeName($item->getField('type'));
       $datas['##ticket.requesttype##']
-                        = Dropdown::getDropdownName('glpi_requesttypes',
+                        = Dropdown::getDropdownName(RequestType::getTable(),
                                                     $item->getField('requesttypes_id'));
 
       $autoclose_value  = Entity::getUsedConfig('autoclose_delay', $this->getEntity(), '',
@@ -328,13 +328,13 @@ class NotificationTargetTicket extends NotificationTargetCommonITILObject {
 
       $datas['##ticket.sla##'] = '';
       if ($item->getField('slas_id')) {
-         $datas['##ticket.sla##'] = Dropdown::getDropdownName('glpi_slas',
+         $datas['##ticket.sla##'] = Dropdown::getDropdownName(SLA::getTable(),
                                                               $item->getField('slas_id'));
       }
 
       $datas['##ticket.location##'] = '';
       if ($item->getField('locations_id')) {
-         $datas['##ticket.location##'] = Dropdown::getDropdownName('glpi_locations',
+         $datas['##ticket.location##'] = Dropdown::getDropdownName(Location::getTable(),
                                                                    $item->getField('locations_id'));
          $locations = new Location();
          $locations->getFromDB($item->getField('locations_id'));
@@ -421,7 +421,7 @@ class NotificationTargetTicket extends NotificationTargetCommonITILObject {
                //Object location
                if ($hardware->isField('locations_id')) {
                   $tmp['##ticket.item.location##']
-                              = Dropdown::getDropdownName('glpi_locations',
+                              = Dropdown::getDropdownName(Location::getTable(),
                                                           $hardware->getField('locations_id'));
                   $locations = new Location();
                   $locations->getFromDB($hardware->getField('locations_id'));
@@ -456,7 +456,7 @@ class NotificationTargetTicket extends NotificationTargetCommonITILObject {
                //Object group
                if ($hardware->getField('groups_id')) {
                   $tmp['##ticket.item.group##']
-                              = Dropdown::getDropdownName('glpi_groups', $hardware->getField('groups_id'));
+                              = Dropdown::getDropdownName(Group::getTable(), $hardware->getField('groups_id'));
                }
 
                $modeltable = getSingular($hardware->getTable())."models";
@@ -575,7 +575,7 @@ class NotificationTargetTicket extends NotificationTargetCommonITILObject {
             $tmp                             = array();
             $tmp['##followup.isprivate##']   = Dropdown::getYesNo($followup['is_private']);
             $tmp['##followup.author##']      = Html::clean(getUserName($followup['users_id']));
-            $tmp['##followup.requesttype##'] = Dropdown::getDropdownName('glpi_requesttypes',
+            $tmp['##followup.requesttype##'] = Dropdown::getDropdownName(RequestType::getTable(),
                                                                          $followup['requesttypes_id']);
             $tmp['##followup.date##']        = Html::convDateTime($followup['date']);
             $tmp['##followup.description##'] = $followup['content'];

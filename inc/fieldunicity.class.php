@@ -199,27 +199,24 @@ class FieldUnicity extends CommonDropdown {
       global $DB;
 
       //Get the first active configuration for this itemtype
-      $query = "SELECT *
-                FROM `glpi_fieldunicities`
-                WHERE `itemtype` = '$itemtype' ".
-                      getEntitiesRestrictRequest("AND", 'glpi_fieldunicities', "", $entities_id,
-                                                 true);
+      $rows = $DB->dbh->fieldunicity()->where('itemtype', $itemtype);
+      $rows = whereEntitiesRestrict($rows, "AND", 'glpi_fieldunicity', "", $entities_id, true);
 
       if ($check_active) {
-         $query .= " AND `is_active` = '1' ";
+         $rows = $rows->where('is_active', '1');
       }
 
-      $query .= "ORDER BY `entities_id` DESC";
+      $rows = $rows->orderBy('entity_id', 'DESC');
 
       $current_entity = false;
       $return         = array();
-      foreach ($DB->request($query) as $data) {
-         //First row processed
+      foreach ($rows as $row) {
+         $data = $row->getData();
          if (!$current_entity) {
-            $current_entity = $data['entities_id'];
+            $current_entity = $data['entity_id'];
          }
          //Process only for one entity, not more
-         if ($current_entity != $data['entities_id']) {
+         if ($current_entity != $data['entity_id']) {
             break;
          }
          $return[] = $data;
@@ -518,7 +515,7 @@ class FieldUnicity extends CommonDropdown {
 
          $entities = array($unicity->fields['entities_id']);
          if ($unicity->fields['is_recursive']) {
-            $entities = getSonsOf('glpi_entities', $unicity->fields['entities_id']);
+            $entities = getSonsOf(Entity::getTable(), $unicity->fields['entities_id']);
          }
          $fields_string = implode(',', $fields);
 

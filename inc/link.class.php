@@ -78,7 +78,7 @@ class Link extends CommonDBTM {
             $restrict = "`glpi_links_itemtypes`.`links_id` = `glpi_links`.`id`
                          AND `glpi_links_itemtypes`.`itemtype` = '".$item->getType()."'".
                           getEntitiesRestrictRequest(" AND ", "glpi_links", '', '', false);
-            $nb = countElementsInTable(array('glpi_links_itemtypes','glpi_links'), $restrict);
+            $nb = countElementsInTable(array(Link_Itemtype::getTable(), $this->getTable()), $restrict);
          }
          return self::createTabEntry(self::getTypeName(Session::getPluralNumber()), $nb);
       }
@@ -277,31 +277,31 @@ class Link extends CommonDBTM {
       if (strstr($link,"[LOCATION]")
           && $item->isField('locations_id')) {
             $link = str_replace("[LOCATION]",
-                                Dropdown::getDropdownName("glpi_locations",
+                                Dropdown::getDropdownName(Location::getTable(),
                                                           $item->getField('locations_id')), $link);
       }
       if (strstr($link,"[NETWORK]")
           && $item->isField('networks_id')) {
             $link = str_replace("[NETWORK]",
-                                Dropdown::getDropdownName("glpi_networks",
+                                Dropdown::getDropdownName(Network::getTable(),
                                                           $item->getField('networks_id')), $link);
       }
       if (strstr($link,"[DOMAIN]")
           && $item->isField('domains_id')) {
             $link = str_replace("[DOMAIN]",
-                                Dropdown::getDropdownName("glpi_domains",
+                                Dropdown::getDropdownName(Domain::getTable(),
                                                           $item->getField('domains_id')), $link);
       }
       if (strstr($link,"[USER]")
           && $item->isField('users_id')) {
             $link = str_replace("[USER]",
-                                Dropdown::getDropdownName("glpi_users",
+                                Dropdown::getDropdownName(User::getTable(),
                                                           $item->getField('users_id')), $link);
       }
       if (strstr($link,"[GROUP]")
           && $item->isField('groups_id')) {
             $link = str_replace("[GROUP]",
-                                Dropdown::getDropdownName("glpi_groups",
+                                Dropdown::getDropdownName(Group::getTable(),
                                                           $item->getField('groups_id')), $link);
       }
       if (strstr($link,"[REALNAME]")

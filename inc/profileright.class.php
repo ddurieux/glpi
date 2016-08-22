@@ -61,11 +61,12 @@ class ProfileRight extends CommonDBChild {
 
          $_SESSION['glpi_all_possible_rights'] = array();
          $rights = array();
-         $query  = "SELECT DISTINCT `name`
-                    FROM `".self::getTable()."`";
-         foreach ($DB->request($query) as $right) {
+
+         $rows = $DB->dbh->profileright()->fetchAll();
+         foreach ($rows as $row) {
+            $data = $row->getData();
             // By default, all rights are NULL ...
-            $_SESSION['glpi_all_possible_rights'][$right['name']] = '';
+            $_SESSION['glpi_all_possible_rights'][$data['name']] = '';
          }
       }
       return $_SESSION['glpi_all_possible_rights'];
@@ -79,19 +80,15 @@ class ProfileRight extends CommonDBChild {
    static function getProfileRights($profiles_id, array $rights=array()) {
       global $DB;
 
-      if (count($rights) == 0) {
-         $query  = "SELECT *
-                    FROM `glpi_profilerights`
-                    WHERE `profiles_id` = '$profiles_id'";
-      } else {
-         $query  = "SELECT *
-                    FROM `glpi_profilerights`
-                    WHERE `profiles_id` = '$profiles_id'
-                          AND `name` IN ('".implode("', '", $rights)."')";
+      $rows = $DB->dbh->profileright()->where('profile_id', $profiles_id);
+      if (count($rights) > 0) {
+         $rows = $rows->where('name', $rights);
       }
       $rights = array();
-      foreach ($DB->request($query) as $right) {
-         $rights[$right['name']] = $right['rights'];
+      $rows = $rows->fetchAll();
+      foreach ($rows as $row) {
+         $data = $row->getData();
+         $rights[$data['name']] = $data['rights'];
       }
       return $rights;
    }

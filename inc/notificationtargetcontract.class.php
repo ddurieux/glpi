@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -62,7 +62,7 @@ class NotificationTargetContract extends NotificationTarget {
     * @param $options   array
    **/
    function getDatasForTemplate($event, $options=array()) {
-      $this->datas['##contract.entity##'] = Dropdown::getDropdownName('glpi_entities',
+      $this->datas['##contract.entity##'] = Dropdown::getDropdownName(Entity::getTable(),
                                                                       $options['entities_id']);
       $events                             = $this->getEvents();
       $this->datas['##contract.action##'] = sprintf(__('%1$s - %2$s'), __('Contracts alarm'),
@@ -74,7 +74,7 @@ class NotificationTargetContract extends NotificationTarget {
          $tmp['##contract.number##'] = $contract['num'];
 
          if ($contract['contracttypes_id']) {
-            $tmp['##contract.type##'] = Dropdown::getDropdownName('glpi_contracttypes',
+            $tmp['##contract.type##'] = Dropdown::getDropdownName(ContractType::getTable(),
                                                                   $contract['contracttypes_id']);
          } else {
             $tmp['##contract.type##'] = "";

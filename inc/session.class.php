@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -111,7 +111,7 @@ class Session {
                $_SESSION["glpiname"]            = $auth->user->fields['name'];
                $_SESSION["glpirealname"]        = $auth->user->fields['realname'];
                $_SESSION["glpifirstname"]       = $auth->user->fields['firstname'];
-               $_SESSION["glpidefault_entity"]  = $auth->user->fields['entities_id'];
+               $_SESSION["glpidefault_entity"]  = $auth->user->fields['entity_id'];
                $_SESSION["glpiusers_idisation"] = true;
                $_SESSION["glpiextauth"]         = $auth->extauth;
                $_SESSION["glpiauthtype"]        = $auth->user->fields['authtype'];
@@ -146,8 +146,8 @@ class Session {
                self::initEntityProfiles(self::getLoginUserID());
 
                // Use default profile if exist
-               if (isset($_SESSION['glpiprofiles'][$auth->user->fields['profiles_id']])) {
-                  self::changeProfile($auth->user->fields['profiles_id']);
+               if (isset($_SESSION['glpiprofiles'][$auth->user->fields['profile_id']])) {
+                  self::changeProfile($auth->user->fields['profile_id']);
 
                } else { // Else use first
                   self::changeProfile(key($_SESSION['glpiprofiles']));
@@ -223,7 +223,7 @@ class Session {
    static function isMultiEntitiesMode() {
 
       if (!isset($_SESSION['glpi_multientitiesmode'])) {
-         if (countElementsInTable("glpi_entities") > 1) {
+         if (countElementsInTable(Entity::getTable()) > 1) {
             $_SESSION['glpi_multientitiesmode'] = 1;
          } else {
             $_SESSION['glpi_multientitiesmode'] = 0;
@@ -243,7 +243,7 @@ class Session {
 
       // Command line can see all entities
       return (isCommandLine()
-              || ((countElementsInTable("glpi_entities")) == count($_SESSION["glpiactiveentities"])));
+              || ((countElementsInTable(Entity::getTable())) == count($_SESSION["glpiactiveentities"])));
    }
 
 
@@ -302,14 +302,13 @@ class Session {
          if ($ID == "all") {
             $ancestors = array();
             foreach ($_SESSION['glpiactiveprofile']['entities'] as $key => $val) {
-               $ancestors               = array_unique(array_merge(getAncestorsOf("glpi_entities",
-                                                                                  $val['id']),
-                                                                   $ancestors));
+               $ancestors = array_unique(array_merge(getAncestorsOf(
+                       Entity::getTable(), $val['id']), $ancestors));
                $newroots[$val['id']]    = $val['is_recursive'];
                $newentities[$val['id']] = $val['id'];
 
                if ($val['is_recursive']) {
-                  $entities = getSonsOf("glpi_entities", $val['id']);
+                  $entities = getSonsOf(Entity::getTable(), $val['id']);
                   if (count($entities)) {
                      foreach ($entities as $key2 => $val2) {
                         $newentities[$key2] = $key2;
@@ -320,7 +319,7 @@ class Session {
 
          } else {
             /// Check entity validity
-            $ancestors = getAncestorsOf("glpi_entities", $ID);
+            $ancestors = getAncestorsOf(Entity::getTable(), $ID);
             $ok        = false;
             foreach ($_SESSION['glpiactiveprofile']['entities'] as $key => $val) {
                if (($val['id'] == $ID) || in_array($val['id'], $ancestors)) {
@@ -337,7 +336,7 @@ class Session {
             $newroots[$ID]    = $is_recursive;
             $newentities[$ID] = $ID;
             if ($is_recursive) {
-               $entities = getSonsOf("glpi_entities", $ID);
+               $entities = getSonsOf(Entity::getTable(), $ID);
                if (count($entities)) {
                   foreach ($entities as $key2 => $val2) {
                      $newentities[$key2] = $key2;
@@ -359,9 +358,9 @@ class Session {
          // Active entity loading
          $_SESSION["glpiactive_entity"]           = $active;
          $_SESSION["glpiactive_entity_recursive"] = $is_recursive;
-         $_SESSION["glpiactive_entity_name"]      = Dropdown::getDropdownName("glpi_entities",
+         $_SESSION["glpiactive_entity_name"]      = Dropdown::getDropdownName(Entity::getTable(),
                                                                               $active);
-         $_SESSION["glpiactive_entity_shortname"] = getTreeLeafValueName("glpi_entities", $active);
+         $_SESSION["glpiactive_entity_shortname"] = getTreeLeafValueName(Entity::getTable(), $active);
          if ($is_recursive || $ID=="all") {
             //TRANS: %s is the entity name
             $_SESSION["glpiactive_entity_name"]      = sprintf(__('%1$s (%2$s)'),
@@ -372,7 +371,7 @@ class Session {
                                                                __('tree structure'));
          }
 
-         if (countElementsInTable('glpi_entities') <= count($_SESSION['glpiactiveentities'])) {
+         if (countElementsInTable(Entity::getTable()) <= count($_SESSION['glpiactiveentities'])) {
             $_SESSION['glpishowallentities'] = 1;
          } else {
             $_SESSION['glpishowallentities'] = 0;
@@ -420,7 +419,7 @@ class Session {
             // Try to load default entity if it is a root entity
             foreach ($data['entities'] as $key => $val) {
                if ($val['id'] == $_SESSION["glpidefault_entity"]) {
-                  if (self::changeActiveEntities($val['id'],$val['is_recursive'])) {
+                  if (self::changeActiveEntities($val['id'], $val['is_recursive'])) {
                      $active_entity_done = true;
                   }
                }
@@ -455,44 +454,30 @@ class Session {
    static function initEntityProfiles($userID) {
       global $DB;
 
-      $query = "SELECT DISTINCT `glpi_profiles`.`id`, `glpi_profiles`.`name`
-                FROM `glpi_profiles_users`
-                INNER JOIN `glpi_profiles`
-                     ON (`glpi_profiles_users`.`profiles_id` = `glpi_profiles`.`id`)
-                WHERE `glpi_profiles_users`.`users_id` = ' $userID'
-                ORDER BY `glpi_profiles`.`name`";
-      $result = $DB->query($query);
-
       $_SESSION['glpiprofiles'] = array();
-      if ($DB->numrows($result)) {
-         while ($data = $DB->fetch_assoc($result)) {
+
+      $profile_users = $DB->dbh->profile_user()->where('user_id', $userID);
+      foreach ($profile_users as $profile_user) {
+         foreach ($profile_user->profile() as $profile) {
+            $data = $profile->getData();
             $_SESSION['glpiprofiles'][$data['id']]['name'] = $data['name'];
          }
-         foreach ($_SESSION['glpiprofiles'] as $key => $tab) {
-            $query2 = "SELECT `glpi_profiles_users`.`entities_id` AS eID,
-                              `glpi_profiles_users`.`id` AS kID,
-                              `glpi_profiles_users`.`is_recursive`,
-                              `glpi_entities`.*
-                       FROM `glpi_profiles_users`
-                       LEFT JOIN `glpi_entities`
-                                ON (`glpi_profiles_users`.`entities_id` = `glpi_entities`.`id`)
-                       WHERE `glpi_profiles_users`.`profiles_id` = '$key'
-                             AND `glpi_profiles_users`.`users_id` = '$userID'
-                       ORDER BY `glpi_entities`.`completename`";
-            $result2 = $DB->query($query2);
-
-            if ($DB->numrows($result2)) {
-               while ($data = $DB->fetch_assoc($result2)) {
-                  // Do not override existing entity if define as recursive
-                  if (!isset($_SESSION['glpiprofiles'][$key]['entities'][$data['eID']])
-                      || $data['is_recursive']) {
-                     $_SESSION['glpiprofiles'][$key]['entities'][$data['eID']]['id']
-                                                                           = $data['eID'];
-                     $_SESSION['glpiprofiles'][$key]['entities'][$data['eID']]['name']
-                                                                           = $data['name'];
-                     $_SESSION['glpiprofiles'][$key]['entities'][$data['eID']]['is_recursive']
-                                                                           = $data['is_recursive'];
-                  }
+      }
+      foreach ($_SESSION['glpiprofiles'] as $key => $tab) {
+         $profile_users = $DB->dbh->profile_user()->where('user_id', $userID)->where('profile_id', $key);
+         foreach ($profile_users as $profile_user) {
+            $data_pu = $profile_user->getData();
+            foreach ($profile_user->entity() as $entity) {
+               $data = $entity->getData();
+               // Do not override existing entity if define as recursive
+               if (!isset($_SESSION['glpiprofiles'][$key]['entities'][$data['id']])
+                   || $data_pu['is_recursive']) {
+                  $_SESSION['glpiprofiles'][$key]['entities'][$data['id']]['id']
+                                                                        = $data['id'];
+                  $_SESSION['glpiprofiles'][$key]['entities'][$data['id']]['name']
+                                                                        = $data['name'];
+                  $_SESSION['glpiprofiles'][$key]['entities'][$data['id']]['is_recursive']
+                                                                        = $data_pu['is_recursive'];
                }
             }
          }
@@ -510,16 +495,14 @@ class Session {
 
       $_SESSION["glpigroups"] = array();
 
-      $query_gp = "SELECT `glpi_groups_users`.`groups_id`
-                   FROM `glpi_groups_users`
-                   LEFT JOIN `glpi_groups` ON (`glpi_groups_users`.`groups_id` = `glpi_groups`.`id`)
-                   WHERE `glpi_groups_users`.`users_id`='" . self::getLoginUserID() . "' " .
-                         getEntitiesRestrictRequest(" AND ","glpi_groups","entities_id",
-                                                    $_SESSION['glpiactiveentities'],true);
-      $result_gp = $DB->query($query_gp);
-      if ($DB->numrows($result_gp)) {
-         while ($data = $DB->fetch_assoc($result_gp)) {
-            $_SESSION["glpigroups"][] = $data["groups_id"];
+      $group_users = $DB->dbh->group_user()->where('user_id', self::getLoginUserID());
+      foreach ($group_users as $group_user) {
+         $groups = $group_user->group();
+         $groups = whereEntitiesRestrict($groups, " AND ", "glpi_groups",
+              "entity_id", $_SESSION['glpiactiveentities'], true);
+         foreach ($groups as $group) {
+            $data = $group->getData();
+            $_SESSION["glpigroups"][] = $data["id"];
          }
       }
    }
@@ -536,9 +519,7 @@ class Session {
     * @return nothing (make an include)
    **/
    static function loadLanguage($forcelang='') {
-      global $LANG, $CFG_GLPI, $TRANSLATE;
-
-      $file = "";
+      global $CFG_GLPI, $TRANSLATE;
 
       if (!isset($_SESSION["glpilanguage"])) {
          if (isset($CFG_GLPI["language"])) {
@@ -571,7 +552,7 @@ class Session {
       if (empty($newfile) || !is_file(GLPI_ROOT . $newfile)) {
          $newfile = "/locales/en_GB.mo";
       }
-      
+
       if (isset($CFG_GLPI["languages"][$trytoload][5])) {
         $_SESSION['glpipluralnumber'] = $CFG_GLPI["languages"][$trytoload][5];
       }
@@ -883,7 +864,7 @@ class Session {
 
       /// Recursive object
       foreach ($_SESSION['glpiactiveentities'] as $ent) {
-         if (in_array($ID, getAncestorsOf("glpi_entities", $ent))) {
+         if (in_array($ID, getAncestorsOf(Entity::getTable(), $ent))) {
             return true;
          }
       }

@@ -432,52 +432,52 @@ class Computer extends CommonDBTM {
       echo "<td>";
       $objectName = autoName($this->fields["name"], "name",
                              (isset($options['withtemplate']) && ( $options['withtemplate']== 2)),
-                             $this->getType(), $this->fields["entities_id"]);
+                             $this->getType(), $this->fields["entity_id"]);
       Html::autocompletionTextField($this, 'name', array('value' => $objectName));
       echo "</td>";
       echo "<td>".__('Status')."</td>";
       echo "<td>";
-      State::dropdown(array('value'     => $this->fields["states_id"],
-                            'entity'    => $this->fields["entities_id"],
+      State::dropdown(array('value'     => $this->fields["state_id"],
+                            'entity'    => $this->fields["entity_id"],
                             'condition' => "`is_visible_computer`"));
       echo "</td></tr>\n";
 
       echo "<tr class='tab_bg_1'>";
       echo "<td>".__('Location')."</td>";
       echo "<td>";
-      Location::dropdown(array('value'  => $this->fields["locations_id"],
-                               'entity' => $this->fields["entities_id"]));
+      Location::dropdown(array('value'  => $this->fields["location_id"],
+                               'entity' => $this->fields["entity_id"]));
       echo "</td>";
       echo "<td>".__('Type')."</td>";
       echo "<td>";
-      ComputerType::dropdown(array('value' => $this->fields["computertypes_id"]));
+      ComputerType::dropdown(array('value' => $this->fields["computertype_id"]));
       echo "</td></tr>\n";
 
       echo "<tr class='tab_bg_1'>";
       echo "<td>".__('Technician in charge of the hardware')."</td>";
       echo "<td>";
-      User::dropdown(array('name'   => 'users_id_tech',
-                           'value'  => $this->fields["users_id_tech"],
+      User::dropdown(array('name'   => 'user_id_tech',
+                           'value'  => $this->fields["user_id_tech"],
                            'right'  => 'own_ticket',
-                           'entity' => $this->fields["entities_id"]));
+                           'entity' => $this->fields["entity_id"]));
       echo "</td>";
       echo "<td>".__('Manufacturer')."</td>";
       echo "<td>";
-      Manufacturer::dropdown(array('value' => $this->fields["manufacturers_id"]));
+      Manufacturer::dropdown(array('value' => $this->fields["manufacturer_id"]));
       echo "</td></tr>\n";
 
       echo "<tr class='tab_bg_1'>";
       echo "<td>".__('Group in charge of the hardware')."</td>";
       echo "<td>";
-      Group::dropdown(array('name'      => 'groups_id_tech',
-                            'value'     => $this->fields['groups_id_tech'],
-                            'entity'    => $this->fields['entities_id'],
+      Group::dropdown(array('name'      => 'group_id_tech',
+                            'value'     => $this->fields['group_id_tech'],
+                            'entity'    => $this->fields['entity_id'],
                             'condition' => '`is_assign`'));
 
       echo "</td>";
       echo "<td>".__('Model')."</td>";
       echo "<td>";
-      ComputerModel::dropdown(array('value' => $this->fields["computermodels_id"]));
+      ComputerModel::dropdown(array('value' => $this->fields["computermodel_id"]));
       echo "</td></tr>\n";
 
       echo "<tr class='tab_bg_1'>";
@@ -502,27 +502,27 @@ class Computer extends CommonDBTM {
       echo "<td>";
       $objectName = autoName($this->fields["otherserial"], "otherserial",
                              (isset($options['withtemplate']) && ($options['withtemplate'] == 2)),
-                             $this->getType(), $this->fields["entities_id"]);
+                             $this->getType(), $this->fields["entity_id"]);
       Html::autocompletionTextField($this, 'otherserial', array('value' => $objectName));
       echo "</td></tr>\n";
 
       echo "<tr class='tab_bg_1'>";
       echo "<td>".__('User')."</td>";
       echo "<td>";
-      User::dropdown(array('value'  => $this->fields["users_id"],
-                           'entity' => $this->fields["entities_id"],
+      User::dropdown(array('value'  => $this->fields["user_id"],
+                           'entity' => $this->fields["entity_id"],
                            'right'  => 'all'));
       echo "</td>";
       echo "<td>".__('Network')."</td>";
       echo "<td>";
-      Network::dropdown(array('value' => $this->fields["networks_id"]));
+      Network::dropdown(array('value' => $this->fields["network_id"]));
       echo "</td></tr>\n";
 
       echo "<tr class='tab_bg_1'>";
       echo "<td>".__('Group')."</td>";
       echo "<td>";
-      Group::dropdown(array('value'     => $this->fields["groups_id"],
-                            'entity'    => $this->fields["entities_id"],
+      Group::dropdown(array('value'     => $this->fields["group_id"],
+                            'entity'    => $this->fields["entity_id"],
                             'condition' => '`is_itemgroup`'));
 
       echo "</td>";
@@ -548,14 +548,14 @@ class Computer extends CommonDBTM {
       echo "<tr class='tab_bg_1'>";
       echo "<td>".__('Domain')."</td>";
       echo "<td >";
-      Domain::dropdown(array('value'  => $this->fields["domains_id"],
-                             'entity' => $this->fields["entities_id"]));
+      Domain::dropdown(array('value'  => $this->fields["domain_id"],
+                             'entity' => $this->fields["entity_id"]));
       echo "</td></tr>";
 
       echo "<tr class='tab_bg_1'>";
       echo "<td>".__('Operating system')."</td>";
       echo "<td>";
-      OperatingSystem::dropdown(array('value' => $this->fields["operatingsystems_id"]));
+      OperatingSystem::dropdown(array('value' => $this->fields["operatingsystem_id"]));
       echo "<br /><a href='#' id='toggle_os_information'>".__("More information")."</a>";
       echo "</td>";
       if ($inventory_show) {
@@ -568,7 +568,7 @@ class Computer extends CommonDBTM {
       echo "<tr class='tab_bg_1'>";
       echo "<td>".__('Version of the operating system')."</td>";
       echo "<td >";
-      OperatingSystemVersion::dropdown(array('value' => $this->fields["operatingsystemversions_id"]));
+      OperatingSystemVersion::dropdown(array('value' => $this->fields["operatingsystemversion_id"]));
       echo "</td>";
       echo "</tr>";
 
@@ -600,14 +600,14 @@ class Computer extends CommonDBTM {
       echo "<td>".__('Service pack')."</td>";
       echo "<td >";
       OperatingSystemServicePack::dropdown(array('value'
-                                                 => $this->fields["operatingsystemservicepacks_id"]));
+                                                 => $this->fields["operatingsystemservicepack_id"]));
       echo "</td></tr>";
 
       echo "<tr class='tab_bg_1'>";
       echo "<td>".__('Operating system architecture')."</td>";
       echo "<td >";
       OperatingSystemArchitecture::dropdown(array('value'
-                                                 => $this->fields["operatingsystemarchitectures_id"]));
+                                                 => $this->fields["operatingsystemarchitecture_id"]));
       echo "</td></tr>";
 
       echo "<tr class='tab_bg_1'>";
@@ -645,7 +645,7 @@ class Computer extends CommonDBTM {
       echo "<tr class='tab_bg_1'>";
       echo "<td>".__('Update Source')."</td>";
       echo "<td >";
-      AutoUpdateSystem::dropdown(array('value' => $this->fields["autoupdatesystems_id"]));
+      AutoUpdateSystem::dropdown(array('value' => $this->fields["autoupdatesystem_id"]));
       echo "</td></tr>";
 
       $this->showFormButtons($options);
@@ -715,38 +715,38 @@ class Computer extends CommonDBTM {
 
       $tab += Location::getSearchOptionsToAdd();
 
-      $tab[4]['table']           = 'glpi_computertypes';
+      $tab[4]['table']           = ComputerType::getTable();
       $tab[4]['field']           = 'name';
       $tab[4]['name']            = __('Type');
       $tab[4]['datatype']        = 'dropdown';
 
-      $tab[40]['table']          = 'glpi_computermodels';
+      $tab[40]['table']          = ComputerModel::getTable();
       $tab[40]['field']          = 'name';
       $tab[40]['name']           = __('Model');
       $tab[40]['datatype']       = 'dropdown';
 
-      $tab[31]['table']          = 'glpi_states';
+      $tab[31]['table']          = State::getTable();
       $tab[31]['field']          = 'completename';
       $tab[31]['name']           = __('Status');
       $tab[31]['datatype']       = 'dropdown';
       $tab[31]['condition']      = "`is_visible_computer`";
 
-      $tab[45]['table']          = 'glpi_operatingsystems';
+      $tab[45]['table']          = OperatingSystem::getTable();
       $tab[45]['field']          = 'name';
       $tab[45]['name']           = __('Operating system');
       $tab[45]['datatype']       = 'dropdown';
 
-      $tab[46]['table']          = 'glpi_operatingsystemversions';
+      $tab[46]['table']          = OperatingSystemVersion::getTable();
       $tab[46]['field']          = 'name';
       $tab[46]['name']           = __('Version of the operating system');
       $tab[46]['datatype']       = 'dropdown';
 
-      $tab[41]['table']          = 'glpi_operatingsystemservicepacks';
+      $tab[41]['table']          = OperatingSystemServicePack::getTable();
       $tab[41]['field']          = 'name';
       $tab[41]['name']           = __('Service pack');
       $tab[41]['datatype']       = 'dropdown';
 
-      $tab[42]['table']          = 'glpi_autoupdatesystems';
+      $tab[42]['table']          = AutoUpdateSystem::getTable();
       $tab[42]['field']          = 'name';
       $tab[42]['name']           = __('Update Source');
       $tab[42]['datatype']       = 'dropdown';
@@ -761,7 +761,7 @@ class Computer extends CommonDBTM {
       $tab[44]['name']           = __('Product ID of the operating system');
       $tab[44]['datatype']       = 'string';
 
-      $tab[45]['table']          = 'glpi_operatingsystemarchitectures';
+      $tab[45]['table']          = OperatingSystemArchitecture::getTable();
       $tab[45]['field']          = 'name';
       $tab[45]['name']           = __('Operating system architecture');
       $tab[45]['datatype']       = 'dropdown';
@@ -801,13 +801,13 @@ class Computer extends CommonDBTM {
       $tab[8]['name']            = __('Alternate username number');
       $tab[8]['datatype']        = 'string';
 
-      $tab[70]['table']          = 'glpi_users';
+      $tab[70]['table']          = User::getTable();
       $tab[70]['field']          = 'name';
       $tab[70]['name']           = __('User');
       $tab[70]['datatype']       = 'dropdown';
       $tab[70]['right']          = 'all';
 
-      $tab[71]['table']          = 'glpi_groups';
+      $tab[71]['table']          = Group::getTable();
       $tab[71]['field']          = 'completename';
       $tab[71]['name']           = __('Group');
       $tab[71]['condition']      = '`is_itemgroup`';
@@ -825,36 +825,36 @@ class Computer extends CommonDBTM {
       $tab[121]['datatype']       = 'datetime';
       $tab[121]['massiveaction']  = false;
 
-      $tab[32]['table']          = 'glpi_networks';
+      $tab[32]['table']          = Network::getTable();
       $tab[32]['field']          = 'name';
       $tab[32]['name']           = __('Network');
       $tab[32]['datatype']       = 'dropdown';
 
-      $tab[33]['table']          = 'glpi_domains';
+      $tab[33]['table']          = Domain::getTable();
       $tab[33]['field']          = 'name';
       $tab[33]['name']           = __('Domain');
       $tab[33]['datatype']       = 'dropdown';
 
-      $tab[23]['table']          = 'glpi_manufacturers';
+      $tab[23]['table']          = Manufacturer::getTable();
       $tab[23]['field']          = 'name';
       $tab[23]['name']           = __('Manufacturer');
       $tab[23]['datatype']       = 'dropdown';
 
-      $tab[24]['table']          = 'glpi_users';
+      $tab[24]['table']          = User::getTable();
       $tab[24]['field']          = 'name';
       $tab[24]['linkfield']      = 'users_id_tech';
       $tab[24]['name']           = __('Technician in charge of the hardware');
       $tab[24]['datatype']       = 'dropdown';
       $tab[24]['right']          = 'own_ticket';
 
-      $tab[49]['table']          = 'glpi_groups';
+      $tab[49]['table']          = Group::getTable();
       $tab[49]['field']          = 'completename';
       $tab[49]['linkfield']      = 'groups_id_tech';
       $tab[49]['name']           = __('Group in charge of the hardware');
       $tab[49]['condition']      = '`is_assign`';
       $tab[49]['datatype']       = 'dropdown';
 
-      $tab[80]['table']          = 'glpi_entities';
+      $tab[80]['table']          = Entity::getTable();
       $tab[80]['field']          = 'completename';
       $tab[80]['name']           = __('Entity');
       $tab[80]['datatype']       = 'dropdown';
@@ -869,18 +869,25 @@ class Computer extends CommonDBTM {
       $items_device_joinparams   = array('jointype'          => 'itemtype_item',
                                          'specific_itemtype' => 'Computer');
 
-      $tab[17]['table']          = 'glpi_deviceprocessors';
+      $tab[17]['table']          = DeviceProcessor::getTable();
       $tab[17]['field']          = 'designation';
       $tab[17]['name']           = __('Processor');
       $tab[17]['forcegroupby']   = true;
       $tab[17]['usehaving']      = true;
       $tab[17]['massiveaction']  = false;
       $tab[17]['datatype']       = 'string';
-      $tab[17]['joinparams']     = array('beforejoin'
-                                          => array('table'      => 'glpi_items_deviceprocessors',
-                                                   'joinparams' => $items_device_joinparams));
+      $tab[17]['path']           = array(
+          array(
+              'table' => Item_DeviceProcessor::getTable(),
+              'field' => 'items_id'
+          ),
+          array(
+              'table' => DeviceProcessor::getTable(),
+              'field' => 'deviceprocessor_id'
+          ),
+      );
 
-      $tab[36]['table']          = 'glpi_items_deviceprocessors';
+      $tab[36]['table']          = Item_DeviceProcessor::getTable();
       $tab[36]['field']          = 'frequency';
       $tab[36]['name']           = __('Processor frequency');
       $tab[36]['unit']           = __('MHz');
@@ -889,21 +896,33 @@ class Computer extends CommonDBTM {
       $tab[36]['datatype']       = 'number';
       $tab[36]['width']          = 100;
       $tab[36]['massiveaction']  = false;
-      $tab[36]['joinparams']     = $items_device_joinparams;
+      $tab[36]['path']           = array(
+          array(
+              'table' => Item_DeviceProcessor::getTable(),
+              'field' => 'items_id'
+          ),
+      );
       $tab[36]['computation']    = "SUM(TABLE.`frequency`) / COUNT(TABLE.`id`)";
 
-      $tab[10]['table']          = 'glpi_devicememories';
+      $tab[10]['table']          = DeviceMemory::getTable();
       $tab[10]['field']          = 'designation';
       $tab[10]['name']           = __('Memory type');
       $tab[10]['forcegroupby']   = true;
       $tab[10]['usehaving']      = true;
       $tab[10]['massiveaction']  = false;
       $tab[10]['datatype']       = 'string';
-      $tab[10]['joinparams']     = array('beforejoin'
-                                          => array('table'      => 'glpi_items_devicememories',
-                                                   'joinparams' => $items_device_joinparams));
+      $tab[10]['path']           = array(
+          array(
+              'table' => Item_DeviceMemory::getTable(),
+              'field' => 'items_id'
+          ),
+          array(
+              'table' => DeviceMemory::getTable(),
+              'field' => 'devicememory_id'
+          ),
+      );
 
-      $tab[35]['table']          = 'glpi_items_devicememories';
+      $tab[35]['table']          = Item_DeviceMemory::getTable();
       $tab[35]['field']          = 'size';
       $tab[35]['unit']           = __('Mio');
       $tab[35]['name']           = sprintf(__('%1$s (%2$s)'),__('Memory'),__('Mio'));
@@ -912,72 +931,116 @@ class Computer extends CommonDBTM {
       $tab[35]['datatype']       = 'number';
       $tab[35]['width']          = 100;
       $tab[35]['massiveaction']  = false;
-      $tab[35]['joinparams']     = $items_device_joinparams;
+      $tab[35]['path']           = array(
+          array(
+              'table' => Item_DeviceMemory::getTable(),
+              'field' => 'items_id'
+          ),
+      );
       $tab[35]['computation']    = "(SUM(TABLE.`size`) / COUNT(TABLE.`id`))
                                     * COUNT(DISTINCT TABLE.`id`)";
 
 
-      $tab[11]['table']          = 'glpi_devicenetworkcards';
+      $tab[11]['table']          = DeviceNetworkCard::getTable();
       $tab[11]['field']          = 'designation';
       $tab[11]['name']           = _n('Network interface', 'Network interfaces', 1);
       $tab[11]['forcegroupby']   = true;
       $tab[11]['massiveaction']  = false;
       $tab[11]['datatype']       = 'string';
-      $tab[11]['joinparams']     = array('beforejoin'
-                                          => array('table'      => 'glpi_items_devicenetworkcards',
-                                                   'joinparams' => $items_device_joinparams));
+      $tab[11]['path']           = array(
+          array(
+              'table' => Item_DeviceNetworkCard::getTable(),
+              'field' => 'items_id'
+          ),
+          array(
+              'table' => DeviceNetworkCard::getTable(),
+              'field' => 'devicenetworkcard_id'
+          ),
+      );
 
-      $tab[20]['table']          = 'glpi_items_devicenetworkcards';
+      $tab[20]['table']          = Item_DeviceNetworkCard::getTable();
       $tab[20]['field']          = 'mac';
       $tab[20]['name']           = __('MAC address');
       $tab[20]['forcegroupby']   = true;
       $tab[20]['massiveaction']  = false;
       $tab[20]['datatype']       = 'string';
-      $tab[20]['joinparams']     = $items_device_joinparams;
+      $tab[20]['path']           = array(
+          array(
+              'table' => Item_DeviceNetworkCard::getTable(),
+              'field' => 'items_id'
+          ),
+      );
 
-      $tab[12]['table']          = 'glpi_devicesoundcards';
+      $tab[12]['table']          = DeviceSoundCard::getTable();
       $tab[12]['field']          = 'designation';
       $tab[12]['name']           = __('Soundcard');
       $tab[12]['forcegroupby']   = true;
       $tab[12]['massiveaction']  = false;
       $tab[12]['datatype']       = 'string';
-      $tab[12]['joinparams']     = array('beforejoin'
-                                          => array('table'      => 'glpi_items_devicesoundcards',
-                                                   'joinparams' => $items_device_joinparams));
+      $tab[12]['path']           = array(
+          array(
+              'table' => Item_DeviceSoundCard::getTable(),
+              'field' => 'items_id'
+          ),
+          array(
+              'table' => DeviceSoundCard::getTable(),
+              'field' => 'devicesoundcard_id'
+          ),
+      );
 
-      $tab[13]['table']          = 'glpi_devicegraphiccards';
+      $tab[13]['table']          = DeviceGraphicCard::getTable();
       $tab[13]['field']          = 'designation';
       $tab[13]['name']           = __('Graphics card');
       $tab[13]['forcegroupby']   = true;
       $tab[13]['massiveaction']  = false;
       $tab[13]['datatype']       = 'string';
-      $tab[13]['joinparams']     = array('beforejoin'
-                                          => array('table'      => 'glpi_items_devicegraphiccards',
-                                                   'joinparams' => $items_device_joinparams));
+      $tab[13]['path']           = array(
+          array(
+              'table' => Item_DeviceGraphicCard::getTable(),
+              'field' => 'items_id'
+          ),
+          array(
+              'table' => DeviceGraphicCard::getTable(),
+              'field' => 'devicegraphiccard_id'
+          ),
+      );
 
-      $tab[14]['table']          = 'glpi_devicemotherboards';
+      $tab[14]['table']          = DeviceMotherboard::getTable();
       $tab[14]['field']          = 'designation';
       $tab[14]['name']           = __('System board');
       $tab[14]['forcegroupby']   = true;
       $tab[14]['massiveaction']  = false;
       $tab[14]['datatype']       = 'string';
-      $tab[14]['joinparams']     = array('beforejoin'
-                                          => array('table'      => 'glpi_items_devicemotherboards',
-                                                   'joinparams' => $items_device_joinparams));
+      $tab[14]['path']           = array(
+          array(
+              'table' => Item_DeviceMotherboard::getTable(),
+              'field' => 'items_id'
+          ),
+          array(
+              'table' => DeviceMotherboard::getTable(),
+              'field' => 'devicemotherboard_id'
+          ),
+      );
 
-
-      $tab[15]['table']          = 'glpi_deviceharddrives';
+      $tab[15]['table']          = DeviceHardDrive::getTable();
       $tab[15]['field']          = 'designation';
       $tab[15]['name']           = __('Hard drive type');
       $tab[15]['forcegroupby']   = true;
       $tab[15]['usehaving']      = true;
       $tab[15]['massiveaction']  = false;
       $tab[15]['datatype']       = 'string';
-      $tab[15]['joinparams']     = array('beforejoin'
-                                          => array('table'      => 'glpi_items_deviceharddrives',
-                                                   'joinparams' => $items_device_joinparams));
+      $tab[15]['path']           = array(
+          array(
+              'table' => Item_DeviceHardDrive::getTable(),
+              'field' => 'items_id'
+          ),
+          array(
+              'table' => DeviceHardDrive::getTable(),
+              'field' => 'deviceharddrive_id'
+          ),
+      );
 
-      $tab[34]['table']          = 'glpi_items_deviceharddrives';
+      $tab[34]['table']          = Item_DeviceHardDrive::getTable();
       $tab[34]['field']          = 'capacity';
       $tab[34]['name']           = __('Hard drive size');
       $tab[34]['unit']           = __('Mio');
@@ -986,43 +1049,68 @@ class Computer extends CommonDBTM {
       $tab[34]['datatype']       = 'number';
       $tab[34]['width']          = 1000;
       $tab[34]['massiveaction']  = false;
+      $tab[34]['path']           = array(
+          array(
+              'table' => Item_DeviceHardDrive::getTable(),
+              'field' => 'items_id'
+          ),
+      );
       $tab[34]['joinparams']     = $items_device_joinparams;
       $tab[34]['computation']    = "(SUM(TABLE.`capacity`) / COUNT(TABLE.`id`))
                                        * COUNT(DISTINCT TABLE.`id`)";
 
-      $tab[39]['table']          = 'glpi_devicepowersupplies';
+      $tab[39]['table']          = DevicePowerSupply::getTable();
       $tab[39]['field']          = 'designation';
       $tab[39]['name']           = __('Power supply');
       $tab[39]['forcegroupby']   = true;
       $tab[39]['usehaving']      = true;
       $tab[39]['massiveaction']  = false;
       $tab[39]['datatype']       = 'string';
-      $tab[39]['joinparams']     = array('beforejoin'
-                                          => array('table'      => 'glpi_items_devicepowersupplies',
-                                                   'joinparams' => $items_device_joinparams));
+      $tab[39]['path']           = array(
+          array(
+              'table' => Item_DevicePowerSupply::getTable(),
+              'field' => 'items_id'
+          ),
+          array(
+              'table' => DevicePowerSupply::getTable(),
+              'field' => 'devicepowersupply_id'
+          ),
+      );
 
-      $tab[95]['table']          = 'glpi_devicepcis';
+      $tab[95]['table']          = DevicePci::getTable();
       $tab[95]['field']          = 'designation';
       $tab[95]['name']           = __('Other component');
       $tab[95]['forcegroupby']   = true;
       $tab[95]['usehaving']      = true;
       $tab[95]['massiveaction']  = false;
       $tab[95]['datatype']       = 'string';
-      $tab[95]['joinparams']     = array('beforejoin'
-                                          => array('table'      => 'glpi_items_devicepcis',
-                                                   'joinparams' => $items_device_joinparams));
+      $tab[95]['path']           = array(
+          array(
+              'table' => Item_DevicePci::getTable(),
+              'field' => 'items_id'
+          ),
+          array(
+              'table' => DevicePci::getTable(),
+              'field' => 'devicepci_id'
+          ),
+      );
 
       $tab['disk']               = _n('Volume', 'Volumes', Session::getPluralNumber());
 
-      $tab[156]['table']         = 'glpi_computerdisks';
+      $tab[156]['table']         = ComputerDisk::getTable();
       $tab[156]['field']         = 'name';
       $tab[156]['name']          = __('Volume');
       $tab[156]['forcegroupby']  = true;
       $tab[156]['massiveaction'] = false;
       $tab[156]['datatype']      = 'dropdown';
-      $tab[156]['joinparams']    = array('jointype' => 'child');
+      $tab[156]['path']           = array(
+          array(
+              'table' => ComputerDisk::getTable(),
+              'field' => 'computer_id'
+          ),
+      );
 
-      $tab[150]['table']         = 'glpi_computerdisks';
+      $tab[150]['table']         = ComputerDisk::getTable();
       $tab[150]['field']         = 'totalsize';
       $tab[150]['name']          = sprintf(__('%1$s (%2$s)'), __('Global size'), __('Mio'));
       $tab[150]['forcegroupby']  = true;
@@ -1030,18 +1118,28 @@ class Computer extends CommonDBTM {
       $tab[150]['datatype']      = 'number';
       $tab[150]['width']         = 1000;
       $tab[150]['massiveaction'] = false;
-      $tab[150]['joinparams']    = array('jointype' => 'child');
+      $tab[150]['path']           = array(
+          array(
+              'table' => ComputerDisk::getTable(),
+              'field' => 'computer_id'
+          ),
+      );
 
-      $tab[151]['table']         = 'glpi_computerdisks';
+      $tab[151]['table']         = ComputerDisk::getTable();
       $tab[151]['field']         = 'freesize';
       $tab[151]['name']          = __('Free size');
       $tab[151]['forcegroupby']  = true;
       $tab[151]['datatype']      = 'number';
       $tab[151]['width']         = 1000;
       $tab[151]['massiveaction'] = false;
-      $tab[151]['joinparams']    = array('jointype' => 'child');
+      $tab[151]['path']           = array(
+          array(
+              'table' => ComputerDisk::getTable(),
+              'field' => 'computer_id'
+          ),
+      );
 
-      $tab[152]['table']         = 'glpi_computerdisks';
+      $tab[152]['table']         = ComputerDisk::getTable();
       $tab[152]['field']         = 'freepercent';
       $tab[152]['name']          = __('Free percentage');
       $tab[152]['forcegroupby']  = true;
@@ -1051,98 +1149,161 @@ class Computer extends CommonDBTM {
       $tab[152]['computationgroupby'] = true;
       $tab[152]['unit']          = '%';
       $tab[152]['massiveaction'] = false;
-      $tab[152]['joinparams']    = array('jointype' => 'child');
+      $tab[152]['path']           = array(
+          array(
+              'table' => ComputerDisk::getTable(),
+              'field' => 'computer_id'
+          ),
+      );
 
-      $tab[153]['table']         = 'glpi_computerdisks';
+      $tab[153]['table']         = ComputerDisk::getTable();
       $tab[153]['field']         = 'mountpoint';
       $tab[153]['name']          = __('Mount point');
       $tab[153]['forcegroupby']  = true;
       $tab[153]['massiveaction'] = false;
       $tab[153]['datatype']      = 'string';
-      $tab[153]['joinparams']    = array('jointype' => 'child');
+      $tab[153]['path']           = array(
+          array(
+              'table' => ComputerDisk::getTable(),
+              'field' => 'computer_id'
+          ),
+      );
 
-      $tab[154]['table']         = 'glpi_computerdisks';
+      $tab[154]['table']         = ComputerDisk::getTable();
       $tab[154]['field']         = 'device';
       $tab[154]['name']          = __('Partition');
       $tab[154]['forcegroupby']  = true;
       $tab[154]['massiveaction'] = false;
       $tab[154]['datatype']      = 'string';
-      $tab[154]['joinparams']    = array('jointype' => 'child');
+      $tab[154]['path']           = array(
+          array(
+              'table' => ComputerDisk::getTable(),
+              'field' => 'computer_id'
+          ),
+      );
 
-      $tab[155]['table']         = 'glpi_filesystems';
+      $tab[155]['table']         = Filesystem::getTable();
       $tab[155]['field']         = 'name';
       $tab[155]['name']          = __('File system');
       $tab[155]['forcegroupby']  = true;
       $tab[155]['massiveaction'] = false;
       $tab[155]['datatype']      = 'dropdown';
-      $tab[155]['joinparams']    = array('beforejoin'
-                                         => array('table'      => 'glpi_computerdisks',
-                                                  'joinparams' => array('jointype' => 'child')));
+      $tab[155]['path']           = array(
+          array(
+              'table' => ComputerDisk::getTable(),
+              'field' => 'computer_id'
+          ),
+          array(
+              'table' => Filesystem::getTable(),
+              'field' => 'filesystem_id'
+          ),
+      );
 
       $tab['virtualmachine']     = _n('Virtual machine', 'Virtual machines', Session::getPluralNumber());
 
-      $tab[160]['table']         = 'glpi_computervirtualmachines';
+      $tab[160]['table']         = ComputerVirtualMachine::getTable();
       $tab[160]['field']         = 'name';
       $tab[160]['name']          = __('Virtual machine');
       $tab[160]['forcegroupby']  = true;
       $tab[160]['massiveaction'] = false;
       $tab[160]['datatype']      = 'dropdown';
-      $tab[160]['joinparams']    = array('jointype' => 'child');
+      $tab[160]['path']           = array(
+          array(
+              'table' => ComputerVirtualMachine::getTable(),
+              'field' => 'computer_id'
+          ),
+      );
 
-      $tab[161]['table']         = 'glpi_virtualmachinestates';
+      $tab[161]['table']         = VirtualMachineState::getTable();
       $tab[161]['field']         = 'name';
       $tab[161]['name']          = __('State of the virtual machine');
       $tab[161]['forcegroupby']  = true;
       $tab[161]['massiveaction'] = false;
       $tab[161]['datatype']      = 'dropdown';
-      $tab[161]['joinparams']    = array('beforejoin'
-                                          => array('table'      => 'glpi_computervirtualmachines',
-                                                   'joinparams' => array('jointype' => 'child')));
+      $tab[161]['path']           = array(
+          array(
+              'table' => ComputerVirtualMachine::getTable(),
+              'field' => 'computer_id'
+          ),
+          array(
+              'table' => VirtualMachineState::getTable(),
+              'field' => 'virtualmachinestate_id'
+          ),
+      );
 
-      $tab[162]['table']         = 'glpi_virtualmachinesystems';
+      $tab[162]['table']         = VirtualMachineSystem::getTable();
       $tab[162]['field']         = 'name';
       $tab[162]['name']          = __('Virtualization model');
       $tab[162]['forcegroupby']  = true;
       $tab[162]['massiveaction'] = false;
       $tab[162]['datatype']      = 'dropdown';
-      $tab[162]['joinparams']    = array('beforejoin'
-                                          => array('table'      => 'glpi_computervirtualmachines',
-                                                   'joinparams' => array('jointype' => 'child')));
+      $tab[162]['path']           = array(
+          array(
+              'table' => ComputerVirtualMachine::getTable(),
+              'field' => 'computer_id'
+          ),
+          array(
+              'table' => VirtualMachineSystem::getTable(),
+              'field' => 'virtualmachinesystem_id'
+          ),
+      );
 
-      $tab[163]['table']         = 'glpi_virtualmachinetypes';
+      $tab[163]['table']         = VirtualMachineType::getTable();
       $tab[163]['field']         = 'name';
       $tab[163]['name']          = __('Virtualization system');
       $tab[163]['datatype']      = 'dropdown';
       $tab[163]['forcegroupby']  = true;
       $tab[163]['massiveaction'] = false;
-      $tab[163]['joinparams']    = array('beforejoin'
-                                          => array('table'      => 'glpi_computervirtualmachines',
-                                                   'joinparams' => array('jointype' => 'child')));
+      $tab[163]['path']           = array(
+          array(
+              'table' => ComputerVirtualMachine::getTable(),
+              'field' => 'computer_id'
+          ),
+          array(
+              'table' => VirtualMachineType::getTable(),
+              'field' => 'virtualmachinetype_id'
+          ),
+      );
 
-      $tab[164]['table']         = 'glpi_computervirtualmachines';
+      $tab[164]['table']         = ComputerVirtualMachine::getTable();
       $tab[164]['field']         = 'vcpu';
       $tab[164]['name']          = __('Virtual machine processor number');
       $tab[164]['datatype']      = 'number';
       $tab[164]['forcegroupby']  = true;
       $tab[164]['massiveaction'] = false;
-      $tab[164]['joinparams']    = array('jointype' => 'child');
+      $tab[164]['path']           = array(
+          array(
+              'table' => ComputerVirtualMachine::getTable(),
+              'field' => 'computer_id'
+          ),
+      );
 
-      $tab[165]['table']         = 'glpi_computervirtualmachines';
+      $tab[165]['table']         = ComputerVirtualMachine::getTable();
       $tab[165]['field']         = 'ram';
       $tab[165]['name']          = __('Memory of virtual machines');
       $tab[165]['datatype']      = 'number';
       $tab[165]['unit']          = __('Mio');
       $tab[165]['forcegroupby']  = true;
       $tab[165]['massiveaction'] = false;
-      $tab[165]['joinparams']    = array('jointype' => 'child');
+      $tab[165]['path']           = array(
+          array(
+              'table' => ComputerVirtualMachine::getTable(),
+              'field' => 'computer_id'
+          ),
+      );
 
-      $tab[166]['table']         = 'glpi_computervirtualmachines';
+      $tab[166]['table']         = ComputerVirtualMachine::getTable();
       $tab[166]['field']         = 'uuid';
       $tab[166]['name']          = __('Virtual machine UUID');
       $tab[165]['datatype']      = 'string';
       $tab[166]['forcegroupby']  = true;
       $tab[166]['massiveaction'] = false;
-      $tab[166]['joinparams']    = array('jointype' => 'child');
+      $tab[166]['path']           = array(
+          array(
+              'table' => ComputerVirtualMachine::getTable(),
+              'field' => 'computer_id'
+          ),
+      );
 
       $tab+= ComputerAntivirus::getSearchOptionsToAdd();
 

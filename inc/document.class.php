@@ -911,7 +911,7 @@ class Document extends CommonDBTM {
       if (isset($input['current_filepath'])
           && !empty($input['current_filepath'])
           && is_file(GLPI_DOC_DIR."/".$input['current_filepath'])
-          && (countElementsInTable('glpi_documents',
+          && (countElementsInTable(self::getTable(),
                                    "`sha1sum`='".sha1_file(GLPI_DOC_DIR."/".
                                              $input['current_filepath'])."'") <= 1)) {
 
@@ -992,7 +992,7 @@ class Document extends CommonDBTM {
       if (isset($input['current_filepath'])
           && !empty($input['current_filepath'])
           && is_file(GLPI_DOC_DIR."/".$input['current_filepath'])
-          && (countElementsInTable('glpi_documents',
+          && (countElementsInTable(self::getTable(),
                                    "`sha1sum`='".sha1_file(GLPI_DOC_DIR."/".
                                              $input['current_filepath'])."'") <= 1)) {
 
@@ -1079,7 +1079,7 @@ class Document extends CommonDBTM {
       // Delete old file (if not used by another doc)
       if (isset($input['current_filepath'])
           && !empty($input['current_filepath'])
-          && (countElementsInTable('glpi_documents',
+          && (countElementsInTable(self::getTable(),
                                   "`sha1sum`='".sha1_file(GLPI_DOC_DIR."/".
                                              $input['current_filepath'])."'") <= 1)) {
 

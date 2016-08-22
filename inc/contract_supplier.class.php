@@ -72,7 +72,7 @@ class Contract_Supplier extends CommonDBRelation {
                     getEntitiesRestrictRequest(" AND ", "glpi_contracts", '',
                                                $_SESSION['glpiactiveentities']);
 
-      return countElementsInTable(array('glpi_contracts_suppliers', 'glpi_contracts'), $restrict);
+      return countElementsInTable(array(self::getTable(), Contract::getTable()), $restrict);
    }
 
 
@@ -86,7 +86,7 @@ class Contract_Supplier extends CommonDBRelation {
                     getEntitiesRestrictRequest(" AND ", "glpi_suppliers", '',
                                                $_SESSION['glpiactiveentities'], true);
 
-      return countElementsInTable(array('glpi_contracts_suppliers', 'glpi_suppliers'), $restrict);
+      return countElementsInTable(array(self::getTable(), Supplier::getTable()), $restrict);
    }
 
 
@@ -246,10 +246,10 @@ class Contract_Supplier extends CommonDBRelation {
          echo "<td class='center b'>
                <a href='".$CFG_GLPI["root_doc"]."/front/contract.form.php?id=$cID'>".$name."</a>";
          echo "</td>";
-         echo "<td class='center'>".Dropdown::getDropdownName("glpi_entities", $data["entity"]);
+         echo "<td class='center'>".Dropdown::getDropdownName(Entity::getTable(), $data["entity"]);
          echo "</td><td class='center'>".$data["num"]."</td>";
          echo "<td class='center'>".
-                Dropdown::getDropdownName("glpi_contracttypes",$data["contracttypes_id"])."</td>";
+                Dropdown::getDropdownName(ContractType::getTable(),$data["contracttypes_id"])."</td>";
          echo "<td class='center'>".Html::convDate($data["begin_date"])."</td>";
          echo "<td class='center'>";
          sprintf(_n('%d month', '%d months', $data["duration"]), $data["duration"]);
@@ -380,7 +380,7 @@ class Contract_Supplier extends CommonDBRelation {
          $entID         = $data['entID'];
          $entity        = $data['entity'];
          $used[$entID]  = $entID;
-         $entname       = Dropdown::getDropdownName("glpi_suppliers", $entID);
+         $entname       = Dropdown::getDropdownName(Supplier::getTable(), $entID);
          echo "<tr class='tab_bg_1'>";
          if ($canedit) {
             echo "<td>";
@@ -394,9 +394,9 @@ class Contract_Supplier extends CommonDBRelation {
          }
          echo "<a href='".$CFG_GLPI["root_doc"]."/front/supplier.form.php?id=$entID'>".$entname;
          echo "</a></td>";
-         echo "<td class='center'>".Dropdown::getDropdownName("glpi_entities",$entity)."</td>";
+         echo "<td class='center'>".Dropdown::getDropdownName(Entity::getTable(), $entity)."</td>";
          echo "<td class='center'>";
-         echo Dropdown::getDropdownName("glpi_suppliertypes", $data['type'])."</td>";
+         echo Dropdown::getDropdownName(SupplierType::getTable(), $data['type'])."</td>";
          echo "<td class='center'>".$data['phone']."</td>";
          echo "<td class='center'>".$website."</td>";
          echo "</tr>";

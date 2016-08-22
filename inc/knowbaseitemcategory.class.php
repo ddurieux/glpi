@@ -124,7 +124,7 @@ class KnowbaseItemCategory extends CommonTreeDropdown {
                      if (!in_array($data['knowbaseitemcategories_id'], $tmp)) {
                         $tmp[] = $data['knowbaseitemcategories_id'];
                         $tmp   = array_merge($tmp,
-                                             getAncestorsOf('glpi_knowbaseitemcategories',
+                                             getAncestorsOf(KnowbaseItemCategory::getTable(),
                                                             $data['knowbaseitemcategories_id']));
                      }
                   }

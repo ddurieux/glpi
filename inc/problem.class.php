@@ -954,7 +954,7 @@ class Problem extends CommonITILObject {
          if (isset($problem->groups[CommonITILActor::REQUESTER])
              && count($problem->groups[CommonITILActor::REQUESTER])) {
             foreach ($problem->groups[CommonITILActor::REQUESTER] as $d) {
-               echo Dropdown::getDropdownName("glpi_groups", $d["groups_id"]);
+               echo Dropdown::getDropdownName(Group::getTable(), $d["groups_id"]);
                echo "<br>";
             }
          }
@@ -1363,7 +1363,7 @@ class Problem extends CommonITILObject {
             echo "</td></tr></table>";
 
             if ($tree) {
-               $restrict = "IN (".implode(',', getSonsOf('glpi_groups', $item->getID())).")";
+               $restrict = "IN (".implode(',', getSonsOf(Group::getTable(), $item->getID())).")";
             } else {
                $restrict = "='".$item->getID()."'";
             }

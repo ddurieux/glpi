@@ -94,7 +94,7 @@ class Item_Problem extends CommonDBRelation{
                    AND `glpi_items_problems`.`itemtype` = '".$item->getType()."'".
                    getEntitiesRestrictRequest(" AND ", "glpi_problems", '', '', true);
 
-      $nb = countElementsInTable(array('glpi_items_problems', 'glpi_problems'), $restrict);
+      $nb = countElementsInTable(array(self::getTable(), Problem::getTable()), $restrict);
 
       return $nb ;
    }
@@ -144,7 +144,7 @@ class Item_Problem extends CommonDBRelation{
                                                       => $types,
                                                      'entity_restrict'
                                                       => ($problem->fields['is_recursive']
-                                                          ?getSonsOf('glpi_entities',
+                                                          ?getSonsOf(Entity::getTable(),
                                                                      $problem->fields['entities_id'])
                                                           :$problem->fields['entities_id'])));
          echo "</td><td class='center' width='30%'>";
@@ -236,7 +236,7 @@ class Item_Problem extends CommonDBRelation{
                          (($nb > 1) ? sprintf(__('%1$s: %2$s'), $typename, $nb) : $typename)."</td>";
                }
                echo "<td class='center'>";
-               echo Dropdown::getDropdownName("glpi_entities", $data['entity'])."</td>";
+               echo Dropdown::getDropdownName(Entity::getTable(), $data['entity'])."</td>";
                echo "<td class='center".
                         (isset($data['is_deleted']) && $data['is_deleted'] ? " tab_bg_2_2'" : "'");
                echo ">".$namelink."</td>";
@@ -271,7 +271,7 @@ class Item_Problem extends CommonDBRelation{
          switch ($item->getType()) {
             case 'Problem' :
                if ($_SESSION['glpishow_count_on_tabs']) {
-                  $nb = countElementsInTable('glpi_items_problems',
+                  $nb = countElementsInTable($this->getTable(),
                                              "`problems_id` = '".$item->getID()."'");
                }
                return self::createTabEntry(_n('Item', 'Items', Session::getPluralNumber()), $nb);
@@ -301,7 +301,7 @@ class Item_Problem extends CommonDBRelation{
                if (Session::haveRight("problem", Problem::READALL)) {
                   if ($_SESSION['glpishow_count_on_tabs']) {
                      // Direct one
-                     $nb = countElementsInTable('glpi_items_problems',
+                     $nb = countElementsInTable($this->getTable(),
                                                 " `itemtype` = '".$item->getType()."'
                                                    AND `items_id` = '".$item->getID()."'");
                      // Linked items
@@ -310,7 +310,7 @@ class Item_Problem extends CommonDBRelation{
                      if (count($linkeditems)) {
                         foreach ($linkeditems as $type => $tab) {
                            foreach ($tab as $ID) {
-                              $nb += countElementsInTable('glpi_items_problems',
+                              $nb += countElementsInTable($this->getTable(),
                                                           " `itemtype` = '$type'
                                                             AND `items_id` = '$ID'");
                            }
