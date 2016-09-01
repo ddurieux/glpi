@@ -49,6 +49,12 @@ class Glpi92FillData extends AbstractMigration {
               'is_notif_enable_default'             => 1,
               'inquest_duration'                    => 0,
               'autofill_decommission_date'          => 0,
+              'ancestors_cache'                     => '',
+              'sons_cache'                          => '',
+              'address'                             => '',
+              'entity_ldapfilter'                   => '',
+              'mailing_signature'                   => '',
+              'comment'                             => ''
           )
       );
       $this->insert('glpi_entity', $rows);
@@ -58,9 +64,10 @@ class Glpi92FillData extends AbstractMigration {
       // Insert into table glpi_apiclient
       $rows = array(
           array(
-              'name' => 'full access',
+              'name'      => 'full access',
               'entity_id' => $entity_id,
               'is_active' => 1,
+              'comment'   => ''
           )
       );
       $this->insert('glpi_apiclient', $rows);
@@ -68,22 +75,26 @@ class Glpi92FillData extends AbstractMigration {
       // Insert into table glpi_blacklist
       $rows = array(
           array(
-              'type'  => 1,
-              'name'  => 'empty IP'
+              'type'    => 1,
+              'name'    => 'empty IP',
+              'comment' => '',
           ),
           array(
-              'type'  => 1,
-              'name'  => 'localhost',
-              'value' => '127.0.0.1',
+              'type'    => 1,
+              'name'    => 'localhost',
+              'value'   => '127.0.0.1',
+              'comment' => '',
           ),
           array(
-              'type'  => 1,
-              'name'  => 'zero IP',
-              'value' => '0.0.0.0',
+              'type'    => 1,
+              'name'    => 'zero IP',
+              'value'   => '0.0.0.0',
+              'comment' => '',
           ),
           array(
-              'type'  => 2,
-              'name'  => 'empty MAC'
+              'type'    => 2,
+              'name'    => 'empty MAC',
+              'comment' => '',
           )
       );
       $this->insert('glpi_blacklist', $rows);
@@ -95,7 +106,8 @@ class Glpi92FillData extends AbstractMigration {
               'entity_id'      => $entity_id,
               'is_recursive'   => true,
               'comment'        => 'Default calendar',
-              'cache_duration' => '[0,43200,43200,43200,43200,43200,0]'
+              'cache_duration' => '[0,43200,43200,43200,43200,43200,0]',
+              'comment'        => '',
           )
       );
       $this->insert('glpi_calendar', $rows);
@@ -190,14 +202,17 @@ class Glpi92FillData extends AbstractMigration {
           array(
               'context' => 'core',
               'name'    => 'admin_email_name',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'admin_reply',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'admin_reply_name',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
@@ -257,6 +272,7 @@ class Glpi92FillData extends AbstractMigration {
           array(
               'context' => 'core',
               'name'    => 'cas_host',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
@@ -266,10 +282,12 @@ class Glpi92FillData extends AbstractMigration {
           array(
               'context' => 'core',
               'name'    => 'cas_uri',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'cas_logout',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
@@ -309,10 +327,12 @@ class Glpi92FillData extends AbstractMigration {
           array(
               'context' => 'core',
               'name'    => 'text_login',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'founded_new_version',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
@@ -367,6 +387,7 @@ class Glpi92FillData extends AbstractMigration {
           array(
               'context' => 'core',
               'name'    => 'smtp_host',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
@@ -376,10 +397,12 @@ class Glpi92FillData extends AbstractMigration {
           array(
               'context' => 'core',
               'name'    => 'smtp_username',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'proxy_name',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
@@ -389,6 +412,7 @@ class Glpi92FillData extends AbstractMigration {
           array(
               'context' => 'core',
               'name'    => 'proxy_user',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
@@ -413,10 +437,12 @@ class Glpi92FillData extends AbstractMigration {
           array(
               'context' => 'core',
               'name'    => 'helpdesk_doc_url',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'central_doc_url',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
@@ -521,18 +547,22 @@ class Glpi92FillData extends AbstractMigration {
           array(
               'context' => 'core',
               'name'    => 'x509_email_field',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'x509_cn_restrict',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'x509_o_restrict',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'x509_ou_restrict',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
@@ -612,10 +642,12 @@ class Glpi92FillData extends AbstractMigration {
           array(
               'context' => 'core',
               'name'    => 'proxy_passwd',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'smtp_passwd',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
@@ -735,62 +767,77 @@ class Glpi92FillData extends AbstractMigration {
           array(
               'context' => 'core',
               'name'    => 'realname_ssofield',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'firstname_ssofield',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'email1_ssofield',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'email2_ssofield',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'email3_ssofield',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'email4_ssofield',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'phone_ssofield',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'phone2_ssofield',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'mobile_ssofield',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'comment_ssofield',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'title_ssofield',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'category_ssofield',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'language_ssofield',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'entity_ssofield',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
               'name'    => 'registration_number_ssofield',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
@@ -825,6 +872,7 @@ class Glpi92FillData extends AbstractMigration {
           array(
               'context' => 'core',
               'name'    => 'maintenance_text',
+              'value'   => '',
           ),
           array(
               'context' => 'core',
@@ -936,133 +984,159 @@ class Glpi92FillData extends AbstractMigration {
               'itemtype' => 'CartridgeItem',
               'param'    => 10,
               'state'    => 0,
+              'comment'  => '',
           ),
           array(
               'name'     => 'consumable',
               'itemtype' => 'ConsumableItem',
               'param'    => 10,
               'state'    => 0,
+              'comment'  => '',
           ),
           array(
               'name'     => 'software',
               'itemtype' => 'SoftwareLicense',
               'state'    => 0,
+              'comment'  => '',
           ),
           array(
               'name'     => 'contract',
               'itemtype' => 'Contract',
+              'comment'  => '',
           ),
           array(
               'name'     => 'infocom',
               'itemtype' => 'InfoCom',
+              'comment'  => '',
           ),
           array(
               'name'     => 'logs',
               'itemtype' => 'CronTask',
               'param'    => 30,
               'state'    => 0,
+              'comment'  => '',
           ),
           array(
               'name'      => 'optimize',
               'itemtype'  => 'CronTask',
-              'frequency' => 604800
+              'frequency' => 604800,
+              'comment'  => '',
           ),
           array(
               'name'      => 'mailgate',
               'itemtype'  => 'MailCollector',
               'frequency' => 600,
-              'param'     => 10
+              'param'     => 10,
+              'comment'  => '',
           ),
           array(
               'name'      => 'checkdbreplicate',
               'itemtype'  => 'DBconnection',
               'frequency' => 300,
-              'state'     => 0
+              'state'     => 0,
+              'comment'  => '',
           ),
           array(
               'name'      => 'checkupdate',
               'itemtype'  => 'CronTask',
               'frequency' => 604800,
-              'state'     => 0
+              'state'     => 0,
+              'comment'  => '',
           ),
           array(
               'name'      => 'session',
               'itemtype'  => 'CronTask',
+              'comment'  => '',
           ),
           array(
               'name'      => 'graph',
               'itemtype'  => 'CronTask',
-              'frequency' => 3600
+              'frequency' => 3600,
+              'comment'  => '',
           ),
           array(
               'name'      => 'reservation',
               'itemtype'  => 'ReservationItem',
-              'frequency' => 3600
+              'frequency' => 3600,
+              'comment'  => '',
           ),
           array(
               'name'      => 'closeticket',
               'itemtype'  => 'Ticket',
-              'frequency' => 43200
+              'frequency' => 43200,
+              'comment'  => '',
           ),
           array(
               'name'      => 'alertnotclosed',
               'itemtype'  => 'Ticket',
-              'frequency' => 43200
+              'frequency' => 43200,
+              'comment'  => '',
           ),
           array(
               'name'      => 'slaticket',
               'itemtype'  => 'SlaLevel_Ticket',
-              'frequency' => 300
+              'frequency' => 300,
+              'comment'  => '',
           ),
           array(
               'name'      => 'createinquest',
               'itemtype'  => 'Ticket',
+              'comment'  => '',
           ),
           array(
               'name'      => 'watcher',
               'itemtype'  => 'Crontask',
+              'comment'  => '',
           ),
           array(
               'name'      => 'ticketrecurrent',
               'itemtype'  => 'TicketRecurrent',
-              'frequency' => 3600
+              'frequency' => 3600,
+              'comment'  => '',
           ),
           array(
               'name'      => 'planningrecall',
               'itemtype'  => 'PlanningRecall',
-              'frequency' => 300
+              'frequency' => 300,
+              'comment'  => '',
           ),
           array(
               'name'      => 'queuedmail',
               'itemtype'  => 'QueuedMail',
               'frequency' => 600,
-              'param'     => 50
+              'param'     => 50,
+              'comment'  => '',
           ),
           array(
               'name'      => 'queuedmailclean',
               'itemtype'  => 'QueuedMail',
-              'param'     => 30
+              'param'     => 30,
+              'comment'  => '',
           ),
           array(
               'name'      => 'temp',
               'itemtype'  => 'Crontask',
-              'frequency' => 3600
+              'frequency' => 3600,
+              'comment'  => '',
           ),
           array(
               'name'      => 'mailgateerror',
               'itemtype'  => 'MailCollector',
+              'comment'  => '',
           ),
           array(
               'name'      => 'circularlogs',
               'itemtype'  => 'Crontask',
               'param'     => 4,
-              'state'     => 0
+              'state'     => 0,
+              'comment'  => '',
           ),
           array(
               'name'      => 'unlockobject',
               'itemtype'  => 'ObjectLock',
               'param'     => 4,
-              'state'     => 0
+              'state'     => 0,
+              'comment'  => '',
           ),
       );
       $this->insert('glpi_crontask', $rows);
@@ -1070,16 +1144,20 @@ class Glpi92FillData extends AbstractMigration {
       // Insert into table glpi_devicememorytype
       $rows = array(
           array(
-              'name' => 'EDO',
+              'name'    => 'EDO',
+              'comment' => '',
           ),
           array(
-              'name' => 'DDR',
+              'name'    => 'DDR',
+              'comment' => '',
           ),
           array(
-              'name' => 'SDRAM',
+              'name'    => 'SDRAM',
+              'comment' => '',
           ),
           array(
-              'name' => 'SDRAM-2',
+              'name'    => 'SDRAM-2',
+              'comment' => '',
           ),
       );
       $this->insert('glpi_devicememorytype', $rows);
@@ -2211,357 +2289,429 @@ class Glpi92FillData extends AbstractMigration {
               'name'          => 'JPEG',
               'ext'           => 'jpg',
               'icon'          => 'jpg-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'PNG',
               'ext'           => 'png',
               'icon'          => 'png-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'GIF',
               'ext'           => 'gif',
               'icon'          => 'gif-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'BMP',
               'ext'           => 'bmp',
               'icon'          => 'bmp-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Photoshop',
               'ext'           => 'psd',
               'icon'          => 'psd-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'TIFF',
               'ext'           => 'tif',
               'icon'          => 'tif-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'AIFF',
               'ext'           => 'aiff',
               'icon'          => 'aiff-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Windows Media',
               'ext'           => 'asf',
               'icon'          => 'asf-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Windows Media',
               'ext'           => 'avi',
               'icon'          => 'avi-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'C source',
               'ext'           => 'c',
               'icon'          => 'c-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'RealAudio',
               'ext'           => 'rm',
               'icon'          => 'rm-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Midi',
               'ext'           => 'mid',
               'icon'          => 'mid-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'QuickTime',
               'ext'           => 'mov',
               'icon'          => 'mov-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'MP3',
               'ext'           => 'mp3',
               'icon'          => 'mp3-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'MPEG',
               'ext'           => 'mpg',
               'icon'          => 'mpg-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Ogg Vorbis',
               'ext'           => 'ogg',
               'icon'          => 'ogg-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'QuickTime',
               'ext'           => 'qt',
               'icon'          => 'qt-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'BZip',
               'ext'           => 'bz2',
               'icon'          => 'bz2-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'RealAudio',
               'ext'           => 'ra',
               'icon'          => 'ra-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'RealAudio',
               'ext'           => 'ram',
               'icon'          => 'ram-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Word',
               'ext'           => 'doc',
               'icon'          => 'doc-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'DjVu',
               'ext'           => 'djv',
+              'comment'       => '',
           ),
           array(
               'name'          => 'MNG',
               'ext'           => 'mng',
+              'comment'       => '',
           ),
           array(
               'name'          => 'PostScript',
               'ext'           => 'eps',
               'icon'          => 'ps-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'GZ',
               'ext'           => 'gz',
               'icon'          => 'gz-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'WAV',
               'ext'           => 'wav',
               'icon'          => 'wav-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'HTML',
               'ext'           => 'html',
               'icon'          => 'html-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Flash',
               'ext'           => 'swf',
               'icon'          => 'swf-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'PDF',
               'ext'           => 'pdf',
               'icon'          => 'pdf-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'PowerPoint',
               'ext'           => 'ppt',
               'icon'          => 'ppt-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'PostScript',
               'ext'           => 'ps',
               'icon'          => 'ps-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Windows Media',
               'ext'           => 'wmv',
               'icon'          => 'wmv-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'RTF',
               'ext'           => 'rtf',
               'icon'          => 'rtf-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'StarOffice',
               'ext'           => 'sdd',
               'icon'          => 'sdd-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'StarOffice',
               'ext'           => 'sdw',
               'icon'          => 'sdw-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Stuffit',
               'ext'           => 'sit',
               'icon'          => 'sit-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Adobe Illustrator',
               'ext'           => 'ai',
               'icon'          => 'ai-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'OpenOffice Impress',
               'ext'           => 'sxi',
               'icon'          => 'sxi-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'OpenOffice',
               'ext'           => 'sxw',
               'icon'          => 'sxw-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'DVI',
               'ext'           => 'dvi',
               'icon'          => 'dvi-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'TGZ',
               'ext'           => 'tgz',
               'icon'          => 'tgz-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'texte',
               'ext'           => 'txt',
               'icon'          => 'txt-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'RedHat/Mandrake/SuSE',
               'ext'           => 'rpm',
               'icon'          => 'rpm-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Excel',
               'ext'           => 'xls',
               'icon'          => 'xls-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'XML',
               'ext'           => 'xml',
               'icon'          => 'xml-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Zip',
               'ext'           => 'zip',
               'icon'          => 'zip-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Debian',
               'ext'           => 'deb',
               'icon'          => 'deb-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'C header',
               'ext'           => 'h',
               'icon'          => 'h-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Pascal',
               'ext'           => 'pas',
               'icon'          => 'pas-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'OpenOffice Calc',
               'ext'           => 'sxc',
               'icon'          => 'sxc-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'LaTeX',
               'ext'           => 'tex',
               'icon'          => 'tex-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'GIMP multi-layer',
               'ext'           => 'xcf',
               'icon'          => 'xcf-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'JPEG',
               'ext'           => 'jpeg',
               'icon'          => 'jpg-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Oasis Open Office Writer',
               'ext'           => 'odt',
               'icon'          => 'odt-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Oasis Open Office Calc',
               'ext'           => 'ods',
               'icon'          => 'ods-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Oasis Open Office Impress',
               'ext'           => 'odp',
               'icon'          => 'odp-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Oasis Open Office Impress Template',
               'ext'           => 'otp',
               'icon'          => 'otp-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Oasis Open Office Writer Template',
               'ext'           => 'ott',
               'icon'          => 'odt-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Oasis Open Office Calc Template',
               'ext'           => 'ots',
               'icon'          => 'ods-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Oasis Open Office Math',
               'ext'           => 'odf',
               'icon'          => 'odf-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Oasis Open Office Draw',
               'ext'           => 'odg',
               'icon'          => 'odg-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Oasis Open Office Draw Template',
               'ext'           => 'otg',
               'icon'          => 'odg-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Oasis Open Office Base',
               'ext'           => 'odb',
               'icon'          => 'odb-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Oasis Open Office HTML',
               'ext'           => 'oth',
               'icon'          => 'oth-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Oasis Open Office Writer Master',
               'ext'           => 'odm',
               'icon'          => 'odm-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Oasis Open Office Chart',
               'ext'           => 'odc',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Oasis Open Office Image',
               'ext'           => 'odi',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Word XML',
               'ext'           => 'docx',
               'icon'          => 'doc-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Excel XML',
               'ext'           => 'xlsx',
               'icon'          => 'xls-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'PowerPoint XML',
               'ext'           => 'pptx',
               'icon'          => 'ppt-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Comma-Separated Values',
               'ext'           => 'csv',
               'icon'          => 'csv-dist.png',
+              'comment'       => '',
           ),
           array(
               'name'          => 'Scalable Vector Graphics',
               'ext'           => 'svg',
               'icon'          => 'svg-dist.png',
+              'comment'       => '',
           ),
       );
       $this->insert('glpi_documenttype', $rows);
@@ -2570,64 +2720,84 @@ class Glpi92FillData extends AbstractMigration {
       // Insert into table glpi_filesystem
       $rows = array(
           array(
-              'name' => 'ext',
+              'name'    => 'ext',
+              'comment' => '',
           ),
           array(
-              'name' => 'ext2',
+              'name'    => 'ext2',
+              'comment' => '',
           ),
           array(
-              'name' => 'ext3',
+              'name'    => 'ext3',
+              'comment' => '',
           ),
           array(
-              'name' => 'ext4',
+              'name'    => 'ext4',
+              'comment' => '',
           ),
           array(
-              'name' => 'FAT',
+              'name'    => 'FAT',
+              'comment' => '',
           ),
           array(
-              'name' => 'FAT32',
+              'name'    => 'FAT32',
+              'comment' => '',
           ),
           array(
-              'name' => 'VFAT',
+              'name'    => 'VFAT',
+              'comment' => '',
           ),
           array(
-              'name' => 'HFS',
+              'name'    => 'HFS',
+              'comment' => '',
           ),
           array(
-              'name' => 'HPFS',
+              'name'    => 'HPFS',
+              'comment' => '',
           ),
           array(
-              'name' => 'HTFS',
+              'name'    => 'HTFS',
+              'comment' => '',
           ),
           array(
-              'name' => 'JFS',
+              'name'    => 'JFS',
+              'comment' => '',
           ),
           array(
-              'name' => 'JFS2',
+              'name'    => 'JFS2',
+              'comment' => '',
           ),
           array(
-              'name' => 'NFS',
+              'name'    => 'NFS',
+              'comment' => '',
           ),
           array(
-              'name' => 'NTFS',
+              'name'    => 'NTFS',
+              'comment' => '',
           ),
           array(
-              'name' => 'ReiserFS',
+              'name'    => 'ReiserFS',
+              'comment' => '',
           ),
           array(
-              'name' => 'SMBFS',
+              'name'    => 'SMBFS',
+              'comment' => '',
           ),
           array(
-              'name' => 'UDF',
+              'name'    => 'UDF',
+              'comment' => '',
           ),
           array(
-              'name' => 'UFS',
+              'name'    => 'UFS',
+              'comment' => '',
           ),
           array(
-              'name' => 'XFS',
+              'name'    => 'XFS',
+              'comment' => '',
           ),
           array(
-              'name' => 'ZFS',
+              'name'    => 'ZFS',
+              'comment' => '',
           ),
       );
       $this->insert('glpi_filesystem', $rows);
@@ -2636,28 +2806,36 @@ class Glpi92FillData extends AbstractMigration {
       // Insert into table glpi_interfacetype
       $rows = array(
           array(
-              'name' => 'IDE',
+              'name'    => 'IDE',
+              'comment' => '',
           ),
           array(
-              'name' => 'SATA',
+              'name'    => 'SATA',
+              'comment' => '',
           ),
           array(
-              'name' => 'SCSI',
+              'name'    => 'SCSI',
+              'comment' => '',
           ),
           array(
-              'name' => 'USB',
+              'name'    => 'USB',
+              'comment' => '',
           ),
           array(
-              'name' => 'AGP',
+              'name'    => 'AGP',
+              'comment' => '',
           ),
           array(
-              'name' => 'PCI',
+              'name'    => 'PCI',
+              'comment' => '',
           ),
           array(
-              'name' => 'PCIe',
+              'name'    => 'PCIe',
+              'comment' => '',
           ),
           array(
-              'name' => 'PCI-X',
+              'name'    => 'PCI-X',
+              'comment' => '',
           ),
       );
       $this->insert('glpi_interfacetype', $rows);
@@ -2668,94 +2846,140 @@ class Glpi92FillData extends AbstractMigration {
           array(
               'name'     => 'MySQL Synchronization',
               'itemtype' => 'DBConnection',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Reservations',
               'itemtype' => 'Reservation',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Alert Reservation',
               'itemtype' => 'Reservation',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Tickets',
               'itemtype' => 'Ticket',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Tickets (Simple)',
               'itemtype' => 'Ticket',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Alert Tickets not closed',
               'itemtype' => 'Ticket',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Tickets Validation',
               'itemtype' => 'Ticket',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Cartridges',
               'itemtype' => 'CartridgeItem',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Consumables',
               'itemtype' => 'ConsumableItem',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Infocoms',
               'itemtype' => 'Infocom',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Licenses',
               'itemtype' => 'SoftwareLicense',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Contracts',
               'itemtype' => 'Contract',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Password Forget',
               'itemtype' => 'User',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Ticket Satisfaction',
               'itemtype' => 'Ticket',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Item not unique',
               'itemtype' => 'FieldUnicity',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Crontask',
               'itemtype' => 'Crontask',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Problems',
               'itemtype' => 'Problem',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Planning recall',
               'itemtype' => 'PlanningRecall',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Changes',
               'itemtype' => 'Change',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Receiver errors',
               'itemtype' => 'MailCollector',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Projects',
               'itemtype' => 'Project',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Project Tasks',
               'itemtype' => 'ProjectTask',
+              'css'      => '',
+              'comment'  => '',
           ),
           array(
               'name'     => 'Unlock Item request',
               'itemtype' => 'ObjectLock',
+              'css'      => '',
+              'comment'  => '',
           ),
       );
       $this->insert('glpi_notificationtemplate', $rows);
@@ -2776,7 +3000,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Alert Tickets not closed'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'New Ticket',
@@ -2786,7 +3011,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Tickets'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Update Ticket',
@@ -2796,7 +3022,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Tickets'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Close Ticket',
@@ -2806,7 +3033,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Tickets'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Add Followup',
@@ -2816,7 +3044,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Tickets'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Add Task',
@@ -2826,7 +3055,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Tickets'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Update Followup',
@@ -2836,7 +3066,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Tickets'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Update Task',
@@ -2846,7 +3077,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Tickets'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Delete Followup',
@@ -2856,7 +3088,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Tickets'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Delete Task',
@@ -2866,7 +3099,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Tickets'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Resolve ticket',
@@ -2876,7 +3110,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Tickets'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Ticket Validation',
@@ -2886,7 +3121,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Tickets Validation'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'New Reservation',
@@ -2896,7 +3132,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Reservations'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Update Reservation',
@@ -2906,7 +3143,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Reservations'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Delete Reservation',
@@ -2916,7 +3154,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Reservations'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Alert Reservation',
@@ -2926,7 +3165,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Alert Reservation'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Contract Notice',
@@ -2936,7 +3176,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Contracts'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Contract End',
@@ -2946,7 +3187,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Contracts'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'MySQL Synchronization',
@@ -2956,7 +3198,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['MySQL Synchronization'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Cartridges',
@@ -2966,7 +3209,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Cartridges'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Consumables',
@@ -2976,7 +3220,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Consumables'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Infocoms',
@@ -2986,7 +3231,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Infocoms'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Software Licenses',
@@ -2996,7 +3242,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Licenses'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Ticket Recall',
@@ -3006,7 +3253,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Tickets'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Password Forget',
@@ -3016,7 +3264,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Password Forget'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Ticket Satisfaction',
@@ -3026,7 +3275,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Ticket Satisfaction'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Item not unique',
@@ -3036,7 +3286,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Item not unique'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Crontask Watcher',
@@ -3046,7 +3297,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Crontask'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'New Problem',
@@ -3056,7 +3308,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Problems'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Update Problem',
@@ -3066,7 +3319,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Problems'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Resolve Problem',
@@ -3076,7 +3330,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Problems'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Add Task',
@@ -3086,7 +3341,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Problems'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Update Task',
@@ -3096,7 +3352,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Problems'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Delete Task',
@@ -3106,7 +3363,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Problems'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Close Problem',
@@ -3116,7 +3374,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Problems'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Delete Problem',
@@ -3126,7 +3385,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Problems'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Ticket Validation Answer',
@@ -3136,7 +3396,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Tickets Validation'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Contract End Periodicity',
@@ -3146,7 +3407,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Contracts'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Contract Notice Periodicity',
@@ -3156,7 +3418,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Contracts'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Planning recall',
@@ -3166,7 +3429,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Planning recall'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Delete Ticket',
@@ -3176,7 +3440,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Tickets'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'New Change',
@@ -3186,7 +3451,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Changes'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Update Change',
@@ -3196,7 +3462,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Changes'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Resolve Change',
@@ -3206,7 +3473,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Changes'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Add Task',
@@ -3216,7 +3484,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Changes'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Update Task',
@@ -3226,7 +3495,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Changes'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Delete Task',
@@ -3236,7 +3506,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Changes'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Close Change',
@@ -3246,7 +3517,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Changes'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Delete Change',
@@ -3256,7 +3528,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Changes'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Ticket Satisfaction Answer',
@@ -3266,7 +3539,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Ticket Satisfaction'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Receiver errors',
@@ -3276,7 +3550,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Receiver errors'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'New Project',
@@ -3286,7 +3561,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Projects'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Update Project',
@@ -3296,7 +3572,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Projects'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Delete Project',
@@ -3306,7 +3583,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Projects'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'New Project Task',
@@ -3316,7 +3594,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Project Tasks'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Update Project Task',
@@ -3326,7 +3605,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Project Tasks'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Delete Project Task',
@@ -3336,7 +3616,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Project Tasks'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
           array(
               'name'                    => 'Request Unlock Items',
@@ -3346,7 +3627,8 @@ class Glpi92FillData extends AbstractMigration {
               'mode'                    => 'mail',
               'notificationtemplate_id' => $notiftemplates['Unlock Item request'],
               'is_recursive'            => true,
-              'is_active'               => true
+              'is_active'               => true,
+              'comment'                 => '',
           ),
       );
       $this->insert('glpi_notification', $rows);
@@ -4678,6 +4960,8 @@ class Glpi92FillData extends AbstractMigration {
               'helpdesk_item_type'     => '[\"Computer\",\"Monitor\",\"NetworkEquipment\",\"Peripheral\",\"Phone\",\"Printer\",\"Software\"]',
               'ticket_status'          => '{\"1\":{\"2\":0,\"3\":0,\"4\":0,\"5\":0,\"6\":0},\"2\":{\"1\":0,\"3\":0,\"4\":0,\"5\":0,\"6\":0},\"3\":{\"1\":0,\"2\":0,\"4\":0,\"5\":0,\"6\":0},\"4\":{\"1\":0,\"2\":0,\"3\":0,\"5\":0,\"6\":0},\"5\":{\"1\":0,\"2\":0,\"3\":0,\"4\":0},\"6\":{\"1\":0,\"2\":0,\"3\":0,\"4\":0,\"5\":0}}',
               'problem_status'         => '[]',
+              'change_status'          => '',
+              'comment'                => '',
           ),
           array(
               'name'                   => 'Observer',
@@ -4686,6 +4970,8 @@ class Glpi92FillData extends AbstractMigration {
               'helpdesk_item_type'     => '[\"Computer\",\"Monitor\",\"NetworkEquipment\",\"Peripheral\",\"Phone\",\"Printer\",\"Software\"]',
               'ticket_status'          => '[]',
               'problem_status'         => '[]',
+              'change_status'          => '',
+              'comment'                => '',
           ),
           array(
               'name'                   => 'Admin',
@@ -4694,6 +4980,8 @@ class Glpi92FillData extends AbstractMigration {
               'helpdesk_item_type'     => '[\"Computer\",\"Monitor\",\"NetworkEquipment\",\"Peripheral\",\"Phone\",\"Printer\",\"Software\"]',
               'ticket_status'          => '[]',
               'problem_status'         => '[]',
+              'change_status'          => '',
+              'comment'                => '',
           ),
           array(
               'name'                   => 'Super-Admin',
@@ -4702,6 +4990,8 @@ class Glpi92FillData extends AbstractMigration {
               'helpdesk_item_type'     => '[\"Computer\",\"Monitor\",\"NetworkEquipment\",\"Peripheral\",\"Phone\",\"Printer\",\"Software\"]',
               'ticket_status'          => '[]',
               'problem_status'         => '[]',
+              'change_status'          => '',
+              'comment'                => '',
           ),
           array(
               'name'                   => 'Hotliner',
@@ -4711,6 +5001,8 @@ class Glpi92FillData extends AbstractMigration {
               'ticket_status'          => '[]',
               'problem_status'         => '[]',
               'create_ticket_on_login' => true,
+              'change_status'          => '',
+              'comment'                => '',
           ),
           array(
               'name'                   => 'Technician',
@@ -4719,6 +5011,8 @@ class Glpi92FillData extends AbstractMigration {
               'helpdesk_item_type'     => '[\"Computer\",\"Monitor\",\"NetworkEquipment\",\"Peripheral\",\"Phone\",\"Printer\",\"Software\"]',
               'ticket_status'          => '[]',
               'problem_status'         => '[]',
+              'change_status'          => '',
+              'comment'                => '',
           ),
           array(
               'name'                   => 'Supervisor',
@@ -4727,6 +5021,8 @@ class Glpi92FillData extends AbstractMigration {
               'helpdesk_item_type'     => '[\"Computer\",\"Monitor\",\"NetworkEquipment\",\"Peripheral\",\"Phone\",\"Printer\",\"Software\"]',
               'ticket_status'          => '[]',
               'problem_status'         => '[]',
+              'change_status'          => '',
+              'comment'                => '',
           ),
           array(
               'name'                   => 'Read-Only',
@@ -4757,6 +5053,8 @@ class Glpi92FillData extends AbstractMigration {
                                         . '\"5\":{\"1\":0,\"9\":0,\"10\":0,\"7\":0,\"4\":0,\"11\":0,\"12\":0,\"8\":0,\"6\":0},'
                                         . '\"8\":{\"1\":0,\"9\":0,\"10\":0,\"7\":0,\"4\":0,\"11\":0,\"12\":0,\"5\":0,\"6\":0},'
                                         . '\"6\":{\"1\":0,\"9\":0,\"10\":0,\"7\":0,\"4\":0,\"11\":0,\"12\":0,\"5\":0,\"8\":0}}',
+              'change_status'          => '',
+              'comment'                => '',
           ),
       );
       $this->insert('glpi_profile', $rows);
@@ -7403,6 +7701,11 @@ class Glpi92FillData extends AbstractMigration {
               'is_active'  => true,
               'authtype'   => 1,
               'entity_id'  => $entity_id,
+              'user_dn'    => '',
+              'display_options' => '',
+              'privatebookmarkorder' => '',
+              'plannings'  => '',
+              'comment'    => '',
           ),
           array(
               'name'       => 'post-only',
@@ -7410,6 +7713,11 @@ class Glpi92FillData extends AbstractMigration {
               'language'   => 'en_GB',
               'list_limit' => 20,
               'entity_id'  => $entity_id,
+              'user_dn'    => '',
+              'display_options' => '',
+              'privatebookmarkorder' => '',
+              'plannings'  => '',
+              'comment'    => '',
           ),
           array(
               'name'       => 'tech',
@@ -7417,6 +7725,11 @@ class Glpi92FillData extends AbstractMigration {
               'language'   => 'en_GB',
               'list_limit' => 20,
               'entity_id'  => $entity_id,
+              'user_dn'    => '',
+              'display_options' => '',
+              'privatebookmarkorder' => '',
+              'plannings'  => '',
+              'comment'    => '',
           ),
           array(
               'name'       => 'normal',
@@ -7424,6 +7737,11 @@ class Glpi92FillData extends AbstractMigration {
               'language'   => 'en_GB',
               'list_limit' => 20,
               'entity_id'  => $entity_id,
+              'user_dn'    => '',
+              'display_options' => '',
+              'privatebookmarkorder' => '',
+              'plannings'  => '',
+              'comment'    => '',
           ),
       );
       $this->insert('glpi_user', $rows);
@@ -7465,17 +7783,20 @@ class Glpi92FillData extends AbstractMigration {
       // Insert into table glpi_projectstate
       $rows = array(
           array(
-              'name'  => 'New',
-              'color' => '#06ff00',
+              'name'    => 'New',
+              'color'   => '#06ff00',
+              'comment' => '',
           ),
           array(
-              'name'  => 'Processing',
-              'color' => '#ffb800',
+              'name'    => 'Processing',
+              'color'   => '#ffb800',
+              'comment' => '',
           ),
           array(
               'name'        => 'Closed',
               'color'       => '#ff0000',
-              'is_finished' => true
+              'is_finished' => true,
+              'comment'     => '',
           ),
       );
       $this->insert('glpi_projectstate', $rows);
@@ -7485,26 +7806,32 @@ class Glpi92FillData extends AbstractMigration {
       // Insert into table glpi_requesttype
       $rows = array(
           array(
-              'name' => 'Helpdesk',
+              'name'                => 'Helpdesk',
               'is_helpdesk_default' => true,
               'is_followup_default' => true,
+              'comment'             => '',
           ),
           array(
-              'name' => 'E-Mail',
-              'is_mail_default' => true,
+              'name'                    => 'E-Mail',
+              'is_mail_default'         => true,
               'is_mailfollowup_default' => true,
+              'comment'                 => '',
           ),
           array(
-              'name' => 'Phone',
+              'name'    => 'Phone',
+              'comment' => '',
           ),
           array(
-              'name' => 'Direct',
+              'name'    => 'Direct',
+              'comment' => '',
           ),
           array(
-              'name' => 'Written',
+              'name'    => 'Written',
+              'comment' => '',
           ),
           array(
-              'name' => 'Other',
+              'name'    => 'Other',
+              'comment' => '',
           ),
       );
       $this->insert('glpi_requesttype', $rows);
@@ -7522,6 +7849,7 @@ class Glpi92FillData extends AbstractMigration {
               'match'       => 'OR',
               'is_active'   => true,
               'uuid'        => '500717c8-2bd6e957-53a12b5fd35745.02608131',
+              'comment'     => '',
           ),
           array(
               'entity_id'   => $entity_id,
@@ -7532,6 +7860,7 @@ class Glpi92FillData extends AbstractMigration {
               'match'       => 'OR',
               'is_active'   => true,
               'uuid'        => '500717c8-2bd6e957-53a12b5fd36404.54713349',
+              'comment'     => '',
           ),
           array(
               'entity_id'    => $entity_id,
@@ -7543,6 +7872,7 @@ class Glpi92FillData extends AbstractMigration {
               'is_active'    => true,
               'is_recursive' => true,
               'uuid'         => '500717c8-2bd6e957-53a12b5fd36d97.94503423',
+              'comment'      => '',
           ),
           array(
               'entity_id'    => $entity_id,
@@ -7554,6 +7884,7 @@ class Glpi92FillData extends AbstractMigration {
               'is_active'    => true,
               'is_recursive' => true,
               'uuid'         => '500717c8-2bd6e957-53a12b5fd376c2.87642651',
+              'comment'      => '',
           ),
           array(
               'entity_id'    => $entity_id,
@@ -7566,6 +7897,7 @@ class Glpi92FillData extends AbstractMigration {
               'is_recursive' => true,
               'uuid'         => '500717c8-2bd6e957-53a12b5fd37f94.10365341',
               'condition'    => 1,
+              'comment'      => '',
           ),
           array(
               'entity_id'    => $entity_id,
@@ -7578,6 +7910,7 @@ class Glpi92FillData extends AbstractMigration {
               'is_recursive' => true,
               'uuid'         => '500717c8-2bd6e957-53a12b5fd38869.86002585',
               'condition'    => 1,
+              'comment'      => '',
           ),
       );
       $this->insert('glpi_rule', $rows);
@@ -7704,56 +8037,69 @@ class Glpi92FillData extends AbstractMigration {
       // Insert into table glpi_rulerightparameter
       $rows = array(
           array(
-              'name'  => '(LDAP)Organization',
-              'value' => 'o',
+              'name'    => '(LDAP)Organization',
+              'value'   => 'o',
+              'comment' => '',
           ),
           array(
-              'name'  => '(LDAP)Common Name',
-              'value' => 'cn',
+              'name'    => '(LDAP)Common Name',
+              'value'   => 'cn',
+              'comment' => '',
           ),
           array(
-              'name'  => '(LDAP)Department Number',
-              'value' => 'departmentnumber',
+              'name'    => '(LDAP)Department Number',
+              'value'   => 'departmentnumber',
+              'comment' => '',
           ),
           array(
-              'name'  => '(LDAP)Email',
-              'value' => 'mail',
+              'name'    => '(LDAP)Email',
+              'value'   => 'mail',
+              'comment' => '',
           ),
           array(
-              'name'  => 'Object Class',
-              'value' => 'objectclass',
+              'name'    => 'Object Class',
+              'value'   => 'objectclass',
+              'comment' => '',
           ),
           array(
-              'name'  => '(LDAP)User ID',
-              'value' => 'uid',
+              'name'    => '(LDAP)User ID',
+              'value'   => 'uid',
+              'comment' => '',
           ),
           array(
-              'name'  => '(LDAP)Telephone Number',
-              'value' => 'phone',
+              'name'    => '(LDAP)Telephone Number',
+              'value'   => 'phone',
+              'comment' => '',
           ),
           array(
-              'name'  => '(LDAP)Employee Number',
-              'value' => 'employeenumber',
+              'name'    => '(LDAP)Employee Number',
+              'value'   => 'employeenumber',
+              'comment' => '',
           ),
           array(
-              'name'  => '(LDAP)Manager',
-              'value' => 'manager',
+              'name'    => '(LDAP)Manager',
+              'value'   => 'manager',
+              'comment' => '',
           ),
           array(
-              'name'  => '(LDAP)DistinguishedName',
-              'value' => 'dn',
+              'name'    => '(LDAP)DistinguishedName',
+              'value'   => 'dn',
+              'comment' => '',
           ),
           array(
-              'name'  => '(AD)User ID',
-              'value' => 'samaccountname',
+              'name'    => '(AD)User ID',
+              'value'   => 'samaccountname',
+              'comment' => '',
           ),
           array(
-              'name'  => '(LDAP) Title',
-              'value' => 'title',
+              'name'    => '(LDAP) Title',
+              'value'   => 'title',
+              'comment' => '',
           ),
           array(
-              'name'  => '(LDAP) MemberOf',
-              'value' => 'memberof',
+              'name'    => '(LDAP) MemberOf',
+              'value'   => 'memberof',
+              'comment' => '',
           ),
       );
       $this->insert('glpi_rulerightparameter', $rows);
@@ -7762,9 +8108,12 @@ class Glpi92FillData extends AbstractMigration {
       // Insert into table glpi_softwarecategory
       $rows = array(
           array(
-              'name'         => 'FUSION',
-              'completename' => 'FUSION',
-              'level'        => 1
+              'name'            => 'FUSION',
+              'completename'    => 'FUSION',
+              'level'           => 1,
+              'ancestors_cache' => '',
+              'sons_cache'      => '',
+              'comment'         => '',
           ),
       );
       $this->insert('glpi_softwarecategory', $rows);
@@ -7773,7 +8122,8 @@ class Glpi92FillData extends AbstractMigration {
       // Insert into table glpi_softwarelicensetype
       $rows = array(
           array(
-              'name' => 'OEM',
+              'name'    => 'OEM',
+              'comment' => '',
           ),
       );
       $this->insert('glpi_softwarelicensetype', $rows);
@@ -7782,22 +8132,28 @@ class Glpi92FillData extends AbstractMigration {
       // Insert into table glpi_ssovariable
       $rows = array(
           array(
-              'name' => 'HTTP_AUTH_USER',
+              'name'    => 'HTTP_AUTH_USER',
+              'comment' => '',
           ),
           array(
-              'name' => 'REMOTE_USER',
+              'name'    => 'REMOTE_USER',
+              'comment' => '',
           ),
           array(
-              'name' => 'PHP_AUTH_USER',
+              'name'    => 'PHP_AUTH_USER',
+              'comment' => '',
           ),
           array(
-              'name' => 'USERNAME',
+              'name'    => 'USERNAME',
+              'comment' => '',
           ),
           array(
-              'name' => 'REDIRECT_REMOTE_USER',
+              'name'    => 'REDIRECT_REMOTE_USER',
+              'comment' => '',
           ),
           array(
-              'name' => 'HTTP_REMOTE_USER',
+              'name'    => 'HTTP_REMOTE_USER',
+              'comment' => '',
           ),
       );
       $this->insert('glpi_ssovariable', $rows);
@@ -7808,7 +8164,8 @@ class Glpi92FillData extends AbstractMigration {
           array(
               'name'         => 'Default',
               'entity_id'    => $entity_id,
-              'is_recursive' => true
+              'is_recursive' => true,
+              'comment'      => '',
           )
       );
       $this->insert('glpi_tickettemplate', $rows);
@@ -7826,7 +8183,6 @@ class Glpi92FillData extends AbstractMigration {
       );
       $this->insert('glpi_tickettemplatemandatoryfield', $rows);
 
-      // TODO x x x x x x x x x x x x x x x x x x x x
 
       // Insert into table glpi_transfer
       $rows = array(
@@ -7861,6 +8217,7 @@ class Glpi92FillData extends AbstractMigration {
               'keep_cartridge'      => 1,
               'keep_consumable'     => 1,
               'keep_disk'           => 1,
+              'comment'             => '',
           )
       );
       $this->insert('glpi_transfer', $rows);
