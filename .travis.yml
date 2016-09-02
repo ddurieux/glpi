@@ -12,7 +12,10 @@ php:
 before_script:
   - composer self-update
   - composer install --no-dev
-  - php tools/cliinstall.php --db=glpitest --user=root --tests --type=$DB
+  - if [[ $DB == 'mysql' ]]; then mysql -u root -e 'create database glpitest;'; fi
+  - if [[ $DB == 'mysql' ]]; then php tools/cliinstall.php --db=glpitest --user=root --tests --type=mysql; fi
+  - if [[ $DB == 'postgres' ]]; then psql -c 'create database glpitest;' -U postgres; fi
+  - if [[ $DB == 'postgres' ]]; then php tools/cliinstall.php --db=glpitest --user=postgres --tests --type=pgsql; fi
 
 script:
 # - mysql -u root -e 'select version();'
