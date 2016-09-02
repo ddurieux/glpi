@@ -5,6 +5,10 @@ env:
   - DB=mysql
   - DB=postgres
 
+php:
+  - '5.6'
+  - '7.0'
+
 before_script:
   - composer self-update
   - composer install --no-dev
@@ -15,28 +19,28 @@ script:
  - mysql -u root -e 'select version();'
  - phpunit --verbose
 
-matrix:
-  include:
-    - php: 5.6
-      addons:
-        mariadb: 5.5
-    - php: 5.6
-      addons:
-        mariadb: 10.0
-    - php: 5.6
-      addons:
-        mariadb: 10.1
-    - php: 7.0
-      addons:
-        mariadb: 10.0
-    - php: 7.0
-      addons:
-        mariadb: 10.1
-    - php: nightly
-      addons:
-        mariadb: 10.1
-  allow_failures:
-    - php: nightly
+#matrix:
+#  include:
+#    - php: 5.6
+#      addons:
+#        mariadb: 5.5
+#    - php: 5.6
+#      addons:
+#        mariadb: 10.0
+#    - php: 5.6
+#      addons:
+#        mariadb: 10.1
+#    - php: 7.0
+#      addons:
+#        mariadb: 10.0
+#    - php: 7.0
+#      addons:
+#        mariadb: 10.1
+#    - php: nightly
+#      addons:
+#        mariadb: 10.1
+#  allow_failures:
+#    - php: nightly
 
 cache:
   directories:
