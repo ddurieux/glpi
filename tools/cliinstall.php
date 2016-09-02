@@ -105,7 +105,7 @@ try {
    exit(1);
 }
 
-$sth = $pdo->prepare('CREATE DATABASE '.$newdatabasename);
+$sth = $pdo->prepare('CREATE DATABASE '.$args['db']);
 if (!$sth->execute()) {
    echo "Can't create the DB\n";
    exit(1);
