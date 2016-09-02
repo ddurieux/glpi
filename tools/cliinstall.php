@@ -127,7 +127,7 @@ if (!DBConnection::createMainConfig($args['host'], $args['user'], $args['pass'],
 
 $app = require __DIR__ . '/../vendor/robmorgan/phinx/app/phinx.php';
 $wrap = new Phinx\Wrapper\TextWrapper($app,
-        array('configuration' => 'phinx.yml', 'parser' => 'YAML'));
+        array('configuration' => __DIR__ . '/../install/phinx.yml', 'parser' => 'YAML'));
 
 // Execute the command and determine if it was successful.
 $output = call_user_func(array($wrap, 'getMigrate'), 'production_'.$args['type'], null);
