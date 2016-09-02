@@ -51,69 +51,69 @@ function loadDataset() {
       // Type => array of entries
       'Entity' => [
          [
-            'name'        => '_test_root_entity',
-            'entities_id' => 0,
+            'name'      => '_test_root_entity',
+            'entity_id' => 0,
          ], [
-            'name'        => '_test_child_1',
-            'entities_id' => '_test_root_entity',
+            'name'      => '_test_child_1',
+            'entity_id' => '_test_root_entity',
          ], [
-            'name'        => '_test_child_2',
-            'entities_id' => '_test_root_entity',
+            'name'      => '_test_child_2',
+            'entity_id' => '_test_root_entity',
          ]
       ], 'Computer' => [
          [
-            'name'        => '_test_pc01',
-            'entities_id' => '_test_root_entity',
+            'name'      => '_test_pc01',
+            'entity_id' => '_test_root_entity',
          ], [
-            'name'        => '_test_pc02',
-            'entities_id' => '_test_root_entity',
+            'name'      => '_test_pc02',
+            'entity_id' => '_test_root_entity',
          ], [
-            'name'        => '_test_pc11',
-            'entities_id' => '_test_child_1',
+            'name'      => '_test_pc11',
+            'entity_id' => '_test_child_1',
          ], [
-            'name'        => '_test_pc12',
-            'entities_id' => '_test_child_1',
+            'name'      => '_test_pc12',
+            'entity_id' => '_test_child_1',
          ], [
-            'name'        => '_test_pc21',
-            'entities_id' => '_test_child_2',
+            'name'      => '_test_pc21',
+            'entity_id' => '_test_child_2',
          ], [
-            'name'        => '_test_pc22',
-            'entities_id' => '_test_child_2',
+            'name'      => '_test_pc22',
+            'entity_id' => '_test_child_2',
          ]
       ], 'Software' => [
          [
             'name'         => '_test_soft',
-            'entities_id'  => '_test_root_entity',
+            'entity_id'    => '_test_root_entity',
             'is_recursive' => 1,
          ]
       ], 'SoftwareVersion' => [
          [
-            'name'        => '_test_softver_1',
-            'entities_id' => '_test_root_entity',
+            'name'         => '_test_softver_1',
+            'entity_id'    => '_test_root_entity',
             'is_recursive' => 1,
-            'softwares_id' => '_test_soft',
+            'software_id'  => '_test_soft',
          ], [
-            'name'        => '_test_softver_2',
-            'entities_id' => '_test_root_entity',
+            'name'         => '_test_softver_2',
+            'entity_id'    => '_test_root_entity',
             'is_recursive' => 1,
-            'softwares_id' => '_test_soft',
+            'software_id'  => '_test_soft',
          ]
       ], 'Printer' => [
          [
             'name'         => '_test_printer_all',
-            'entities_id'  => '_test_root_entity',
+            'entity_id'    => '_test_root_entity',
             'is_recursive' => 1,
          ], [
             'name'         => '_test_printer_ent0',
-            'entities_id'  => '_test_root_entity',
+            'entity_id'    => '_test_root_entity',
             'is_recursive' => 0,
          ], [
             'name'         => '_test_printer_ent1',
-            'entities_id'  => '_test_child_1',
+            'entity_id'    => '_test_child_1',
             'is_recursive' => 0,
          ], [
             'name'         => '_test_printer_ent2',
-            'entities_id'  => '_test_child_2',
+            'entity_id'    => '_test_child_2',
             'is_recursive' => 0,
          ]
       ], 'User' => [
@@ -121,10 +121,10 @@ function loadDataset() {
             'name'          => TU_USER,
             'password'      => TU_PASS,
             'password2'     => TU_PASS,
-            'entities_id'   => '_test_root_entity',
-            'profiles_id'   => 4, // TODO manage test profiles
-            '_entities_id'  => '_test_root_entity',
-            '_profiles_id'  => 4,
+            'entity_id'     => '_test_root_entity',
+            'profile_id'    => 4, // TODO manage test profiles
+            '_entity_id'    => '_test_root_entity',
+            '_profile_id'   => 4,
             '_is_recursive' => 1,
          ]
       ]
@@ -184,10 +184,17 @@ function loadDataset() {
  * @return the item, or its id
  */
 function getItemByTypeName($type, $name, $onlyid=false) {
+   global $DB;
 
-   $item = getItemForItemtype($type);
-   if ($item->getFromDBByQuery("WHERE `name`='$name'")) {
-      return ($onlyid ? $item->getField('id') : $item);
+   $rows = $DB->dbh->table(getTableForItemType($type));
+   $rows = $rows->where('name', $name);
+   if ($rows->count()) {
+      $row = $rows->fetch();
+      $row_data = $row->getData();
+      $item = getItemForItemtype($type);
+      if ($item->getFromDB($row_data['id'])) {
+         return ($onlyid ? $item->getField('id') : $item);
+      }
    }
    return false;
 }
