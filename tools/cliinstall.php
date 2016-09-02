@@ -35,7 +35,7 @@
 */
 
 function displayUsage() {
-   die("\nusage: ".$_SERVER['argv'][0]." [ --host=<dbhost> ] --db=<dbname> --user=<dbuser> [ --pass=<dbpassword> ] [ --lang=xx_XX] [ --tests ] [ --force ]\n\n");
+   die("\nusage: ".$_SERVER['argv'][0]." [ --host=<dbhost> ] --type=<dbtype> --db=<dbname> --user=<dbuser> [ --pass=<dbpassword> ] [ --lang=xx_XX] [ --tests ] [ --force ]\n\n");
 }
 
 $args = [ 'host' => 'localhost', 'pass' => ''];
@@ -77,35 +77,64 @@ Toolbox::setDebugMode(Session::DEBUG_MODE, 0, 0, 1);
 
 echo "Connect to the DB...\n";
 
-//Check if the port is in url
-$hostport = explode(':', $args['host']);
-if (count($hostport) < 2) {
-   $link = new mysqli($hostport[0], $args['user'], $args['pass']);
-} else {
-   $link = new mysqli($hostport[0], $args['user'], $args['pass'], '', $hostport[1]);
+if ($args['type'] == 'postgres') {
+   $args['type'] = 'pgsql';
 }
 
-if (!$link || mysqli_connect_error()) {
+$hostport = explode(":", $args['host']);
+if (count($hostport) < 2) {
+  $dsn = $args['type'].':host='.$hostport[0];
+} else {
+  $dsn = $args['type'].':host='.$hostport[0].';port='.$hostport[1];
+}
+$options = array();
+if ($type == 'mysql') {
+   $options = array(
+       PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+   );
+} else if ($type == 'pgsql') {
+   $dsn .= ';dbname=postgres';
+}
+
+try {
+   $pdo = new PDO($dsn, $args['user'], $args['pass'], $options);
+} catch (PDOException $e) {
    die("DB connection failed\n");
 }
 
-$args['db'] = $link->real_escape_string($args['db']);
-
-echo "Create the DB...\n";
-if (!$link->query("CREATE DATABASE IF NOT EXISTS `" . $args['db'] ."`")) {
+$sth = $pdo->prepare('CREATE DATABASE '.$newdatabasename);
+if (!$sth->execute()) {
    die("Can't create the DB\n");
 }
 
-if (!$link->select_db($args['db'])) {
-   die("Can't select the DB\n");
-}
+$pdo = new PDO($dsn.';dbname='.$args['db'], $args['user'], $args['pass'], $options);
+
+// Prepare conf for phinx
+$_SERVER['PHINX_DBHOST'] = $hostport[0];
+$_SERVER['PHINX_DBUSER'] = $args['user'];
+$_SERVER['PHINX_DBPASS'] = $args['pass'];
+$_SERVER['PHINX_DBNAME'] = $args['db'];
 
 echo "Save configuration file...\n";
-if (!DBConnection::createMainConfig($args['host'], $args['user'], $args['pass'], $args['db'])) {
+if (!DBConnection::createMainConfig($args['host'], $args['user'], $args['pass'], $args['db'], $args['type'])) {
    die("Can't write configuration file\n");
 }
 
-echo "Load default schema...\n";
-Toolbox::createSchema($_SESSION['glpilanguage']);
+$app = require '../vendor/robmorgan/phinx/app/phinx.php';
+$wrap = new Phinx\Wrapper\TextWrapper($app,
+        array('configuration' => 'phinx.yml', 'parser' => 'YAML'));
+
+// Execute the command and determine if it was successful.
+$output = call_user_func(array($wrap, 'getMigrate'), 'production_'.$type, null);
+$error  = $wrap->getExitCode() > 0;
+
+echo "<pre>";
+echo $output;
+echo "</pre>";
+echo $error;
+
+if ($error == 500) {
+   die("Error on install\n");
+}
 
 echo "Done\n";

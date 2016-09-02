@@ -12,8 +12,7 @@ php:
 before_script:
   - composer self-update
   - composer install --no-dev
-  - mysql -u root -e 'create database glpitest;'
-  - php tools/cliinstall.php --db=glpitest --user=root --tests
+  - php tools/cliinstall.php --db=glpitest --user=root --tests --type=$DB
 
 script:
  - mysql -u root -e 'select version();'
