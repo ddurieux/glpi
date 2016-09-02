@@ -65,11 +65,13 @@ if (isset($args['help']) || !(isset($args['db']) && isset($args['user']))) {
 
 if (isset($args['lang']) && !isset($CFG_GLPI['languages'][$args['lang']])) {
    $kl = implode(', ', array_keys($CFG_GLPI['languages']));
-   die("Unkown locale (use one of: $kl)\n");
+   echo "Unkown locale (use one of: $kl)\n";
+   exit(1);
 }
 
 if (file_exists(GLPI_CONFIG_DIR . '/config_db.php') && !isset($args['force'])) {
-   die("Already installed (see --force option)\n");
+   echo "Already installed (see --force option)\n";
+   exit(1);
 }
 
 $_SESSION = ['glpilanguage' => (isset($args['lang']) ? $args['lang'] : 'en_GB')];
@@ -99,12 +101,14 @@ if ($type == 'mysql') {
 try {
    $pdo = new PDO($dsn, $args['user'], $args['pass'], $options);
 } catch (PDOException $e) {
-   die("DB connection failed\n");
+   echo "DB connection failed\n";
+   exit(1);
 }
 
 $sth = $pdo->prepare('CREATE DATABASE '.$newdatabasename);
 if (!$sth->execute()) {
-   die("Can't create the DB\n");
+   echo "Can't create the DB\n";
+   exit(1);
 }
 
 $pdo = new PDO($dsn.';dbname='.$args['db'], $args['user'], $args['pass'], $options);
@@ -117,7 +121,8 @@ $_SERVER['PHINX_DBNAME'] = $args['db'];
 
 echo "Save configuration file...\n";
 if (!DBConnection::createMainConfig($args['host'], $args['user'], $args['pass'], $args['db'], $args['type'])) {
-   die("Can't write configuration file\n");
+   echo "Can't write configuration file\n";
+   exit(1);
 }
 
 $app = require '../vendor/robmorgan/phinx/app/phinx.php';
@@ -134,7 +139,8 @@ echo "</pre>";
 echo $error;
 
 if ($error == 500) {
-   die("Error on install\n");
+   echo "Error on install\n";
+   exit(1);
 }
 
 echo "Done\n";
