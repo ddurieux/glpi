@@ -251,10 +251,10 @@ class Bookmark extends CommonDBTM {
 
    function post_getEmpty() {
 
-      $this->fields["users_id"]     = Session::getLoginUserID();
+      $this->fields["user_id"]     = Session::getLoginUserID();
       $this->fields["is_private"]   = 1;
       $this->fields["is_recursive"] = 0;
-      $this->fields["entities_id"]  = $_SESSION["glpiactive_entity"];
+      $this->fields["entity_id"]  = $_SESSION["glpiactive_entity"];
    }
 
 
@@ -324,7 +324,7 @@ class Bookmark extends CommonDBTM {
 
       if (static::canCreate()) {
          Dropdown::showPrivatePublicSwitch($this->fields["is_private"],
-                                           $this->fields["entities_id"],
+                                           $this->fields["entity_id"],
                                            $this->fields["is_recursive"]);
       } else {
          if ($this->fields["is_private"]) {

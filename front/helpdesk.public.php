@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -49,7 +49,7 @@ if (isset($_POST['newprofile'])) {
       }
 
    } else {
-      Html::redirect(preg_replace("/entities_id=.*/","",$_SERVER['HTTP_REFERER']));
+      Html::redirect(preg_replace("/entity_id=.*/","",$_SERVER['HTTP_REFERER']));
    }
 }
 
@@ -60,7 +60,7 @@ if (isset($_GET["active_entity"])) {
    }
    if (Session::changeActiveEntities($_GET["active_entity"],$_GET["is_recursive"])) {
       if ($_GET["active_entity"] == $_SESSION["glpiactive_entity"]) {
-         Html::redirect(preg_replace("/entities_id.*/","",$_SERVER['HTTP_REFERER']));
+         Html::redirect(preg_replace("/entity_id.*/","",$_SERVER['HTTP_REFERER']));
       }
    }
 }
