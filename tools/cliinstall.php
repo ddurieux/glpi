@@ -108,8 +108,8 @@ try {
 $sth = $pdo->prepare('CREATE DATABASE '.$args['db']);
 if (!$sth->execute()) {
    $errors = $sth->errorInfo();
-   if (strstr('database exists', $errors[2])
-           || strstr('already exists', $errors[2])) {
+   if (strstr($errors[2], 'database exists')
+           || strstr($errors[2], 'already exists')) {
       echo "DB exists\n";
    } else {
       print_r($sth->errorInfo());
