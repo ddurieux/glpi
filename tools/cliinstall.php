@@ -107,8 +107,15 @@ try {
 
 $sth = $pdo->prepare('CREATE DATABASE '.$args['db']);
 if (!$sth->execute()) {
-   echo "Can't create the DB\n";
-   exit(1);
+   $errors = $sth->errorInfo();
+   if (strstr('database exists', $errors[2])
+           || strstr('already exists', $errors[2])) {
+      echo "DB exists\n";
+   } else {
+      print_r($sth->errorInfo());
+      echo "Can't create the DB\n";
+      exit(1);
+   }
 }
 
 $pdo = new PDO($dsn.';dbname='.$args['db'], $args['user'], $args['pass'], $options);
