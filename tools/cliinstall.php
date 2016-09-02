@@ -90,11 +90,11 @@ if (count($hostport) < 2) {
   $dsn = $args['type'].':host='.$hostport[0].';port='.$hostport[1];
 }
 $options = array();
-if ($type == 'mysql') {
+if ($args['type'] == 'mysql') {
    $options = array(
        PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
    );
-} else if ($type == 'pgsql') {
+} else if ($args['type'] == 'pgsql') {
    $dsn .= ';dbname=postgres';
 }
 
@@ -130,7 +130,7 @@ $wrap = new Phinx\Wrapper\TextWrapper($app,
         array('configuration' => 'phinx.yml', 'parser' => 'YAML'));
 
 // Execute the command and determine if it was successful.
-$output = call_user_func(array($wrap, 'getMigrate'), 'production_'.$type, null);
+$output = call_user_func(array($wrap, 'getMigrate'), 'production_'.$args['type'], null);
 $error  = $wrap->getExitCode() > 0;
 
 echo "<pre>";
