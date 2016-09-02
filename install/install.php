@@ -156,8 +156,6 @@ function step0() {
 
 //Step 1 checking some compatibility issue and some write tests.
 function step1($update) {
-   global $CFG_GLPI;
-
    $error = 0;
    echo "<h3>".__s('Checking of the compatibility of your environment with the execution of GLPI').
         "</h3>";
@@ -255,6 +253,8 @@ function step3($host, $user, $password, $update, $type) {
       $options = array(
           PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
       );
+   } else if ($type == 'pgsql') {
+      $dsn .= ';dbname=postgres';
    }
 
    if (empty($host)
@@ -271,7 +271,7 @@ function step3($host, $user, $password, $update, $type) {
    }
 
    try {
-      $pdo = new PDO($dsn.';dbname=glpi_test', $user, $password, $options);
+      $pdo = new PDO($dsn, $user, $password, $options);
 
       $_SESSION['db_access'] = array('host'     => $host,
                                      'user'     => $user,
@@ -412,13 +412,8 @@ function step4 ($databasename, $newdatabasename) {
       );
    }
 
-//ini_set('display_errors', 1);
-//ini_set('display_startup_errors', 1);
-//error_reporting(E_ALL);
-
    // Prepare conf for phinx
    $_SERVER['PHINX_DBHOST'] = $hostport[0];
-   $_SERVER['PHINX_DBNAME'] = $databasename;
    $_SERVER['PHINX_DBUSER'] = $user;
    $_SERVER['PHINX_DBPASS'] = $password;
 
@@ -426,11 +421,18 @@ function step4 ($databasename, $newdatabasename) {
    $wrap = new Phinx\Wrapper\TextWrapper($app,
            array('configuration' => 'phinx.yml', 'parser' => 'YAML'));
 
-   $pdo = new PDO($dsn.';dbname=glpi_test', $user, $password, $options);
    if (!empty($databasename)) { // use db already created
+      $_SERVER['PHINX_DBNAME'] = $databasename;
+      try {
+         $pdo = new PDO($dsn.';dbname='.$databasename, $user, $password, $options);
+      } catch (PDOException $e) {
+        _e('Impossible to use the database:');
+         echo "<br>".sprintf(__('The server answered: %s'), $e->getMessage());
+         prev_form($host, $user, $password);
+         return;
+      }
 
       if (DBConnection::createMainConfig($host, $user, $password, $databasename, $type)) {
-
          // Execute the command and determine if it was successful.
          $output = call_user_func(array($wrap, 'getMigrate'), 'production_'.$type, null);
          $error  = $wrap->getExitCode() > 0;
@@ -441,61 +443,32 @@ function step4 ($databasename, $newdatabasename) {
          echo $error;
 
          echo "<p>".__('OK - database was initialized')."</p>";
-
          next_form();
 
       } else { // can't create config_db file
          echo "<p>".__('Impossible to write the database setup file')."</p>";
          prev_form($host, $user, $password);
       }
-      // old code x x x x x x x x x x x x
-return;
-      $DB_selected = $link->select_db($databasename);
-
-      if (!$DB_selected) {
-         _e('Impossible to use the database:');
-         echo "<br>".sprintf(__('The server answered: %s'), $link->error);
-         prev_form($host, $user, $password);
-
-      } else {
-         if (DBConnection::createMainConfig($host,$user,$password,$databasename)) {
-            Toolbox::createSchema($_SESSION["glpilanguage"]);
-            echo "<p>".__('OK - database was initialized')."</p>";
-
-            next_form();
-
-         } else { // can't create config_db file
-            echo "<p>".__('Impossible to write the database setup file')."</p>";
-            prev_form($host, $user, $password);
-         }
-      }
-
    } else if (!empty($newdatabasename)) { // create new db
-
-      $sth = $pdo->prepare('CREATE DATABASE :dbname');
-      $sth->execute(array(':dbname' => $newdatabasename));
-
-      // Execute the command and determine if it was successful.
-      $output = call_user_func(array($wrap, 'getMigrate'), 'production_'.$type, null);
-      $error  = $wrap->getExitCode() > 0;
-
-      echo "<pre>";
-      echo $output;
-      echo "</pre>";
-      echo $error;
-
-      return;
-
-
-
-      // OLD x x x x x x x x x
-
-      // Try to connect
-      if ($link->select_db($newdatabasename)) {
+      $_SERVER['PHINX_DBNAME'] = $newdatabasename;
+      if ($type == 'pgsql') {
+         $dsn .= ';dbname=postgres';
+      }
+      $pdo = new PDO($dsn, $user, $password, $options);
+      $sth = $pdo->prepare('CREATE DATABASE '.$newdatabasename);
+      if ($sth->execute()) {
          echo "<p>".__('Database created')."</p>";
 
-         if (DBConnection::createMainConfig($host,$user,$password,$newdatabasename)) {
-            Toolbox::createSchema($_SESSION["glpilanguage"]);
+         if (DBConnection::createMainConfig($host, $user, $password, $newdatabasename, $type)) {
+            // Execute the command and determine if it was successful.
+            $output = call_user_func(array($wrap, 'getMigrate'), 'production_'.$type, null);
+            $error  = $wrap->getExitCode() > 0;
+
+            echo "<pre>";
+            echo $output;
+            echo "</pre>";
+            echo $error;
+
             echo "<p>".__('OK - database was initialized')."</p>";
             next_form();
 
@@ -503,63 +476,36 @@ return;
             echo "<p>".__('Impossible to write the database setup file')."</p>";
             prev_form($host, $user, $password);
          }
-
-      } else { // try to create the DB
-         if ($link->query("CREATE DATABASE IF NOT EXISTS `".$newdatabasename."`")) {
-            echo "<p>".__('Database created')."</p>";
-
-            if ($link->select_db($newdatabasename)
-                && Toolbox::createMainConfig($host,$user,$password,$newdatabasename)) {
-
-               Toolbox::createSchema($_SESSION["glpilanguage"]);
-               echo "<p>".__('OK - database was initialized')."</p>";
-               next_form();
-
-            } else { // can't create config_db file
-               echo "<p>".__('Impossible to write the database setup file')."</p>";
-               prev_form($host, $user, $password);
-            }
-
-         } else { // can't create database
-            echo __('Error in creating database!');
-            echo "<br>".sprintf(__('The server answered: %s'), $link->error);
-            prev_form($host, $user, $password);
-         }
+      } else { // can't create database
+         echo __('Error in creating database!');
+         echo "<br>".sprintf(__('The server answered: %s'), print_r($sth->errorInfo(), true));
+         prev_form($host, $user, $password);
       }
-
    } else { // no db selected
       echo "<p>".__("You didn't select a database!"). "</p>";
       //prev_form();
       prev_form($host, $user, $password);
    }
-
-   $link->close();
-
 }
 
 
 // finish installation
 function step7() {
-   global $CFG_GLPI;
-
    include_once(GLPI_ROOT . "/inc/dbmysql.class.php");
    include_once(GLPI_CONFIG_DIR . "/config_db.php");
    $DB = new DB();
 
-
    $url_base = str_replace("/install/install.php", "", $_SERVER['HTTP_REFERER']);
-   $query = "UPDATE `glpi_configs`
-             SET `value`     = '".$DB->escape($url_base)."'
-             WHERE `context` = 'core'
-                   AND `name`    = 'url_base'";
-   $DB->query($query);
+   $input = array(
+       'value' => $url_base
+   );
+   $DB->dbh->config()->where('context', 'core')->where('name', 'url_base')->update($input);
 
    $url_base_api = "$url_base/api";
-   $query = "UPDATE `glpi_configs`
-             SET `value`     = '".$DB->escape($url_base_api)."'
-             WHERE `context` = 'core'
-                   AND `name`    = 'url_base_api'";
-   $DB->query($query);
+   $input = array(
+       'value' => $url_base_api
+   );
+   $DB->dbh->config()->where('context', 'core')->where('name', 'url_base_api')->update($input);
 
    echo "<h2>".__('The installation is finished')."</h2>";
    echo "<p>".__('Default logins / passwords are:')."</p>";
@@ -618,6 +564,7 @@ Session::loadLanguage();
  * @since version 0.84.2
 **/
 function checkConfigFile() {
+   global $CFG_GLPI;
 
    if (file_exists(GLPI_CONFIG_DIR . "/config_db.php")) {
       Html::redirect($CFG_GLPI['root_doc'] ."/index.php");
