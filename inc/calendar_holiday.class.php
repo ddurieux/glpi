@@ -45,9 +45,9 @@ class Calendar_Holiday extends CommonDBRelation {
 
    // From CommonDBRelation
    static public $itemtype_1 = 'Calendar';
-   static public $items_id_1 = 'calendars_id';
+   static public $items_id_1 = 'calendar_id';
    static public $itemtype_2 = 'Holiday';
-   static public $items_id_2 = 'holidays_id';
+   static public $items_id_2 = 'holiday_id';
 
    static public $checkItem_2_Rights = self::DONT_CHECK_ITEM_RIGHTS;
 

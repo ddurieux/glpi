@@ -47,10 +47,10 @@ class IPNetwork_Vlan extends CommonDBRelation {
 
    // From CommonDBRelation
    static public $itemtype_1          = 'IPNetwork';
-   static public $items_id_1          = 'ipnetworks_id';
+   static public $items_id_1          = 'ipnetwork_id';
 
    static public $itemtype_2          = 'Vlan';
-   static public $items_id_2          = 'vlans_id';
+   static public $items_id_2          = 'vlan_id';
    static public $checkItem_2_Rights  = self::HAVE_VIEW_RIGHT_ON_ITEM;
 
 

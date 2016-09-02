@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -32,7 +32,7 @@
  */
 
 /** @file
-* @brief 
+* @brief
 */
 
 if (!defined('GLPI_ROOT')) {
@@ -44,7 +44,7 @@ class SlaLevelAction extends RuleAction {
 
 
    static public $itemtype  = 'SlaLevel';
-   static public $items_id  = 'slalevels_id';
+   static public $items_id  = 'slalevel_id';
    public $dohistory = true;
 
    /**

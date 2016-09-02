@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -46,9 +46,9 @@ class ChangeValidation  extends CommonITILValidation {
 
    // From CommonDBChild
    static public $itemtype           = 'Change';
-   static public $items_id           = 'changes_id';
+   static public $items_id           = 'change_id';
 
    static $rightname                 = 'changevalidation';
-   
+
 }
 ?>

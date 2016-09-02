@@ -48,7 +48,7 @@ class ComputerVirtualMachine extends CommonDBChild {
 
    // From CommonDBChild
    static public $itemtype = 'Computer';
-   static public $items_id = 'computers_id';
+   static public $items_id = 'computer_id';
    public $dohistory       = true;
 
 

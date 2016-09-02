@@ -51,7 +51,7 @@ class TicketTemplatePredefinedField extends CommonDBChild {
 
    // From CommonDBChild
    static public $itemtype  = 'TicketTemplate';
-   static public $items_id  = 'tickettemplates_id';
+   static public $items_id  = 'tickettemplate_id';
    public $dohistory        = true;
 
 

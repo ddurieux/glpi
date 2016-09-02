@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -48,7 +48,7 @@ class TicketCost extends CommonITILCost {
 
    // From CommonDBChild
    static public $itemtype  = 'Ticket';
-   static public $items_id  = 'tickets_id';
+   static public $items_id  = 'ticket_id';
 
    static $rightname        = 'ticketcost';
 

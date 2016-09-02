@@ -49,7 +49,7 @@ class UserEmail  extends CommonDBChild {
 
    // From CommonDBChild
    static public $itemtype        = 'User';
-   static public $items_id        = 'users_id';
+   static public $items_id        = 'user_id';
    public $dohistory              = true;
 
 
@@ -191,7 +191,7 @@ class UserEmail  extends CommonDBChild {
       }
       $canedit = ($user->can($users_id, UPDATE) || ($users_id == Session::getLoginUserID()));
 
-      parent::showChildsForItemForm($user, '_useremails', $canedit);
+      parent::showChildsForItemForm($user, '_useremail', $canedit);
 
    }
 

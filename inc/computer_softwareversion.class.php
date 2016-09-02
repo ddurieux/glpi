@@ -43,9 +43,9 @@ class Computer_SoftwareVersion extends CommonDBRelation {
 
    // From CommonDBRelation
    static public $itemtype_1 = 'Computer';
-   static public $items_id_1 = 'computers_id';
+   static public $items_id_1 = 'computer_id';
    static public $itemtype_2 = 'SoftwareVersion';
-   static public $items_id_2 = 'softwareversions_id';
+   static public $items_id_2 = 'softwareversion_id';
 
 
    static public $log_history_1_add    = Log::HISTORY_INSTALL_SOFTWARE;

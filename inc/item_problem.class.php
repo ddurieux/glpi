@@ -49,7 +49,7 @@ class Item_Problem extends CommonDBRelation{
 
    // From CommonDBRelation
    static public $itemtype_1          = 'Problem';
-   static public $items_id_1          = 'problems_id';
+   static public $items_id_1          = 'problem_id';
 
    static public $itemtype_2          = 'itemtype';
    static public $items_id_2          = 'items_id';

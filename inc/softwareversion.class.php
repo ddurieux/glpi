@@ -49,7 +49,7 @@ class SoftwareVersion extends CommonDBChild {
 
    // From CommonDBChild
    static public $itemtype  = 'Software';
-   static public $items_id  = 'softwares_id';
+   static public $items_id  = 'software_id';
 
 
    static function getTypeName($nb=0) {

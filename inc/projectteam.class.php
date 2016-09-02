@@ -54,7 +54,7 @@ class ProjectTeam extends CommonDBRelation {
 
    // From CommonDBRelation
    static public $itemtype_1          = 'Project';
-   static public $items_id_1          = 'projects_id';
+   static public $items_id_1          = 'project_id';
 
    static public $itemtype_2          = 'itemtype';
    static public $items_id_2          = 'items_id';

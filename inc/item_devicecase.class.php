@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -45,7 +45,7 @@ if (!defined('GLPI_ROOT')) {
 class Item_DeviceCase extends Item_Devices {
 
    static public $itemtype_2 = 'DeviceCase';
-   static public $items_id_2 = 'devicecases_id';
+   static public $items_id_2 = 'devicecase_id';
 
    static protected $notable = false;
 

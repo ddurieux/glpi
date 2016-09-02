@@ -51,7 +51,7 @@ class ProjectTask extends CommonDBChild {
 
    // From CommonDBChild
    static public $itemtype     = 'Project';
-   static public $items_id     = 'projects_id';
+   static public $items_id     = 'project_id';
 
    protected $team             = array();
    static $rightname           = 'project';

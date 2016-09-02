@@ -45,9 +45,9 @@ class Ticket_Ticket extends CommonDBRelation {
 
    // From CommonDBRelation
    static public $itemtype_1     = 'Ticket';
-   static public $items_id_1     = 'tickets_id_1';
+   static public $items_id_1     = 'ticket_id_1';
    static public $itemtype_2     = 'Ticket';
-   static public $items_id_2     = 'tickets_id_2';
+   static public $items_id_2     = 'ticket_id_2';
 
    static public $check_entity_coherency = false;
 

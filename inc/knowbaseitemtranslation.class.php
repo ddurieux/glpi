@@ -48,7 +48,7 @@ if (!defined('GLPI_ROOT')) {
 class KnowbaseItemTranslation extends CommonDBChild {
 
    static public $itemtype = 'KnowbaseItem';
-   static public $items_id = 'knowbaseitems_id';
+   static public $items_id = 'knowbaseitem_id';
    public $dohistory       = true;
 
    static $rightname       = 'knowbase';

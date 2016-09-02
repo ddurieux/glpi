@@ -45,7 +45,7 @@ class ContractCost extends CommonDBChild {
 
    // From CommonDBChild
    static public $itemtype = 'Contract';
-   static public $items_id = 'contracts_id';
+   static public $items_id = 'contract_id';
    public $dohistory       = true;
 
 

@@ -50,10 +50,10 @@ class Change_Project extends CommonDBRelation{
 
    // From CommonDBRelation
    static public $itemtype_1   = 'Change';
-   static public $items_id_1   = 'changes_id';
+   static public $items_id_1   = 'change_id';
 
    static public $itemtype_2   = 'Project';
-   static public $items_id_2   = 'projects_id';
+   static public $items_id_2   = 'project_id';
 
 
 

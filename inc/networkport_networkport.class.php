@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -44,9 +44,9 @@ class NetworkPort_NetworkPort extends CommonDBRelation {
 
    // From CommonDBRelation
    static public $itemtype_1           = 'NetworkPort';
-   static public $items_id_1           = 'networkports_id_1';
+   static public $items_id_1           = 'networkport_id_1';
    static public $itemtype_2           = 'NetworkPort';
-   static public $items_id_2           = 'networkports_id_2';
+   static public $items_id_2           = 'networkport_id_2';
 
    static public $log_history_1_add    = Log::HISTORY_CONNECT_DEVICE;
    static public $log_history_2_add    = Log::HISTORY_CONNECT_DEVICE;

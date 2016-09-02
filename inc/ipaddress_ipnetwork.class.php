@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -48,10 +48,10 @@ class IPAddress_IPNetwork extends CommonDBRelation {
 
    // From CommonDBRelation
    static public $itemtype_1 = 'IPAddress';
-   static public $items_id_1 = 'ipaddresses_id';
+   static public $items_id_1 = 'ipaddress_id';
 
    static public $itemtype_2 = 'IPNetwork';
-   static public $items_id_2 = 'ipnetworks_id';
+   static public $items_id_2 = 'ipnetwork_id';
 
 
    /**

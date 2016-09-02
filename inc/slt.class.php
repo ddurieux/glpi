@@ -45,7 +45,7 @@ class SLT extends CommonDBChild {
 
    // From CommonDBChild
    static public $itemtype             = 'SLA';
-   static public $items_id             = 'slas_id';
+   static public $items_id             = 'sla_id';
 
    static $rightname                   = 'sla';
 

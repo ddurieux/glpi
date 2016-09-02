@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -48,7 +48,7 @@ class ProblemCost extends CommonITILCost {
 
    // From CommonDBChild
    static public $itemtype  = 'Problem';
-   static public $items_id  = 'problems_id';
+   static public $items_id  = 'problem_id';
 
 
    static function canCreate() {

@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -48,9 +48,9 @@ class Supplier_Ticket extends CommonITILActor {
 
    // From CommonDBRelation
    static public $itemtype_1 = 'Ticket';
-   static public $items_id_1 = 'tickets_id';
+   static public $items_id_1 = 'ticket_id';
    static public $itemtype_2 = 'Supplier';
-   static public $items_id_2 = 'suppliers_id';
+   static public $items_id_2 = 'supplier_id';
 
 
    /**
@@ -74,6 +74,6 @@ class Supplier_Ticket extends CommonITILActor {
       }
       return false;
    }
-  
+
 }
 ?>

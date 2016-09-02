@@ -54,7 +54,7 @@ class Cartridge extends CommonDBChild {
 
    // From CommonDBChild
    static public $itemtype             = 'CartridgeItem';
-   static public $items_id             = 'cartridgeitems_id';
+   static public $items_id             = 'cartridgeitem_id';
 
 
    /**

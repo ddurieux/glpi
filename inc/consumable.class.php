@@ -54,7 +54,7 @@ class Consumable extends CommonDBChild {
 
    // From CommonDBChild
    static public $itemtype             = 'ConsumableItem';
-   static public $items_id             = 'consumableitems_id';
+   static public $items_id             = 'consumableitem_id';
 
    /**
     * @since version 0.84

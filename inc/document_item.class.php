@@ -49,7 +49,7 @@ class Document_Item extends CommonDBRelation{
 
    // From CommonDBRelation
    static public $itemtype_1    = 'Document';
-   static public $items_id_1    = 'documents_id';
+   static public $items_id_1    = 'document_id';
    static public $take_entity_1 = true ;
 
    static public $itemtype_2    = 'itemtype';

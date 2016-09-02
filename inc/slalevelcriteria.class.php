@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -45,7 +45,7 @@ class SlaLevelCriteria extends RuleCriteria {
 
 
    static public $itemtype  = 'SlaLevel';
-   static public $items_id  = 'slalevels_id';
+   static public $items_id  = 'slalevel_id';
    public $dohistory        = true;
 
 

@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -50,9 +50,9 @@ class Change_Supplier extends CommonITILActor {
 
    // From CommonDBRelation
    static public $itemtype_1 = 'Change';
-   static public $items_id_1 = 'changes_id';
+   static public $items_id_1 = 'change_id';
    static public $itemtype_2 = 'Supplier';
-   static public $items_id_2 = 'suppliers_id';
+   static public $items_id_2 = 'supplier_id';
 
 
 }

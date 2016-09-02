@@ -46,7 +46,7 @@ class CalendarSegment extends CommonDBChild {
 
    // From CommonDBChild
    static public $itemtype = 'Calendar';
-   static public $items_id = 'calendars_id';
+   static public $items_id = 'calendar_id';
 
 
    /**

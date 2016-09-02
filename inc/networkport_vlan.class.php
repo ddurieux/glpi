@@ -44,10 +44,10 @@ class NetworkPort_Vlan extends CommonDBRelation {
 
    // From CommonDBRelation
    static public $itemtype_1          = 'NetworkPort';
-   static public $items_id_1          = 'networkports_id';
+   static public $items_id_1          = 'networkport_id';
 
    static public $itemtype_2          = 'Vlan';
-   static public $items_id_2          = 'vlans_id';
+   static public $items_id_2          = 'vlan_id';
    static public $checkItem_2_Rights  = self::HAVE_VIEW_RIGHT_ON_ITEM;
 
 

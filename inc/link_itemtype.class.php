@@ -42,7 +42,7 @@ if (!defined('GLPI_ROOT')) {
 class Link_Itemtype extends CommonDBChild {
    // From CommonDbChild
    static public $itemtype = 'Link';
-   static public $items_id = 'links_id';
+   static public $items_id = 'link_id';
 
 
    /**

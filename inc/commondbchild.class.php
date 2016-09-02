@@ -762,7 +762,7 @@ abstract class CommonDBChild extends CommonDBConnexity {
     * @return nothing (display only)
    **/
    static function showChildsForItemForm(CommonDBTM $item, $field_name, $canedit=NULL) {
-      global $DB, $CFG_GLPI;
+      global $DB;
 
       $items_id = $item->getID();
 

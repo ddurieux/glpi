@@ -9,7 +9,7 @@
 
  based on GLPI - Gestionnaire Libre de Parc Informatique
  Copyright (C) 2003-2014 by the INDEPNET Development Team.
- 
+
  -------------------------------------------------------------------------
 
  LICENSE
@@ -45,9 +45,9 @@ class Group_KnowbaseItem extends CommonDBRelation {
 
    // From CommonDBRelation
    static public $itemtype_1          = 'KnowbaseItem';
-   static public $items_id_1          = 'knowbaseitems_id';
+   static public $items_id_1          = 'knowbaseitem_id';
    static public $itemtype_2          = 'Group';
-   static public $items_id_2          = 'groups_id';
+   static public $items_id_2          = 'group_id';
 
    static public $checkItem_2_Rights  = self::DONT_CHECK_ITEM_RIGHTS;
    static public $logs_for_item_2     = false;

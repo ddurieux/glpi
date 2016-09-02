@@ -43,9 +43,9 @@ class Bookmark_User extends CommonDBRelation {
     public $auto_message_on_action = false;
 
    static public $itemtype_1          = 'Bookmark';
-   static public $items_id_1          = 'bookmarks_id';
+   static public $items_id_1          = 'bookmark_id';
 
    static public $itemtype_2          = 'User';
-   static public $items_id_2          = 'users_id';
+   static public $items_id_2          = 'user_id';
 
 }

@@ -48,10 +48,10 @@ class Profile_User extends CommonDBRelation {
 
    // From CommonDBRelation
    static public $itemtype_1                    = 'User';
-   static public $items_id_1                    = 'users_id';
+   static public $items_id_1                    = 'user_id';
 
    static public $itemtype_2                    = 'Profile';
-   static public $items_id_2                    = 'profiles_id';
+   static public $items_id_2                    = 'profile_id';
    static public $checkItem_2_Rights            = self::DONT_CHECK_ITEM_RIGHTS;
 
    // Specific log system
