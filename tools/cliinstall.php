@@ -125,7 +125,7 @@ if (!DBConnection::createMainConfig($args['host'], $args['user'], $args['pass'],
    exit(1);
 }
 
-$app = require '../vendor/robmorgan/phinx/app/phinx.php';
+$app = require __DIR__ . '/../vendor/robmorgan/phinx/app/phinx.php';
 $wrap = new Phinx\Wrapper\TextWrapper($app,
         array('configuration' => 'phinx.yml', 'parser' => 'YAML'));
 
