@@ -1188,10 +1188,7 @@ function getUserName($ID, $link=0) {
    }
 
    if ($ID) {
-      $query  = "SELECT *
-                 FROM `glpi_users`
-                 WHERE `id` = '$ID'";
-      $result = $DB->query($query);
+      $rows = $DB->dbh->user()->where('id', $ID);
 
       if ($link == 2) {
          $user = array("name"    => "",
@@ -1199,8 +1196,10 @@ function getUserName($ID, $link=0) {
                        "link"    => "");
       }
 
-      if ($DB->numrows($result) == 1) {
-         $data     = $DB->fetch_assoc($result);
+      if ($rows->count()) {
+         $row = $rows->fetch();
+         $data = $row->getData();
+
          $username = formatUserName($data["id"], $data["name"], $data["realname"],
                                     $data["firstname"], $link);
 
@@ -1234,22 +1233,22 @@ function getUserName($ID, $link=0) {
                                    'value' => $data["mobile"]);
             }
 
-            if ($data["locations_id"] > 0) {
+            if ($data["location_id"] > 0) {
                $comments[] = array('name'  => __('Location'),
                                    'value' => Dropdown::getDropdownName(Location::getTable(),
-                                                                        $data["locations_id"]));
+                                                                        $data["location_id"]));
             }
 
-            if ($data["usertitles_id"] > 0) {
+            if ($data["usertitle_id"] > 0) {
                $comments[] = array('name'  => _x('person','Title'),
                                    'value' => Dropdown::getDropdownName(UserTitle::getTable(),
-                                                                        $data["usertitles_id"]));
+                                                                        $data["usertitle_id"]));
             }
 
-            if ($data["usercategories_id"] > 0) {
+            if ($data["usercategory_id"] > 0) {
                $comments[] = array('name'  => __('Category'),
                                    'value' => Dropdown::getDropdownName(UserCategory::getTable(),
-                                                                        $data["usercategories_id"]));
+                                                                        $data["usercategory_id"]));
             }
             if (count($comments)) {
                $user['comment'] = $user['comment'];

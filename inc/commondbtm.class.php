@@ -420,9 +420,12 @@ class CommonDBTM extends CommonGLPI {
 //
 //         }
 //         $query .= ")";
-         $row = $DB->dbh->createRow($this->getTable() , $this->fields);
-         $row->save();
-   		return $row['id'];
+         $DB->dbh->table($this->getTable())->insert($this->fields);
+   		$new_id = $DB->dbh->lastInsertId($DB->dbh->getSequence($this->getTable()));
+         if ($new_id) {
+            $this->fields['id'] = $new_id;
+            return $this->fields['id'];
+         }
 //         if ($result=$DB->query($query)) {
 //            // Already define for entity / insert_id does not work
 //            if (!isset($this->fields['id'])
@@ -1002,6 +1005,12 @@ class CommonDBTM extends CommonGLPI {
     * @return the modified $input array
    **/
    function prepareInputForAdd($input) {
+      foreach ($input as $key=>$value) {
+         if (isForeignKeyField($key) && $value == '0') {
+            $input[$key] = NULL;
+         }
+      }
+      Toolbox::logdebug($input);
       return $input;
    }
 

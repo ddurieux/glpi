@@ -230,15 +230,23 @@ class Log extends CommonDBTM {
       }
 
       // Build query
-      $query = "INSERT INTO `glpi_logs`
-                       (`items_id`, `itemtype`, `itemtype_link`, `linked_action`, `user_name`,
-                        `date_mod`, `id_search_option`, `old_value`, `new_value`)
-                VALUES ('$items_id', '$itemtype', '$itemtype_link', '$linked_action',
-                        '".addslashes($username)."', '$date_mod', '$id_search_option',
-                        '$old_value', '$new_value')";
+      $input = array(
+          'items_id'         => $items_id,
+          'itemtype'         => $itemtype,
+          'itemtype_link'    => $itemtype_link,
+          'linked_action'    => $linked_action,
+          'user_name'        => addslashes($username),
+          'date_mod'         => $date_mod,
+          'id_search_option' => $id_search_option,
+          'old_value'        => $old_value,
+          'new_value'        => $new_value,
+      );
+      $DB->dbh->table(Log::getTable())->insert($input);
+      $id = $DB->dbh->lastInsertId($DB->dbh->getSequence(Log::getTable()));
 
-      if ($DB->query($query)) {
-         return $_SESSION['glpi_maxhistory'] = $DB->insert_id();
+
+      if ($id) {
+         return $_SESSION['glpi_maxhistory'] = $id;
       }
       return false;
    }

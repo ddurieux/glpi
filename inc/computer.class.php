@@ -336,7 +336,7 @@ class Computer extends CommonDBTM {
       unset($input['id']);
       unset($input['withtemplate']);
 
-      return $input;
+      return parent::prepareInputForAdd($input);
    }
 
 
