@@ -1025,7 +1025,7 @@ class CommonDBTM extends CommonGLPI {
     * @return boolean : true on success
    **/
    function update(array $input, $history=1, $options=array()) {
-      global $DB, $CFG_GLPI;
+      global $DB;
 
       if ($DB->isSlave()) {
          return false;

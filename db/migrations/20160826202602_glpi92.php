@@ -1848,7 +1848,7 @@ class Glpi92 extends AbstractMigration {
            ->addColumn('date_format', 'integer', array('null' => true))
            ->addColumn('number_format', 'integer', array('null' => true))
            ->addColumn('names_format', 'integer', array('null' => true))
-           ->addColumn('csv_delimiter', 'char', array('limit' => 1, 'default' => ';'))
+           ->addColumn('csv_delimiter', 'char', array('limit' => 1, 'null' => true, 'default' => null))
            ->addColumn('is_ids_visible', 'boolean', array('default' => false))
            ->addColumn('use_flat_dropdowntree', 'boolean', array('default' => false))
            ->addColumn('show_jobs_at_login', 'boolean', array('default' => false))

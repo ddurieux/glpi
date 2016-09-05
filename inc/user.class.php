@@ -669,7 +669,6 @@ class User extends CommonDBTM {
          self::dropPictureFiles($this->fields['picture']);
          $input['picture'] = 'NULL';
       } else {
-
          if (isset($_FILES['picture'])) {
             if (!count($_FILES['picture'])
                 || empty($_FILES['picture']['name'])
@@ -769,22 +768,22 @@ class User extends CommonDBTM {
          }
       }
 
-      if (isset($input["entities_id"])
+      if (isset($input["entity_id"])
           && (Session::getLoginUserID() === $input['id'])) {
-         $_SESSION["glpidefault_entity"] = $input["entities_id"];
+         $_SESSION["glpidefault_entity"] = $input["entity_id"];
       }
 
       // Security on default profile update
-      if (isset($input['profiles_id'])) {
-         if (!in_array($input['profiles_id'], Profile_User::getUserProfiles($input['id']))) {
-            unset($input['profiles_id']);
+      if (isset($input['profile_id'])) {
+         if (!in_array($input['profils_id'], Profile_User::getUserProfiles($input['id']))) {
+            unset($input['profile_id']);
          }
       }
 
       // Security on default entity  update
-      if (isset($input['entities_id'])) {
-         if (!in_array($input['entities_id'], Profile_User::getUserEntities($input['id']))) {
-            unset($input['entities_id']);
+      if (isset($input['entity_id'])) {
+         if (!in_array($input['entity_id'], Profile_User::getUserEntities($input['id']))) {
+            unset($input['entity_id']);
          }
       }
 
