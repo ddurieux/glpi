@@ -63,14 +63,21 @@ class DisplayPreference extends CommonDBTM {
    function prepareInputForAdd($input) {
       global $DB;
 
-      $query = "SELECT MAX(`rank`)
-                FROM `".$this->getTable()."`
-                WHERE `itemtype` = '".$input["itemtype"]."'
-                      AND `users_id` = '".$input["users_id"]."'";
-      $result = $DB->query($query);
+      if ($input["user_id"] == 0) {
+         $input["user_id"] = NULL;
+      }
 
-      $input["rank"] = $DB->result($result,0,0)+1;
-
+      $rows = $DB->dbh->displaypreference();
+      $rows = $rows->orderBy('rank', 'DESC');
+      $rows = $rows->where('itemtype', $input["itemtype"]);
+      $rows = $rows->where('user_id', $input["user_id"]);
+      $row = $rows->fetch();
+      if (is_null($row)) {
+         $input["rank"] = 1;
+      } else {
+         $row_data = $row->getData();
+         $input["rank"] = $row_data['rank'] + 1;
+      }
       return $input;
    }
 
@@ -86,12 +93,12 @@ class DisplayPreference extends CommonDBTM {
       switch ($ma->getAction()) {
          case 'delete_for_user' :
             $input = $ma->getInput();
-            if (isset($input['users_id'])) {
+            if (isset($input['user_id'])) {
                $user = new User();
-               $user->getFromDB($input['users_id']);
+               $user->getFromDB($input['user_id']);
                foreach ($ids as $id) {
-                  if ($input['users_id'] == Session::getLoginUserID()) {
-                     if ($item->deleteByCriteria(array('users_id' => $input['users_id'],
+                  if ($input['user_id'] == Session::getLoginUserID()) {
+                     if ($item->deleteByCriteria(array('user_id' => $input['user_id'],
                                                        'itemtype' => $id))) {
                         $ma->itemDone($item->getType(), $id, MassiveAction::ACTION_OK);
                      } else {
@@ -122,7 +129,7 @@ class DisplayPreference extends CommonDBTM {
       global $DB;
 
       $rows = $DB->dbh->displaypreference()->where('itemtype', $itemtype);
-      $rows = $rows->where("(user_id = '$user_id' OR user_id = '0')");
+      $rows = $rows->where("(user_id = '$user_id' OR user_id IS NULL)");
       $rows = $rows->orderBy('user_id')->orderBy('rank')->fetchAll();
 
       $default_prefs = array();
@@ -143,7 +150,7 @@ class DisplayPreference extends CommonDBTM {
    /**
     * Active personal config based on global one
     *
-    * @param $input  array parameter (itemtype,users_id)
+    * @param $input  array parameter (itemtype,user_id)
    **/
    function activatePerso(array $input) {
       global $DB;
@@ -155,13 +162,13 @@ class DisplayPreference extends CommonDBTM {
       $query = "SELECT *
                 FROM `".$this->getTable()."`
                 WHERE `itemtype` = '".$input["itemtype"]."'
-                      AND `users_id` = '0'";
+                      AND `user_id` = '0'";
       $result = $DB->query($query);
 
       if ($DB->numrows($result)) {
          while ($data = $DB->fetch_assoc($result)) {
             unset($data["id"]);
-            $data["users_id"] = $input["users_id"];
+            $data["user_id"] = $input["user_id"];
             $this->fields     = $data;
             $this->addToDB();
          }
@@ -177,7 +184,7 @@ class DisplayPreference extends CommonDBTM {
                    && ($key != 1)
                    && !$done) {
 
-                  $data["users_id"] = $input["users_id"];
+                  $data["user_id"] = $input["user_id"];
                   $data["itemtype"] = $input["itemtype"];
                   $data["rank"]     = 1;
                   $data["num"]      = $key;
@@ -194,7 +201,7 @@ class DisplayPreference extends CommonDBTM {
    /**
     * Order to move an item
     *
-    * @param $input  array parameter (id,itemtype,users_id)
+    * @param $input  array parameter (id,itemtype,user_id)
     * @param $action       up or down
    **/
    function orderItem(array $input, $action) {
@@ -211,7 +218,7 @@ class DisplayPreference extends CommonDBTM {
       $query = "SELECT `id`, `rank`
                 FROM `".$this->getTable()."`
                 WHERE `itemtype` = '".$input['itemtype']."'
-                      AND `users_id` = '".$input["users_id"]."'";
+                      AND `user_id` = '".$input["user_id"]."'";
 
       switch ($action) {
          case "up" :
@@ -273,7 +280,7 @@ class DisplayPreference extends CommonDBTM {
       $query = "SELECT *
                 FROM `".$this->getTable()."`
                 WHERE `itemtype` = '$itemtype'
-                      AND `users_id` = '$IDuser'
+                      AND `user_id` = '$IDuser'
                 ORDER BY `rank`";
       $result  = $DB->query($query);
       $numrows = 0;
@@ -284,7 +291,7 @@ class DisplayPreference extends CommonDBTM {
          echo "<table class='tab_cadre_fixe'><tr><th colspan='4'>";
          echo "<form method='post' action='$target'>";
          echo "<input type='hidden' name='itemtype' value='$itemtype'>";
-         echo "<input type='hidden' name='users_id' value='$IDuser'>";
+         echo "<input type='hidden' name='user_id' value='$IDuser'>";
          echo __('No personal criteria. Create personal parameters?')."<span class='small_space'>";
          echo "<input type='submit' name='activate' value=\"".__('Create')."\"
                 class='submit'>";
@@ -298,7 +305,7 @@ class DisplayPreference extends CommonDBTM {
          echo "<table class='tab_cadre_fixe'><tr><th colspan='4'>";
          echo "<form method='post' action='$target'>";
          echo "<input type='hidden' name='itemtype' value='$itemtype'>";
-         echo "<input type='hidden' name='users_id' value='$IDuser'>";
+         echo "<input type='hidden' name='user_id' value='$IDuser'>";
          echo __('Select default items to show')."<span class='small_space'>";
          echo "<input type='submit' name='disable' value=\"".__('Delete')."\"
                 class='submit'>";
@@ -309,7 +316,7 @@ class DisplayPreference extends CommonDBTM {
          echo "<tr class='tab_bg_1'><td colspan='4' class='center'>";
          echo "<form method='post' action=\"$target\">";
          echo "<input type='hidden' name='itemtype' value='$itemtype'>";
-         echo "<input type='hidden' name='users_id' value='$IDuser'>";
+         echo "<input type='hidden' name='user_id' value='$IDuser'>";
          $group  = '';
          $values = array();
          foreach ($searchopt as $key => $val) {
@@ -363,7 +370,7 @@ class DisplayPreference extends CommonDBTM {
                      echo "<td class='center middle'>";
                      echo "<form method='post' action='$target'>";
                      echo "<input type='hidden' name='id' value='".$data["id"]."'>";
-                     echo "<input type='hidden' name='users_id' value='$IDuser'>";
+                     echo "<input type='hidden' name='user_id' value='$IDuser'>";
                      echo "<input type='hidden' name='itemtype' value='$itemtype'>";
                      echo "<input type='image' name='up' value=\"".__s('Bring up')."\" src='".
                             $CFG_GLPI["root_doc"]."/pics/puce-up.png' alt=\"".
@@ -379,7 +386,7 @@ class DisplayPreference extends CommonDBTM {
                      echo "<td class='center middle'>";
                      echo "<form method='post' action='$target'>";
                      echo "<input type='hidden' name='id' value='".$data["id"]."'>";
-                     echo "<input type='hidden' name='users_id' value='$IDuser'>";
+                     echo "<input type='hidden' name='user_id' value='$IDuser'>";
                      echo "<input type='hidden' name='itemtype' value='$itemtype'>";
                      echo "<input type='image' name='down' value=\"".__s('Bring down')."\" src='".
                             $CFG_GLPI["root_doc"]."/pics/puce-down.png' alt=\"".
@@ -394,7 +401,7 @@ class DisplayPreference extends CommonDBTM {
                   echo "<td class='center middle'>";
                   echo "<form method='post' action='$target'>";
                   echo "<input type='hidden' name='id' value='".$data["id"]."'>";
-                  echo "<input type='hidden' name='users_id' value='$IDuser'>";
+                  echo "<input type='hidden' name='user_id' value='$IDuser'>";
                   echo "<input type='hidden' name='itemtype' value='$itemtype'>";
                   echo "<input type='image' name='purge' value=\"".
                          _sx('button', 'Delete permanently')."\" src='".
@@ -440,14 +447,6 @@ class DisplayPreference extends CommonDBTM {
 
       echo "<div class='center' id='tabsbody' >";
       // Defined items
-      $query = "SELECT *
-                FROM `".$this->getTable()."`
-                WHERE `itemtype` = '$itemtype'
-                      AND `users_id` = '$IDuser'
-                ORDER BY `rank`";
-
-      $result  = $DB->query($query);
-      $numrows = $DB->numrows($result);
 
       echo "<table class='tab_cadre_fixehov'><tr><th colspan='4'>";
       echo __('Select default items to show')."</th></tr>\n";
@@ -457,7 +456,7 @@ class DisplayPreference extends CommonDBTM {
          echo "<tr class='tab_bg_1'><td colspan='4' class='center'>";
          echo "<form method='post' action='$target'>";
          echo "<input type='hidden' name='itemtype' value='$itemtype'>";
-         echo "<input type='hidden' name='users_id' value='$IDuser'>";
+         echo "<input type='hidden' name='user_id' value='$IDuser'>";
          $group  = '';
          $values = array();
          $searchopt   = Search::getCleanedOptions($itemtype);
@@ -504,65 +503,65 @@ class DisplayPreference extends CommonDBTM {
 
       $i = 0;
 
-      if ($numrows) {
-         while ($data=$DB->fetch_assoc($result)) {
+      $rows = $DB->dbh->displaypreference()->where('itemtype', $itemtype);
+      $rows = $rows->where('user_id', $IDuser)->orderBy('rank');
+      $rows = $rows->fetchAll();
+      foreach ($rows as $row) {
+         if (($row["num"] != 1)
+             && isset($searchopt[$row["num"]])) {
 
-            if (($data["num"] != 1)
-                && isset($searchopt[$data["num"]])) {
+            echo "<tr class='tab_bg_2'><td class='center' width='50%'>";
+            echo $searchopt[$row["num"]]["name"];
+            echo "</td>";
 
-               echo "<tr class='tab_bg_2'><td class='center' width='50%'>";
-               echo $searchopt[$data["num"]]["name"];
-               echo "</td>";
-
-               if ($global_write) {
-                  if ($i != 0) {
-                     echo "<td class='center middle'>";
-                     echo "<form method='post' action='$target'>";
-                     echo "<input type='hidden' name='id' value='".$data["id"]."'>";
-                     echo "<input type='hidden' name='users_id' value='$IDuser'>";
-                     echo "<input type='hidden' name='itemtype' value='$itemtype'>";
-                     echo "<input type='image' name='up' value=\"".__s('Bring up')."\" src='".
-                            $CFG_GLPI["root_doc"]."/pics/puce-up.png' alt=\"".
-                            __s('Bring up')."\"  title=\"".__s('Bring up')."\" class='pointer'>";
-                     Html::closeForm();
-                     echo "</td>";
-
-                  } else {
-                     echo "<td>&nbsp;</td>\n";
-                  }
-
-                  if ($i != ($numrows-1)) {
-                     echo "<td class='center middle'>";
-                     echo "<form method='post' action='$target'>";
-                     echo "<input type='hidden' name='id' value='".$data["id"]."'>";
-                     echo "<input type='hidden' name='users_id' value='$IDuser'>";
-                     echo "<input type='hidden' name='itemtype' value='$itemtype'>";
-                     echo "<input type='image' name='down' value=\"".__s('Bring down')."\" src='".
-                            $CFG_GLPI["root_doc"]."/pics/puce-down.png' alt=\"".
-                            __s('Bring down')."\" title=\"".__s('Bring down')."\" class='pointer'>";
-                     Html::closeForm();
-                     echo "</td>";
-
-                  } else {
-                     echo "<td>&nbsp;</td>\n";
-                  }
-
+            if ($global_write) {
+               if ($i != 0) {
                   echo "<td class='center middle'>";
                   echo "<form method='post' action='$target'>";
-                  echo "<input type='hidden' name='id' value='".$data["id"]."'>";
-                  echo "<input type='hidden' name='users_id' value='$IDuser'>";
+                  echo "<input type='hidden' name='id' value='".$row["id"]."'>";
+                  echo "<input type='hidden' name='user_id' value='$IDuser'>";
                   echo "<input type='hidden' name='itemtype' value='$itemtype'>";
-                  echo "<input type='image' name='purge' value=\"".
-                         _sx('button', 'Delete permanently')."\" src='".
-                         $CFG_GLPI["root_doc"]."/pics/delete.png' alt=\"".
-                         __s('Delete permanently')."\" title=\"". __s('Delete permanently')."\"  class='pointer'>";
+                  echo "<input type='image' name='up' value=\"".__s('Bring up')."\" src='".
+                         $CFG_GLPI["root_doc"]."/pics/puce-up.png' alt=\"".
+                         __s('Bring up')."\"  title=\"".__s('Bring up')."\" class='pointer'>";
                   Html::closeForm();
-                  echo "</td>\n";
+                  echo "</td>";
+
+               } else {
+                  echo "<td>&nbsp;</td>\n";
                }
 
-               echo "</tr>";
-               $i++;
+               if ($i != ($numrows-1)) {
+                  echo "<td class='center middle'>";
+                  echo "<form method='post' action='$target'>";
+                  echo "<input type='hidden' name='id' value='".$row["id"]."'>";
+                  echo "<input type='hidden' name='user_id' value='$IDuser'>";
+                  echo "<input type='hidden' name='itemtype' value='$itemtype'>";
+                  echo "<input type='image' name='down' value=\"".__s('Bring down')."\" src='".
+                         $CFG_GLPI["root_doc"]."/pics/puce-down.png' alt=\"".
+                         __s('Bring down')."\" title=\"".__s('Bring down')."\" class='pointer'>";
+                  Html::closeForm();
+                  echo "</td>";
+
+               } else {
+                  echo "<td>&nbsp;</td>\n";
+               }
+
+               echo "<td class='center middle'>";
+               echo "<form method='post' action='$target'>";
+               echo "<input type='hidden' name='id' value='".$row["id"]."'>";
+               echo "<input type='hidden' name='user_id' value='$IDuser'>";
+               echo "<input type='hidden' name='itemtype' value='$itemtype'>";
+               echo "<input type='image' name='purge' value=\"".
+                      _sx('button', 'Delete permanently')."\" src='".
+                      $CFG_GLPI["root_doc"]."/pics/delete.png' alt=\"".
+                      __s('Delete permanently')."\" title=\"". __s('Delete permanently')."\"  class='pointer'>";
+               Html::closeForm();
+               echo "</td>\n";
             }
+
+            echo "</tr>";
+            $i++;
          }
       }
       echo "</table>";
@@ -583,7 +582,7 @@ class DisplayPreference extends CommonDBTM {
       $query = "SELECT `itemtype`,
                        COUNT(*) AS nb
                 FROM `glpi_displaypreferences`
-                WHERE `users_id` = '$users_id'
+                WHERE `user_id` = '$users_id'
                 GROUP BY `itemtype`";
 
       $req = $DB->request($query);
@@ -596,11 +595,11 @@ class DisplayPreference extends CommonDBTM {
                            'container'        => 'mass'.__CLASS__.$rand,
                            'specific_actions' => array(__CLASS__.MassiveAction::CLASS_ACTION_SEPARATOR.'delete_for_user'
                                                        => _x('button', 'Delete permanently')),
-                           'extraparams'      => array('massive_action_fields' => array('users_id')));
+                           'extraparams'      => array('massive_action_fields' => array('user_id')));
 
          Html::showMassiveActions($massiveactionparams);
 
-         echo Html::hidden('users_id', array('value'                 => $users_id,
+         echo Html::hidden('user_id', array('value'                 => $users_id,
                                              'data-glpicore-ma-tags' => 'common'));
          echo "<table class='tab_cadre_fixe'>";
          echo "<tr>";
