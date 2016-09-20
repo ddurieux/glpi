@@ -1958,7 +1958,7 @@ $('#btn-reset').on('click', function() {
   $('#builder-widgets').queryBuilder('reset');
 });
 
-$('#btn-search').on('click', function() {
+function runSearch() {
   var result = $('#builder-widgets').queryBuilder('getRules');
 
   $.ajax({
@@ -1969,8 +1969,9 @@ $('#btn-search').on('click', function() {
       $('#search_list').html(data);
     }
   });
-});
-
+}
+$('#btn-search').on('click', runSearch);
+runSearch();
 
 ";
 
