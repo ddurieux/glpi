@@ -663,12 +663,12 @@ class Computer extends CommonDBTM {
    function getLinkedItems() {
       global $DB;
 
-      $query = "SELECT `itemtype`, `items_id`
-                FROM `glpi_computers_items`
-                WHERE `computers_id` = '" . $this->fields['id']."'";
-      $tab = array();
-      foreach ($DB->request($query) as $data) {
-         $tab[$data['itemtype']][$data['items_id']] = $data['items_id'];
+      $rows = $DB->dbh->table(Computer_Item::getTable());
+      $rows = $rows->select('itemtype', 'items_id');
+      $rows = $rows->where('computer_id', $this->fields['id']);
+      $rows = $rows->fetchAll();
+      foreach ($rows as $row) {
+         $tab[$row['itemtype']][$row['items_id']] = $row['items_id'];
       }
       return $tab;
    }

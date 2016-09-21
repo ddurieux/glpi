@@ -300,7 +300,7 @@ function countElementsInTable($table, $condition="") {
    global $DB;
 
    if (is_array($table)) {
-      $table = implode('`,`',$table);
+      $table = implode(',',$table);
    }
 
    $rows = $DB->dbh->table($table);
@@ -1625,7 +1625,7 @@ function getEntitiesRestrictRequest($separator="AND", $table="", $field="",$valu
    }
 
    if (!empty($table)) {
-      $query .= "`$table`.";
+      $query .= "$table.";
    }
    if (empty($field)) {
       if ($table == Entity::getTable()) {
@@ -1635,7 +1635,7 @@ function getEntitiesRestrictRequest($separator="AND", $table="", $field="",$valu
       }
    }
 
-   $query .= "`$field`";
+   $query .= "$field";
 
    if (is_array($value)) {
       $query .= " IN ('" . implode("','",$value) . "') ";
@@ -1665,10 +1665,10 @@ function getEntitiesRestrictRequest($separator="AND", $table="", $field="",$valu
 
       if (count($ancestors)) {
          if ($table == Entity::getTable()) {
-            $query .= " OR `$table`.`$field` IN ('" . implode("','",$ancestors) . "')";
+            $query .= " OR $table.$field IN ('" . implode("','",$ancestors) . "')";
          } else {
-            $query .= " OR (`$table`.`is_recursive`='1' ".
-                           "AND `$table`.`$field` IN ('" . implode("','",$ancestors) . "'))";
+            $query .= " OR ($table.is_recursive=true ".
+                           "AND $table.$field IN ('" . implode("','",$ancestors) . "'))";
          }
       }
    }

@@ -294,9 +294,9 @@ class Item_Devices extends CommonDBRelation {
             if ($_SESSION['glpishow_count_on_tabs']) {
                foreach (self::getItemAffinities($item->getType()) as $link_type) {
                   $nb   += countElementsInTable($link_type::getTable(),
-                                                "`items_id` = '".$item->getID()."'
-                                                   AND `itemtype` = '".$item->getType()."'
-                                                   AND `is_deleted` = '0'");
+                                                "items_id = '".$item->getID()."'
+                                                   AND itemtype = '".$item->getType()."'
+                                                   AND is_deleted = false");
                }
             }
             return self::createTabEntry(_n('Component', 'Components', Session::getPluralNumber()),
@@ -309,8 +309,8 @@ class Item_Devices extends CommonDBRelation {
                $table           = $linkClass::getTable();
                $foreignkeyField = $deviceClass::getForeignKeyField();
                $nb = countElementsInTable($table,
-                                          "`$foreignkeyField` = '".$item->getID()."'
-                                            AND `is_deleted` = '0'");
+                                          "$foreignkeyField = '".$item->getID()."'
+                                            AND is_deleted = false");
             }
             return self::createTabEntry(_n('Item', 'Items', Session::getPluralNumber()), $nb);
          }

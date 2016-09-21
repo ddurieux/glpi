@@ -63,7 +63,7 @@ class ComputerAntivirus extends CommonDBChild {
          $nb = 0;
          if ($_SESSION['glpishow_count_on_tabs']) {
             $nb = countElementsInTable($this->getTable(),
-                                       "computers_id = '".$item->getID()."' AND `is_deleted`='0'");
+                                       "computer_id = '".$item->getID()."' AND is_deleted=false");
          }
          return self::createTabEntry(self::getTypeName(Session::getPluralNumber()), $nb);
       }

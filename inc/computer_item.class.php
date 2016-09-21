@@ -94,8 +94,8 @@ class Computer_Item extends CommonDBRelation{
    static function countForComputer(Computer $comp) {
 
       return countElementsInTable(self::getTable(),
-                                  "`computers_id` ='".$comp->getField('id')."'
-                                      AND `is_deleted`='0'");
+                                  "computer_id ='".$comp->getField('id')."'
+                                      AND is_deleted=false");
    }
 
 

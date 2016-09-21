@@ -566,8 +566,8 @@ class Ticket extends CommonITILObject {
                default :
                   // Direct one
                   $nb = countElementsInTable(Item_Ticket::getTable(),
-                                             " `itemtype` = '".$item->getType()."'
-                                                AND `items_id` = '".$item->getID()."'");
+                                             " itemtype = '".$item->getType()."'
+                                                AND items_id = '".$item->getID()."'");
                   // Linked items
                   $linkeditems = $item->getLinkedItems();
 
@@ -575,8 +575,8 @@ class Ticket extends CommonITILObject {
                      foreach ($linkeditems as $type => $tab) {
                         foreach ($tab as $ID) {
                            $nb += countElementsInTable(Item_Ticket::getTable(),
-                                                       " `itemtype` = '$type'
-                                                         AND `items_id` = '$ID'");
+                                                       " itemtype = '$type'
+                                                         AND items_id = '$ID'");
                         }
                      }
                   }

@@ -66,9 +66,9 @@ class Computer_SoftwareVersion extends CommonDBRelation {
           || !isset($input['is_deleted_computer'])) {
          // Get template and deleted information from computer
          // If computer set update is_template / is_deleted infos to ensure data validity
-         if (isset($input['computers_id'])) {
+         if (isset($input['computer_id'])) {
             $computer = new Computer();
-            if ($computer->getFromDB($input['computers_id'])) {
+            if ($computer->getFromDB($input['computer_id'])) {
                $input['is_template_computer'] = $computer->getField('is_template');
                $input['is_deleted_computer']  = $computer->getField('is_deleted');
             }
@@ -86,10 +86,10 @@ class Computer_SoftwareVersion extends CommonDBRelation {
       if (!isset($input['is_template_computer'])
           || !isset($input['is_deleted_computer'])) {
          // If computer set update is_template / is_deleted infos to ensure data validity
-         if (isset($input['computers_id'])) {
+         if (isset($input['computer_id'])) {
             // Get template and deleted information from computer
             $computer = new Computer();
-            if ($computer->getFromDB($input['computers_id'])) {
+            if ($computer->getFromDB($input['computer_id'])) {
                $input['is_template_computer'] = $computer->getField('is_template');
                $input['is_deleted_computer']  = $computer->getField('is_deleted');
             }
@@ -1172,8 +1172,8 @@ class Computer_SoftwareVersion extends CommonDBRelation {
             if (Software::canView()) {
                if ($_SESSION['glpishow_count_on_tabs']) {
                   $nb = countElementsInTable($this->getTable(),
-                                             "computers_id = '".$item->getID()."'
-                                                  AND `is_deleted`='0'");
+                                             "computer_id = '".$item->getID()."'
+                                                  AND is_deleted=false");
                }
                return self::createTabEntry(Software::getTypeName(Session::getPluralNumber()), $nb);
             }

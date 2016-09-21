@@ -135,8 +135,8 @@ class Notepad extends CommonDBChild {
    static function countForItem(CommonDBTM $item) {
 
       return countElementsInTable(self::getTable(),
-                                 "`itemtype` = '".$item->getType()."'
-                                    AND `items_id` = '".$item->getID()."'");
+                                 "itemtype = '".$item->getType()."'
+                                    AND items_id = '".$item->getID()."'");
    }
 
 

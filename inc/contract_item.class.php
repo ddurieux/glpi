@@ -181,8 +181,8 @@ class Contract_Item extends CommonDBRelation{
    static function countForItem(CommonDBTM $item) {
 
       return countElementsInTable(self::getTable(),
-                                  "`itemtype` = '".$item->getType()."'
-                                   AND `items_id` ='".$item->getField('id')."'");
+                                  "itemtype = '".$item->getType()."'
+                                   AND items_id ='".$item->getField('id')."'");
    }
 
 

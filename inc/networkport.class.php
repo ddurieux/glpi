@@ -1105,9 +1105,9 @@ class NetworkPort extends CommonDBChild {
    static function countForItem(CommonDBTM $item) {
 
       return countElementsInTable(self::getTable(),
-                                  "`itemtype` = '".$item->getType()."'
-                                      AND `items_id` ='".$item->getField('id')."'
-                                      AND `is_deleted` = '0'");
+                                  "itemtype = '".$item->getType()."'
+                                      AND items_id ='".$item->getField('id')."'
+                                      AND is_deleted = false");
    }
 
 

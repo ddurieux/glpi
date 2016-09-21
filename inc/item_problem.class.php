@@ -302,8 +302,8 @@ class Item_Problem extends CommonDBRelation{
                   if ($_SESSION['glpishow_count_on_tabs']) {
                      // Direct one
                      $nb = countElementsInTable($this->getTable(),
-                                                " `itemtype` = '".$item->getType()."'
-                                                   AND `items_id` = '".$item->getID()."'");
+                                                " itemtype = '".$item->getType()."'
+                                                   AND items_id = '".$item->getID()."'");
                      // Linked items
                      $linkeditems = $item->getLinkedItems();
 
@@ -311,8 +311,8 @@ class Item_Problem extends CommonDBRelation{
                         foreach ($linkeditems as $type => $tab) {
                            foreach ($tab as $ID) {
                               $nb += countElementsInTable($this->getTable(),
-                                                          " `itemtype` = '$type'
-                                                            AND `items_id` = '$ID'");
+                                                          " itemtype = '$type'
+                                                            AND items_id = '$ID'");
                            }
                         }
                      }

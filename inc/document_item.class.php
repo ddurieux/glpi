@@ -202,14 +202,14 @@ class Document_Item extends CommonDBRelation{
    **/
    static function countForItem(CommonDBTM $item) {
 
-      $restrict = "`glpi_documents_items`.`items_id` = '".$item->getField('id')."'
-                   AND `glpi_documents_items`.`itemtype` = '".$item->getType()."'";
+      $restrict = "glpi_document_item.items_id = '".$item->getField('id')."'
+                   AND glpi_document_item.itemtype = '".$item->getType()."'";
 
       if (Session::getLoginUserID()) {
-         $restrict .= getEntitiesRestrictRequest(" AND ", "glpi_documents_items", '', '', true);
+         $restrict .= getEntitiesRestrictRequest(" AND ", "glpi_document_item", '', '', true);
       } else {
          // Anonymous access from FAQ
-         $restrict .= " AND `glpi_documents_items`.`entities_id` = '0' ";
+         $restrict .= " AND glpi_document_item.entity_id = 0 ";
       }
 
       $nb = countElementsInTable(self::getTable(), $restrict);
