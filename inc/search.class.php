@@ -114,7 +114,7 @@ class Search {
        * * [display] display the data
        */
        $prepared_data = self::prepareDisplayIdName($data, $ids);
-       $prepared_data = self::prepareColumns($data, $prepared_data);
+       $prepared_data = self::prepareColumns($prepared_data);
        self::displayDatas($prepared_data);
    }
 
@@ -6988,7 +6988,7 @@ return;
 
 
 
-   static function prepareColumns($data, $data) {
+   static function prepareColumns($data) {
 
       $data['data']['count'] = count($data['data']['rows']);
 
