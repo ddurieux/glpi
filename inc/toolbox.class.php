@@ -877,7 +877,7 @@ class Toolbox {
       echo "</tr>";
 
       // Check for mysql extension ni php
-      echo "<tr class='tab_bg_1'><td class='left b'>".__('MySQL Improved extension test')."</td>";
+/*      echo "<tr class='tab_bg_1'><td class='left b'>".__('MySQL Improved extension test')."</td>";
       if (class_exists("mysqli")) {
          echo "<td><img src='".$CFG_GLPI['root_doc']."/pics/ok_min.png'
                     alt=\"". __s('Ok - the MySQLi class exist - Perfect!')."\"
@@ -889,7 +889,7 @@ class Toolbox {
          $error = 2;
       }
       echo "</tr>";
-
+*/
       // session test
       echo "<tr class='tab_bg_1'><td class='b left'>".__('Sessions test')."</td>";
 
