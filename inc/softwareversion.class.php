@@ -84,7 +84,7 @@ class SoftwareVersion extends CommonDBChild {
    function getPreAdditionalInfosForName() {
 
       $soft = new Software();
-      if ($soft->getFromDB($this->fields['softwares_id'])) {
+      if ($soft->getFromDB($this->fields['software_id'])) {
          return $soft->getName();
       }
       return '';

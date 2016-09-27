@@ -139,16 +139,16 @@ class Software extends CommonDBTM {
       unset($input['withtemplate']);
 
       //If category was not set by user (when manually adding a user)
-      if (!isset($input["softwarecategories_id"]) || !$input["softwarecategories_id"]) {
-         $softcatrule = new RuleSoftwareCategoryCollection();
-         $result      = $softcatrule->processAllRules(null,null,Toolbox::stripslashes_deep($input));
-
-         if (!empty($result) && isset($result["softwarecategories_id"])) {
-            $input["softwarecategories_id"] = $result["softwarecategories_id"];
-         } else {
-            $input["softwarecategories_id"] = 0;
-         }
-      }
+//      if (!isset($input["softwarecategories_id"]) || !$input["softwarecategories_id"]) {
+//         $softcatrule = new RuleSoftwareCategoryCollection();
+//         $result      = $softcatrule->processAllRules(null,null,Toolbox::stripslashes_deep($input));
+//
+//         if (!empty($result) && isset($result["softwarecategories_id"])) {
+//            $input["softwarecategories_id"] = $result["softwarecategories_id"];
+//         } else {
+//            $input["softwarecategories_id"] = 0;
+//         }
+//      }
       return $input;
    }
 

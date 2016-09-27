@@ -94,7 +94,7 @@ class Search {
 
       $data = self::prepareDatasForSearch($itemtype, $params);
 //echo "<pre>";
-//print_r($data);
+//print_r($params);
 //echo "</pre>";
 
       /*
@@ -248,18 +248,22 @@ class Search {
       $data['search']['no_search']   = true;
 
       $data['toview'] = self::addDefaultToView($itemtype);
-      if (!$forcetoview) {
-         // Add items to display depending of personal prefs
-         $displaypref = DisplayPreference::getForTypeUser($itemtype, Session::getLoginUserID());
-         if (count($displaypref)) {
-            foreach ($displaypref as $val) {
-               array_push($data['toview'],$val);
-            }
-         }
-      } else {
-         $data['toview'] = array_merge($data['toview'], $forcedisplay);
+      // Get all field id (getSearchOptions in query)
+      $forcedisplay = self::get_all_params_ids($params);
+      if (count($forcedisplay) > 0) {
+         $forcetoview = true;
       }
 
+      // Add items to display depending of personal prefs
+      $displaypref = DisplayPreference::getForTypeUser($itemtype, Session::getLoginUserID());
+      if (count($displaypref)) {
+         foreach ($displaypref as $val) {
+            array_push($data['toview'],$val);
+         }
+      }
+      if ($forcetoview) {
+         $data['toview'] = array_merge($data['toview'], $forcedisplay);
+      }
       if (count($p['criteria']) > 0) {
          $data['search']['criteria'] = $p['criteria'];
 //         foreach ($p['criteria'] as $key => $val) {
@@ -1962,7 +1966,7 @@ function runSearch() {
   var result = $('#builder-widgets').queryBuilder('getRules');
 
   $.ajax({
-    url: 'http://127.0.0.1/glpi090/ajax/searchitemtype.php',
+    url: '".$CFG_GLPI["root_doc"]."/ajax/searchitemtype.php',
     type: 'POST',
     data: {'itemtype': '".$itemtype."', 'params': result},
     success: function(data) {
@@ -6497,105 +6501,6 @@ return;
       $result = array();
       self::depth_search_ids($this_table, $data['search']['criteria'], 0, $searchopt, $result);
       return $result;
-
-
-      foreach ($data['search']['criteria'] as $criteria) {
-         if ($criteria['field'] == 'view') {
-            // todo: manage all columns viewed
-
-         } else {
-            if ($criteria['value'] != "") {
-               if ($searchopt[$criteria['field']]['table'] == $this_table) {
-                  $table_search[] = array(
-                      'field'    => $searchopt[$criteria['field']]['field'],
-                      'operator' => self::convert_operator($criteria['searchtype']),
-                      'value'    => $criteria['value']
-                  );
-               } else if (!isset($searchopt[$criteria['field']]['joinparams'])
-                       || empty ($searchopt[$criteria['field']]['joinparams'])) {
-                  $link = 'AND';
-                  if (isset($criteria['link']) && !empty($criteria['link'])) {
-                     $link = $criteria['link'];
-                  }
-                  $other_table_search[$searchopt[$criteria['field']]['table']][] = array(
-                      'field'    => $searchopt[$criteria['field']]['field'],
-                      'operator' => self::convert_operator($criteria['searchtype']),
-                      'value'    => $criteria['value'],
-                      'link'     => $link
-                  );
-               } else {
-                  // todo: manage table different than the itemtype with joimparams
-
-
-               }
-            }
-         }
-      }
-
-      $rows = $DB->dbh->table($this_table)->select('id');
-      foreach ($table_search as $search) {
-         if ($search['operator'] == '=') {
-            $rows = $rows->where($search['field'], $search['value']);
-         } else if ($search['operator'] == '!=') {
-            $rows = $rows->whereNot($search['field'], $search['value']);
-         } else if ($search['operator'] == 'LIKE') {
-            $rows = $rows->where($search['field'].' LIKE :'.$search['field'],
-                    array(':'.$search['field'] => '%'.$search['value'].'%'));
-         } else {
-            echo "error";
-         }
-      }
-      if (count($other_table_search) == 0) {
-         if ($data['search']['start'] == 0) {
-            $rows = $rows->limit($data['search']['list_limit']);
-         } else {
-            $rows = $rows->limit($data['search']['start'], $data['search']['list_limit']);
-         }
-      }
-      $rows = $rows->fetchAll();
-      $ids = array();
-      $grp_ids = array();
-      foreach ($rows as $row) {
-         $row_data = $row->getData();
-         $grp_ids[] = $row_data['id'];
-      }
-      $ids['AND'][] = $grp_ids;
-
-      // Search in other items
-      foreach ($other_table_search as $itemtype=>$searches) {
-         $foreignkey = getTableForItemType($itemtype).'_id';
-         $rows = $DB->dbh->table(getTableForItemType($itemtype))->select('id');
-         foreach ($searches as $search) {
-            if ($search['operator'] == '=') {
-               $rows = $rows->where($search['field'], $search['value']);
-            } else if ($search['operator'] == '!=') {
-               $rows = $rows->whereNot($search['field'], $search['value']);
-            } else if ($search['operator'] == 'LIKE') {
-               $rows = $rows->where($search['field'].' LIKE :'.$search['field'],
-                       array(':'.$search['field'] => '%'.$search['value'].'%'));
-            } else {
-               echo "error";
-            }
-         }
-         $rows = $rows->fetchAll();
-         $this_table_ids = array();
-         foreach ($rows as $row) {
-            $row_data = $row->getData();
-            $this_table_ids[] = $row_data['id'];
-         }
-
-         // Get id of this itemtype
-         $rows = $DB->dbh->table($this_table)->select('id');
-         $rows = $rows->where($foreignkey, $this_table_ids);
-         $rows = $rows->fetchAll();
-         $grp_ids = array();
-         foreach ($rows as $row) {
-            $row_data = $row->getData();
-            $grp_ids[] = $row_data['id'];
-         }
-         $ids['AND'][] = $grp_ids;
-      }
-      return $ids;
    }
 
 
@@ -6611,10 +6516,17 @@ return;
                self::depth_search_ids($table, $search_fields, ($depth + 1), $searchopt, $result);
             } else if ($searchopt[$search_fields['id']]['table'] == $table) {
                $search_fields['field'] = $searchopt[$search_fields['id']]['field'];
+               $search_fields['path'] = array();
                $queries[$table][] = $search_fields;
             } else {
-               // todo
-
+               // Search in related table
+               $search_fields['field'] = $searchopt[$search_fields['id']]['field'];
+               $search_fields['path'] = array();
+               if (isset($searchopt[$search_fields['id']]['path'])
+                       && count($searchopt[$search_fields['id']]['path']) > 0) {
+                  $search_fields['path'] = $searchopt[$search_fields['id']]['path'];
+               }
+               $queries[$searchopt[$search_fields['id']]['table']][] = $search_fields;
             }
          }
          // Second: get ids of requests
@@ -6623,7 +6535,9 @@ return;
                 'where'    => array(),
                 'wherenot' => array()
             );
+            $path = array();
             foreach ($searches as $search) {
+               $path = $search['path'];
                switch ($search['operator']) {
 
                   case 'equal':
@@ -6706,27 +6620,36 @@ return;
 
                }
             }
+            if (count($path) > 0) {
+               array_unshift($path, array(
+                   'table' => $table,
+                   'field' => 'id'
+               ));
+            }
+
+            $list_ids = self::get_search_ids($qtable, $where, $path);
+
             if ($depth == 0) {
                $result['operator'] = $data['condition'];
-               $result[] = self::get_search_ids($qtable, $where);
+               $result[] = $list_ids;
             } else if ($depth == 1) {
                $result[1]['operator'] = $data['condition'];
-               $result[1][] = self::get_search_ids($qtable, $where);
+               $result[1][] = $list_ids;
             } else if ($depth == 2) {
                $result[1][2]['operator'] = $data['condition'];
-               $result[1][2][] = self::get_search_ids($qtable, $where);
+               $result[1][2][] = $list_ids;
             } else if ($depth == 3) {
                $result[1][2][3]['operator'] = $data['condition'];
-               $result[1][2][3][] = self::get_search_ids($qtable, $where);
+               $result[1][2][3][] = $list_ids;
             } else if ($depth == 4) {
                $result[1][2][3][4]['operator'] = $data['condition'];
-               $result[1][2][3][4][] = self::get_search_ids($qtable, $where);
+               $result[1][2][3][4][] = $list_ids;
             } else if ($depth == 5) {
                $result[1][2][3][4][5]['operator'] = $data['condition'];
-               $result[1][2][3][4][5][] = self::get_search_ids($qtable, $where);
+               $result[1][2][3][4][5][] = $list_ids;
             } else if ($depth == 6) {
                $result[1][2][3][4][5][6]['operator'] = $data['condition'];
-               $result[1][2][3][4][5][6][] = self::get_search_ids($qtable, $where);
+               $result[1][2][3][4][5][6][] = $list_ids;
             }
          }
       } else if ($data['condition'] == 'OR') {
@@ -6736,10 +6659,13 @@ return;
 
 
 
-   static function get_search_ids($table, $where) {
+   static function get_search_ids($table, $where, $path, $select=array('id')) {
       global $DB;
-
-      $rows = $DB->dbh->table($table)->select('id');
+      
+      $rows = $DB->dbh->table($table);
+      foreach ($select as $sel) {
+         $rows = $rows->select($sel);
+      }
       foreach ($where['where'] as $field=>$values) {
          $rows = $rows->where($field, $values);
       }
@@ -6750,7 +6676,25 @@ return;
       $ids = array();
       foreach ($rows as $row) {
          $row_data = $row->getData();
-         $ids[] = $row_data['id'];
+         $sel = end($select);
+         $ids[] = $row_data[$sel];
+      }
+      if (count($path) > 1) {
+         $new_where = array(
+             'where' => array(),
+             'wherenot' => array());
+         $last = array_pop($path);
+         if (count($path) == 1) {
+            $last = end($path);
+         }
+         $new_where['where'][$last['field']] = $ids;
+         $before_last = end($path);
+         $select = array('id');
+         if (strstr($before_last['table'], "_")) {
+            $select = array('id', $before_last['field']);
+         }
+         $new_table = $before_last['table'];
+         $ids = self::get_search_ids($new_table, $new_where, $path, $select);
       }
       return $ids;
    }
@@ -6787,6 +6731,19 @@ return;
          }
       }
       return $new_ids;
+   }
+
+
+
+   static function get_all_params_ids($params, $list_id=array()) {
+      foreach ($params as $key=>$value) {
+         if (is_array($value)) {
+            $list_id = self::get_all_params_ids($value, $list_id);
+         } else if ($key == 'id') {
+            $list_id[$value] = $value;
+         }
+      }
+      return $list_id;
    }
 
 
@@ -6934,7 +6891,7 @@ return;
                   if ($i == (count($path) - 1)) {
                      $row2 = $row2->select('id', $searchopt[$val]['field']);
                   } else {
-                     $row2 = $row2->select(getForeignKeyFieldForTable($path[($i+1)]['table']));
+                     $row2 = $row2->select('id', getForeignKeyFieldForTable($path[($i+1)]['table']));
                   }
                   $row2 = $row2->where('id', $mydata[$path[$i]['field']])->fetch();
                   $mydata = $row2->getData();
@@ -6958,6 +6915,9 @@ return;
 
 
       // Convert linked id to field name
+      if (!isset($data['data']['rows'])) {
+         $data['data']['rows'] = [];
+      }
       foreach ($data['data']['rows'] as $row_num=>$row_data) {
          foreach ($row_data as $num=>$values) {
             if (isset($values['_table'])) {

@@ -1,0 +1,1042 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<REQUEST>
+  <CONTENT>
+    <ACCESSLOG>
+      <LOGDATE>2014-12-11 16:09:31</LOGDATE>
+    </ACCESSLOG>
+    <BIOS>
+      <ASSETTAG />  <BDATE>08/29/2013</BDATE>
+      <BMANUFACTURER>Dell Inc.</BMANUFACTURER>
+      <BVERSION>2.0.19</BVERSION>
+      <MMANUFACTURER>Dell Inc.</MMANUFACTURER>
+      <MMODEL>0PXXHP</MMODEL>
+      <MSN>..CN747513610311.</MSN>
+      <SKUNUMBER>SKU=NotProvided;ModelName=PowerEdge R620</SKUNUMBER>
+      <SMANUFACTURER>Dell Inc.</SMANUFACTURER>
+      <SMODEL>PowerEdge R620</SMODEL>
+      <SSN>4TT85Z1</SSN>
+    </BIOS>
+    <CPUS>
+      <CORE>6</CORE>
+      <EXTERNAL_CLOCK>7200</EXTERNAL_CLOCK>
+      <FAMILYNAME>Xeon</FAMILYNAME>
+      <FAMILYNUMBER>6</FAMILYNUMBER>
+      <ID>D7 06 02 00 FF FB EB BF</ID>
+      <MANUFACTURER>Intel</MANUFACTURER>
+      <MODEL>45</MODEL>
+      <NAME>Xeon</NAME>
+      <SPEED>2500</SPEED>
+      <STEPPING>7</STEPPING>
+      <THREAD>12</THREAD>
+    </CPUS>
+    <CPUS>
+      <CORE>6</CORE>
+      <EXTERNAL_CLOCK>7200</EXTERNAL_CLOCK>
+      <FAMILYNAME>Xeon</FAMILYNAME>
+      <FAMILYNUMBER>6</FAMILYNUMBER>
+      <ID>D7 06 02 00 FF FB EB BF</ID>
+      <MANUFACTURER>Intel</MANUFACTURER>
+      <MODEL>45</MODEL>
+      <NAME>Xeon</NAME>
+      <SPEED>2500</SPEED>
+      <STEPPING>7</STEPPING>
+      <THREAD>12</THREAD>
+    </CPUS>
+    <DRIVES>
+      <FILESYSTEM>zfs</FILESYSTEM>
+      <FREE>101943</FREE>
+      <TOTAL>112906</TOTAL>
+      <TYPE>/</TYPE>
+      <VOLUMN>zroot/usr/jails</VOLUMN>
+    </DRIVES>
+    <ENVS>
+      <KEY>PAGER</KEY>
+      <VAL>more</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>TERM</KEY>
+      <VAL>xterm</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>HOST</KEY>
+      <VAL>es_siprossii</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>SSH_CONNECTION</KEY>
+      <VAL>62.193.35.156 48805 93.93.47.83 22</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>EDITOR</KEY>
+      <VAL>vi</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>HOME</KEY>
+      <VAL>/root</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>VENDOR</KEY>
+      <VAL>amd</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>MACHTYPE</KEY>
+      <VAL>x86_64</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>HOSTTYPE</KEY>
+      <VAL>FreeBSD</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>OSTYPE</KEY>
+      <VAL>FreeBSD</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>USER</KEY>
+      <VAL>root</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>LOGNAME</KEY>
+      <VAL>root</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>MAIL</KEY>
+      <VAL>/var/mail/root</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>BLOCKSIZE</KEY>
+      <VAL>K</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>REMOTEHOST</KEY>
+      <VAL>62-193-35-156.as16211.net</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>GROUP</KEY>
+      <VAL>wheel</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>SSH_TTY</KEY>
+      <VAL>/dev/pts/0</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>SSH_CLIENT</KEY>
+      <VAL>62.193.35.156 48805 22</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>SHLVL</KEY>
+      <VAL>2</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>SHELL</KEY>
+      <VAL>/bin/csh</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>PATH</KEY>
+      <VAL>/sbin:/bin:/usr/sbin:/usr/bin:/usr/games:/usr/local/sbin:/usr/local/bin:/root/bin</VAL>
+    </ENVS>
+    <ENVS>
+      <KEY>PWD</KEY>
+      <VAL>/</VAL>
+    </ENVS>
+    <HARDWARE>
+      <ARCHNAME>amd64-freebsd-thread-multi</ARCHNAME>
+      <CHASSIS_TYPE>Rack Mount Chassis</CHASSIS_TYPE>
+      <CHECKSUM>131071</CHECKSUM>
+      <DESCRIPTION>amd64/-1-11-30 18:55:32</DESCRIPTION>
+      <DNS>8.8.8.8</DNS>
+      <IPADDR>10.0.4.103</IPADDR>
+      <MEMORY>32698</MEMORY>
+      <NAME>es_siprossii</NAME>
+      <OSCOMMENTS>FreeBSD 10.0-RELEASE #0 r260789: Thu Jan 16 22:34:59 UTC 2014     root@snap.freebsd.org:/usr/obj/usr/src/sys/GENERIC </OSCOMMENTS>
+      <OSNAME>freebsd</OSNAME>
+      <OSVERSION>10.0-RELEASE</OSVERSION>
+      <PROCESSORN>2</PROCESSORN>
+      <PROCESSORS>2500</PROCESSORS>
+      <PROCESSORT>Xeon</PROCESSORT>
+      <SWAP>10240</SWAP>
+      <UUID>4C4C4544-0054-5410-8038-B4C04F355A31</UUID>
+      <VMSYSTEM>BSDJail</VMSYSTEM>
+    </HARDWARE>
+    <LOCAL_GROUPS>
+      <ID>0</ID>
+      <MEMBER>root</MEMBER>
+      <MEMBER>root</MEMBER>
+      <MEMBER>toor</MEMBER>
+      <NAME>wheel</NAME>
+    </LOCAL_GROUPS>
+    <LOCAL_GROUPS>
+      <ID>5</ID>
+      <MEMBER>root</MEMBER>
+      <MEMBER>operator</MEMBER>
+      <NAME>operator</NAME>
+    </LOCAL_GROUPS>
+    <LOCAL_USERS>
+      <HOME>/root</HOME>
+      <ID>0</ID>
+      <LOGIN>root</LOGIN>
+      <NAME>Charlie &amp;</NAME>
+      <SHELL>/bin/csh</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/root</HOME>
+      <ID>0</ID>
+      <LOGIN>toor</LOGIN>
+      <NAME>Bourne-again Superuser</NAME>
+      <SHELL></SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/root</HOME>
+      <ID>1</ID>
+      <LOGIN>daemon</LOGIN>
+      <NAME>Owner of many system processes</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/</HOME>
+      <ID>2</ID>
+      <LOGIN>operator</LOGIN>
+      <NAME>System &amp;</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/</HOME>
+      <ID>3</ID>
+      <LOGIN>bin</LOGIN>
+      <NAME>Binaries Commands and Source</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/</HOME>
+      <ID>4</ID>
+      <LOGIN>tty</LOGIN>
+      <NAME>Tty Sandbox</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/</HOME>
+      <ID>5</ID>
+      <LOGIN>kmem</LOGIN>
+      <NAME>KMem Sandbox</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/usr/games</HOME>
+      <ID>7</ID>
+      <LOGIN>games</LOGIN>
+      <NAME>Games pseudo-user</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/</HOME>
+      <ID>8</ID>
+      <LOGIN>news</LOGIN>
+      <NAME>News Subsystem</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/usr/share/man</HOME>
+      <ID>9</ID>
+      <LOGIN>man</LOGIN>
+      <NAME>Mister Man Pages</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/var/empty</HOME>
+      <ID>22</ID>
+      <LOGIN>sshd</LOGIN>
+      <NAME>Secure Shell Daemon</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/var/spool/clientmqueue</HOME>
+      <ID>25</ID>
+      <LOGIN>smmsp</LOGIN>
+      <NAME>Sendmail Submission User</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/var/spool/mqueue</HOME>
+      <ID>26</ID>
+      <LOGIN>mailnull</LOGIN>
+      <NAME>Sendmail Default User</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/</HOME>
+      <ID>53</ID>
+      <LOGIN>bind</LOGIN>
+      <NAME>Bind Sandbox</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/var/unbound</HOME>
+      <ID>59</ID>
+      <LOGIN>unbound</LOGIN>
+      <NAME>Unbound DNS Resolver</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/nonexistent</HOME>
+      <ID>62</ID>
+      <LOGIN>proxy</LOGIN>
+      <NAME>Packet Filter pseudo-user</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/var/empty</HOME>
+      <ID>64</ID>
+      <LOGIN>_pflogd</LOGIN>
+      <NAME>pflogd privsep user</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/var/empty</HOME>
+      <ID>65</ID>
+      <LOGIN>_dhcp</LOGIN>
+      <NAME>dhcp programs</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/var/spool/uucppublic</HOME>
+      <ID>66</ID>
+      <LOGIN>uucp</LOGIN>
+      <NAME>UUCP pseudo-user</NAME>
+      <SHELL>/usr/local/libexec/uucp/uucico</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/nonexistent</HOME>
+      <ID>68</ID>
+      <LOGIN>pop</LOGIN>
+      <NAME>Post Office Owner</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/var/empty</HOME>
+      <ID>78</ID>
+      <LOGIN>auditdistd</LOGIN>
+      <NAME>Auditdistd unprivileged user</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/nonexistent</HOME>
+      <ID>80</ID>
+      <LOGIN>www</LOGIN>
+      <NAME>World Wide Web Owner</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/var/empty</HOME>
+      <ID>845</ID>
+      <LOGIN>hast</LOGIN>
+      <NAME>HAST unprivileged user</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/nonexistent</HOME>
+      <ID>65534</ID>
+      <LOGIN>nobody</LOGIN>
+      <NAME>Unprivileged user</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <LOCAL_USERS>
+      <HOME>/nonexistent</HOME>
+      <ID>965</ID>
+      <LOGIN>elasticsearch</LOGIN>
+      <NAME>elasticsearch user</NAME>
+      <SHELL>/usr/sbin/nologin</SHELL>
+    </LOCAL_USERS>
+    <MEMORIES>
+      <CAPACITY>8192</CAPACITY>
+      <CAPTION>DIMM_A1</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MANUFACTURER>00CE00B300CE</MANUFACTURER>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>1</NUMSLOTS>
+      <SERIALNUMBER>149E98BF</SERIALNUMBER>
+      <SPEED>1600 MHz</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPACITY>8192</CAPACITY>
+      <CAPTION>DIMM_A2</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MANUFACTURER>00CE00B300CE</MANUFACTURER>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>2</NUMSLOTS>
+      <SERIALNUMBER>149E9947</SERIALNUMBER>
+      <SPEED>1600 MHz</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_A3</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>3</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_A4</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>4</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_A5</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>5</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_A6</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>6</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_A7</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>7</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_A8</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>8</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_A9</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>9</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_A10</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>10</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_A11</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>11</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_A12</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>12</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPACITY>8192</CAPACITY>
+      <CAPTION>DIMM_B1</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MANUFACTURER>00CE00B300CE</MANUFACTURER>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>13</NUMSLOTS>
+      <SERIALNUMBER>149E9945</SERIALNUMBER>
+      <SPEED>1600 MHz</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPACITY>8192</CAPACITY>
+      <CAPTION>DIMM_B2</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MANUFACTURER>00CE00B300CE</MANUFACTURER>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>14</NUMSLOTS>
+      <SERIALNUMBER>149E9965</SERIALNUMBER>
+      <SPEED>1600 MHz</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_B3</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>15</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_B4</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>16</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_B5</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>17</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_B6</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>18</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_B7</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>19</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_B8</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>20</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_B9</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>21</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_B10</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>22</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_B11</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>23</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <MEMORIES>
+      <CAPTION>DIMM_B12</CAPTION>
+      <DESCRIPTION>DIMM</DESCRIPTION>
+      <MEMORYCORRECTION>Multi-bit ECC</MEMORYCORRECTION>
+      <NUMSLOTS>24</NUMSLOTS>
+      <SPEED>Unknown</SPEED>
+      <TYPE>DDR3</TYPE>
+    </MEMORIES>
+    <NETWORKS>
+      <DESCRIPTION>igb0</DESCRIPTION>
+      <MACADDR>b8:ca:3a:65:21:8b</MACADDR>
+      <MTU>1500</MTU>
+      <STATUS>Up</STATUS>
+      <TYPE>ethernet</TYPE>
+      <VIRTUALDEV>0</VIRTUALDEV>
+    </NETWORKS>
+    <NETWORKS>
+      <DESCRIPTION>lo0</DESCRIPTION>
+      <MTU>16384</MTU>
+      <STATUS>Up</STATUS>
+      <TYPE>loopback</TYPE>
+      <VIRTUALDEV>1</VIRTUALDEV>
+    </NETWORKS>
+    <NETWORKS>
+      <DESCRIPTION>lo1</DESCRIPTION>
+      <IPADDRESS>10.0.4.103</IPADDRESS>
+      <IPMASK>255.255.255.0</IPMASK>
+      <IPSUBNET>10.0.4.0</IPSUBNET>
+      <MTU>16384</MTU>
+      <STATUS>Up</STATUS>
+      <TYPE>loopback</TYPE>
+      <VIRTUALDEV>1</VIRTUALDEV>
+    </NETWORKS>
+    <OPERATINGSYSTEM>
+      <BOOT_TIME>2014-12-11 11:05:03</BOOT_TIME>
+      <DNS_DOMAIN>my.domain</DNS_DOMAIN>
+      <FQDN>es_siprossii.my.domain</FQDN>
+      <FULL_NAME>freebsd</FULL_NAME>
+      <KERNEL_NAME>freebsd</KERNEL_NAME>
+      <KERNEL_VERSION>10.0-RELEASE</KERNEL_VERSION>
+      <NAME>freebsd</NAME>
+      <SSH_KEY>ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD2qmeo5R8UAV5Y8nZSsz+PwVomPS5DJFXnfV5PgFO2SFGejhgRu44awR+A5g7CY2jYGCgYBEJzHrdOvzay5X0Es8KxzUNNDb00ALn03vfIfZQwnrxbfzidf02RvDnn3KmCI8MWTNRZYeG5Mls0Fwd/u0uAzrXuPpqiAjIc2HzhYbbNBGPwKKqPlF0taJryjqXwdL/lRt1/hH2OwFygtL2OzySM/BKYLTeZ0n3o6FRnh3METq9ksB9OVrModMmIpOmRbkPjvBfC0dTv6NVNQBbmlm80ESI6z58GzgotzqPgXxOfV58FplN+z8tBiqfl2S13J4oHxNvObT2bx49pzHBF</SSH_KEY>
+      <VERSION>10.0-RELEASE</VERSION>
+    </OPERATINGSYSTEM>
+    <PORTS>
+      <CAPTION>DB-15 female</CAPTION>
+      <DESCRIPTION>None</DESCRIPTION>
+      <TYPE>Video Port</TYPE>
+    </PORTS>
+    <PORTS>
+      <CAPTION>DB-15 female</CAPTION>
+      <DESCRIPTION>None</DESCRIPTION>
+      <TYPE>Video Port</TYPE>
+    </PORTS>
+    <PORTS>
+      <CAPTION>Access Bus (USB)</CAPTION>
+      <DESCRIPTION>None</DESCRIPTION>
+      <TYPE>USB</TYPE>
+    </PORTS>
+    <PORTS>
+      <CAPTION>Access Bus (USB)</CAPTION>
+      <DESCRIPTION>None</DESCRIPTION>
+      <TYPE>USB</TYPE>
+    </PORTS>
+    <PORTS>
+      <CAPTION>Access Bus (USB)</CAPTION>
+      <DESCRIPTION>None</DESCRIPTION>
+      <TYPE>USB</TYPE>
+    </PORTS>
+    <PORTS>
+      <CAPTION>Access Bus (USB)</CAPTION>
+      <DESCRIPTION>None</DESCRIPTION>
+      <TYPE>USB</TYPE>
+    </PORTS>
+    <PORTS>
+      <CAPTION>None</CAPTION>
+      <DESCRIPTION>Access Bus (USB)</DESCRIPTION>
+      <NAME>INT_USB</NAME>
+      <TYPE>USB</TYPE>
+    </PORTS>
+    <PORTS>
+      <CAPTION>RJ-45</CAPTION>
+      <DESCRIPTION>None</DESCRIPTION>
+      <TYPE>Network Port</TYPE>
+    </PORTS>
+    <PORTS>
+      <CAPTION>RJ-45</CAPTION>
+      <DESCRIPTION>None</DESCRIPTION>
+      <TYPE>Network Port</TYPE>
+    </PORTS>
+    <PORTS>
+      <CAPTION>RJ-45</CAPTION>
+      <DESCRIPTION>None</DESCRIPTION>
+      <TYPE>Network Port</TYPE>
+    </PORTS>
+    <PORTS>
+      <CAPTION>RJ-45</CAPTION>
+      <DESCRIPTION>None</DESCRIPTION>
+      <TYPE>Network Port</TYPE>
+    </PORTS>
+    <PORTS>
+      <CAPTION>DB-9 male</CAPTION>
+      <DESCRIPTION>None</DESCRIPTION>
+      <TYPE>Serial Port 16550A Compatible</TYPE>
+    </PORTS>
+    <PROCESSES>
+      <CMD>/usr/sbin/syslogd -s</CMD>
+      <CPUUSAGE>0.0</CPUUSAGE>
+      <MEM>0.0</MEM>
+      <PID>4340</PID>
+      <STARTED>2014-12-11 11:06</STARTED>
+      <TTY>-</TTY>
+      <USER>root</USER>
+      <VIRTUALMEMORY>14424</VIRTUALMEMORY>
+    </PROCESSES>
+    <PROCESSES>
+      <CMD>/usr/local/openjdk7/bin/java -Des.pidfile=/var/run/elasticsearch.pid -server -Xms256m -Xmx1g -Xss256k -Djava.awt.headless=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:</CMD>
+      <CPUUSAGE>0.0</CPUUSAGE>
+      <MEM>1.2</MEM>
+      <PID>4360</PID>
+      <STARTED>2014-12-11 11:06</STARTED>
+      <TTY>-</TTY>
+      <USER>elasticsearch</USER>
+      <VIRTUALMEMORY>1891392</VIRTUALMEMORY>
+    </PROCESSES>
+    <PROCESSES>
+      <CMD>sendmail: accepting connections (sendmail)</CMD>
+      <CPUUSAGE>0.0</CPUUSAGE>
+      <MEM>0.0</MEM>
+      <PID>4415</PID>
+      <STARTED>2014-12-11 11:06</STARTED>
+      <TTY>-</TTY>
+      <USER>root</USER>
+      <VIRTUALMEMORY>23972</VIRTUALMEMORY>
+    </PROCESSES>
+    <PROCESSES>
+      <CMD>sendmail: Queue runner@00:30:00 for /var/spool/clientmqueue (sendmail)</CMD>
+      <CPUUSAGE>0.0</CPUUSAGE>
+      <MEM>0.0</MEM>
+      <PID>4425</PID>
+      <STARTED>2014-12-11 11:06</STARTED>
+      <TTY>-</TTY>
+      <USER>smmsp</USER>
+      <VIRTUALMEMORY>23972</VIRTUALMEMORY>
+    </PROCESSES>
+    <PROCESSES>
+      <CMD>/usr/sbin/cron -s</CMD>
+      <CPUUSAGE>0.0</CPUUSAGE>
+      <MEM>0.0</MEM>
+      <PID>4431</PID>
+      <STARTED>2014-12-11 11:06</STARTED>
+      <TTY>-</TTY>
+      <USER>root</USER>
+      <VIRTUALMEMORY>16520</VIRTUALMEMORY>
+    </PROCESSES>
+    <PROCESSES>
+      <CMD>csh</CMD>
+      <CPUUSAGE>0.0</CPUUSAGE>
+      <MEM>0.0</MEM>
+      <PID>44803</PID>
+      <STARTED>2014-12-11 16:09</STARTED>
+      <TTY>pts/0</TTY>
+      <USER>root</USER>
+      <VIRTUALMEMORY>23492</VIRTUALMEMORY>
+    </PROCESSES>
+    <PROCESSES>
+      <CMD>/usr/local/bin/perl /usr/local/bin/fusioninventory-agent --local=/tmp</CMD>
+      <CPUUSAGE>8.5</CPUUSAGE>
+      <MEM>0.1</MEM>
+      <PID>44811</PID>
+      <STARTED>2014-12-11 16:09</STARTED>
+      <TTY>pts/0</TTY>
+      <USER>root</USER>
+      <VIRTUALMEMORY>84460</VIRTUALMEMORY>
+    </PROCESSES>
+    <PROCESSES>
+      <CMD>ps -A -o user,pid,pcpu,pmem,vsz,tty,etime,command</CMD>
+      <CPUUSAGE>0.0</CPUUSAGE>
+      <MEM>0.0</MEM>
+      <PID>44830</PID>
+      <STARTED>2014-12-11 16:09</STARTED>
+      <TTY>pts/0</TTY>
+      <USER>root</USER>
+      <VIRTUALMEMORY>16588</VIRTUALMEMORY>
+    </PROCESSES>
+    <SLOTS>
+      <DESCRIPTION>x8 PCI Express 3 x16</DESCRIPTION>
+      <NAME>PCI1</NAME>
+      <STATUS>free</STATUS>
+    </SLOTS>
+    <SLOTS>
+      <DESCRIPTION>x16 PCI Express 3</DESCRIPTION>
+      <NAME>PCI2</NAME>
+      <STATUS>free</STATUS>
+    </SLOTS>
+    <SLOTS>
+      <DESCRIPTION>x16 PCI Express 3</DESCRIPTION>
+      <NAME>PCI3</NAME>
+      <STATUS>free</STATUS>
+    </SLOTS>
+    <SOFTWARES>
+      <COMMENTS>ALSA compatibility library</COMMENTS>
+      <NAME>alsa-lib</NAME>
+      <VERSION>1.0.27.2_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Bitstream Vera Fonts clone with a wider range of characters</COMMENTS>
+      <NAME>dejavu</NAME>
+      <VERSION>2.34_3</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Tool for dumping DMI (SMBIOS) contents in human-readable format</COMMENTS>
+      <NAME>dmidecode</NAME>
+      <VERSION>2.12</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>A full-text search engine for Java</COMMENTS>
+      <NAME>elasticsearch</NAME>
+      <VERSION>1.1.0</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Fixes extension headers</COMMENTS>
+      <NAME>fixesproto</NAME>
+      <VERSION>5.0</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Free and portable TrueType font rendering engine</COMMENTS>
+      <NAME>freetype2</NAME>
+      <VERSION>2.5.3_2</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Input extension headers</COMMENTS>
+      <NAME>inputproto</NAME>
+      <VERSION>2.3</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Updated Java timezone definitions</COMMENTS>
+      <NAME>java-zoneinfo</NAME>
+      <VERSION>2014.c</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Wrapper script for various Java Virtual Machines</COMMENTS>
+      <NAME>javavmwrapper</NAME>
+      <VERSION>2.5</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>KB extension headers</COMMENTS>
+      <NAME>kbproto</NAME>
+      <VERSION>1.0.6</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Inter Client Exchange library for X11</COMMENTS>
+      <NAME>libICE</NAME>
+      <VERSION>1.0.8_2,1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Session Management library for X11</COMMENTS>
+      <NAME>libSM</NAME>
+      <VERSION>1.2.2_2,1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>X11 library</COMMENTS>
+      <NAME>libX11</NAME>
+      <VERSION>1.6.2_2,1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Authentication Protocol library for X11</COMMENTS>
+      <NAME>libXau</NAME>
+      <VERSION>1.0.8_2</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>X Display Manager Control Protocol library</COMMENTS>
+      <NAME>libXdmcp</NAME>
+      <VERSION>1.1.1_2</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>X11 Extension library</COMMENTS>
+      <NAME>libXext</NAME>
+      <VERSION>1.3.2_2,1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>X Fixes extension library</COMMENTS>
+      <NAME>libXfixes</NAME>
+      <VERSION>5.0.1_2</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>X Input extension library</COMMENTS>
+      <NAME>libXi</NAME>
+      <VERSION>1.7.2_2,1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>X Render extension library</COMMENTS>
+      <NAME>libXrender</NAME>
+      <VERSION>0.9.8_2</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>X Toolkit library</COMMENTS>
+      <NAME>libXt</NAME>
+      <VERSION>1.1.4_2,1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>X Test extension</COMMENTS>
+      <NAME>libXtst</NAME>
+      <VERSION>1.2.2_2</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>This library provides weak aliases for pthread functions</COMMENTS>
+      <NAME>libpthread-stubs</NAME>
+      <VERSION>0.3_4</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>The W3C Reference Library</COMMENTS>
+      <NAME>libwww</NAME>
+      <VERSION>5.4.0_5</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>The X protocol C-language Binding (XCB) library</COMMENTS>
+      <NAME>libxcb</NAME>
+      <VERSION>1.10_2</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>XML parser library for GNOME</COMMENTS>
+      <NAME>libxml2</NAME>
+      <VERSION>2.9.1_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Java Development Kit 7</COMMENTS>
+      <NAME>openjdk</NAME>
+      <VERSION>7.55.13_5,1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Perl5 NTLM authentication module</COMMENTS>
+      <NAME>p5-Authen-NTLM</NAME>
+      <VERSION>1.09_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Perl5 interface to HMAC Message-Digest Algorithms</COMMENTS>
+      <NAME>p5-Digest-HMAC</NAME>
+      <VERSION>1.03_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Determine the locale encoding</COMMENTS>
+      <NAME>p5-Encode-Locale</NAME>
+      <VERSION>1.03_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Parse directory listings</COMMENTS>
+      <NAME>p5-File-Listing</NAME>
+      <VERSION>6.04_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Portable implementation of `which&apos; in Perl</COMMENTS>
+      <NAME>p5-File-Which</NAME>
+      <VERSION>1.09_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Perl5 module for parsing HTML documents</COMMENTS>
+      <NAME>p5-HTML-Parser</NAME>
+      <VERSION>3.71_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Some useful data table in parsing HTML</COMMENTS>
+      <NAME>p5-HTML-Tagset</NAME>
+      <VERSION>3.20_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>HTTP Cookie jars</COMMENTS>
+      <NAME>p5-HTTP-Cookies</NAME>
+      <VERSION>6.01_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Simple HTTP server class</COMMENTS>
+      <NAME>p5-HTTP-Daemon</NAME>
+      <VERSION>6.01_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Conversion routines for the HTTP protocol date formats</COMMENTS>
+      <NAME>p5-HTTP-Date</NAME>
+      <VERSION>6.02_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Representation of HTTP style messages</COMMENTS>
+      <NAME>p5-HTTP-Message</NAME>
+      <VERSION>6.06_3</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Implementation of the HTTP content negotiation algorithm</COMMENTS>
+      <NAME>p5-HTTP-Negotiate</NAME>
+      <VERSION>6.01_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Open an HTML file with automatic charset detection</COMMENTS>
+      <NAME>p5-IO-HTML</NAME>
+      <VERSION>1.001_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Drop-in replacement for IO::Socket::INET supporting IPv4 and IPv6</COMMENTS>
+      <NAME>p5-IO-Socket-IP</NAME>
+      <VERSION>0.33_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Perl5 interface to SSL sockets</COMMENTS>
+      <NAME>p5-IO-Socket-SSL</NAME>
+      <VERSION>2.007</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Guess media type for a file or a URL</COMMENTS>
+      <NAME>p5-LWP-MediaTypes</NAME>
+      <VERSION>6.02_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Provide https support for LWP::UserAgent</COMMENTS>
+      <NAME>p5-LWP-Protocol-https</NAME>
+      <VERSION>6.06_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Perl extension for Mozilla CA cert bundle in PEM format</COMMENTS>
+      <NAME>p5-Mozilla-CA</NAME>
+      <VERSION>20130114_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Low-level HTTP client</COMMENTS>
+      <NAME>p5-Net-HTTP</NAME>
+      <VERSION>6.07_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Perl extension for manipulating IPv4/IPv6 addresses</COMMENTS>
+      <NAME>p5-Net-IP</NAME>
+      <VERSION>1.26_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Perl5 interface to SSL</COMMENTS>
+      <NAME>p5-Net-SSLeay</NAME>
+      <VERSION>1.66_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Networking constants and support functions</COMMENTS>
+      <NAME>p5-Socket</NAME>
+      <VERSION>2.016_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Perl module to require() from a variable</COMMENTS>
+      <NAME>p5-UNIVERSAL-require</NAME>
+      <VERSION>0.17_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Perl5 interface to Uniform Resource Identifier (URI) references</COMMENTS>
+      <NAME>p5-URI</NAME>
+      <VERSION>1.64_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Database of robots.txt-derived permissions</COMMENTS>
+      <NAME>p5-WWW-RobotRules</NAME>
+      <VERSION>6.02_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Pure Perl implementation for parsing/writing xml files</COMMENTS>
+      <NAME>p5-XML-TreePP</NAME>
+      <VERSION>0.42_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Perl5 library for WWW access</COMMENTS>
+      <NAME>p5-libwww</NAME>
+      <VERSION>6.08_1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Practical Extraction and Report Language</COMMENTS>
+      <NAME>perl5</NAME>
+      <VERSION>5.18.4_10</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>Package manager</COMMENTS>
+      <NAME>pkg</NAME>
+      <VERSION>1.3.8_3</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>RECORD extension headers</COMMENTS>
+      <NAME>recordproto</NAME>
+      <VERSION>1.14.2</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>RenderProto protocol headers</COMMENTS>
+      <NAME>renderproto</NAME>
+      <VERSION>0.11.1</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>XExt extension headers</COMMENTS>
+      <NAME>xextproto</NAME>
+      <VERSION>7.3.0</VERSION>
+    </SOFTWARES>
+    <SOFTWARES>
+      <COMMENTS>X11 protocol headers</COMMENTS>
+      <NAME>xproto</NAME>
+      <VERSION>7.0.25</VERSION>
+    </SOFTWARES>
+    <VERSIONCLIENT>FusionInventory-Agent_v2.3.13</VERSIONCLIENT>
+  </CONTENT>
+  <DEVICEID>es_siprossii-2014-12-11-16-06-07</DEVICEID>
+  <QUERY>INVENTORY</QUERY>
+</REQUEST>

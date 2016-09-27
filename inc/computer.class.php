@@ -1307,6 +1307,29 @@ class Computer extends CommonDBTM {
 
       $tab+= ComputerAntivirus::getSearchOptionsToAdd();
 
+      $tab['softwaretest']             = 'Software:'.__('Characteristics');
+
+      $tab[801]['table']           = Software::getTable();
+      $tab[801]['field']           = 'name';
+      $tab[801]['name']            = 'soft name';
+      $tab[801]['datatype']        = 'string';
+      $tab[801]['massiveaction']   = false;
+      $tab[801]['path']           = array(
+          array(
+              'table' => Computer_SoftwareVersion::getTable(),
+              'field' => 'computer_id'
+          ),
+          array(
+              'table' => SoftwareVersion::getTable(),
+              'field' => 'softwareversion_id'
+          ),
+          array(
+              'table' => Software::getTable(),
+              'field' => 'software_id'
+          ),
+      );
+
+
       return $tab;
    }
 
