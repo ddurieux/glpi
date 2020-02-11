@@ -645,6 +645,10 @@ CREATE TABLE `glpi_changes` (
   `close_delay_stat` int(11) NOT NULL DEFAULT '0',
   `solve_delay_stat` int(11) NOT NULL DEFAULT '0',
   `date_creation` datetime DEFAULT NULL,
+  `type` int(11) NOT NULL DEFAULT '1',
+  `plan_start_date` datetime DEFAULT NULL,
+  `plan_end_date` datetime DEFAULT NULL,
+  `service_unavailability` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
   KEY `entities_id` (`entities_id`),
@@ -7114,6 +7118,7 @@ INSERT INTO `glpi_profilerights` VALUES ('889','4','global_validation','0');
 INSERT INTO `glpi_profilerights` VALUES ('890','5','global_validation','0');
 INSERT INTO `glpi_profilerights` VALUES ('891','6','global_validation','0');
 INSERT INTO `glpi_profilerights` VALUES ('892','7','global_validation','0');
+INSERT INTO `glpi_profilerights` VALUES ('893','8','rule_change','1');
 
 ### Dump table glpi_profiles
 

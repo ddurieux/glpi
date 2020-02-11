@@ -30,6 +30,28 @@
  * ---------------------------------------------------------------------
  */
 
-include ('../inc/includes.php');
-$dropdown = new Network();
-include (GLPI_ROOT . "/front/dropdown.common.form.php");
+/**
+ * Update from 9.4.5 to 9.4.6
+ *
+ * @return bool for success (will die for most error)
+**/
+function update945to946() {
+   global $DB, $migration;
+
+   $updateresult     = true;
+
+   //TRANS: %s is the number of new version
+   $migration->displayTitle(sprintf(__('Update to %s'), '9.4.6'));
+   $migration->setVersion('9.4.6');
+
+   /** Add type field to Changes */
+   $migration->addField('glpi_changes', 'type', 'INT( 11 ) NOT NULL DEFAULT 1');
+   $migration->addField('glpi_changes', 'plan_start_date', 'datetime');
+   $migration->addField('glpi_changes', 'plan_end_date', 'datetime');
+   $migration->addField('glpi_changes', 'service_unavailability', 'bool');
+
+   // ************ Keep it at the end **************
+   $migration->executeMigration();
+
+   return $updateresult;
+}
